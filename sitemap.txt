@@ -1,3 +1,4 @@
+http://example.com/2024/06/10/%E6%8A%A4%E7%BD%91%E8%93%9D%E9%98%9F%E9%9D%A2%E8%AF%95/
 http://example.com/2024/06/09/%E6%97%85%E6%B8%B8vlog/
 http://example.com/2024/06/09/%E5%9B%BE%E5%BA%8A%E6%90%AD%E5%BB%BA-%E9%9B%B6%E6%88%90%E6%9C%AC/
 http://example.com/2024/06/09/%E5%9F%BA%E4%BA%8Egithub-Cloudflare%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/
@@ -7,3 +8,4 @@ http://example.com/about/index.html
 http://example.com/
 http://example.com/categories/%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/
 http://example.com/categories/%E7%94%9F%E6%B4%BB/
+http://example.com/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/
