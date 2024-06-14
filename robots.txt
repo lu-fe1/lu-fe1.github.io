@@ -1,6 +1,0 @@
-# hexo robots.txt
-User-agent: *
-Allow: /
-
-Sitemap: https://flowers-boy.top/sitemap.xml
-Sitemap: https://flowers-boy.top/baidusitemap.xml
