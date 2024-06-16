@@ -2,7 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://flowers-boy.top/posts/459ba203.html</loc>
+    <loc>https://flowers-boy.top/posts/48203.html</loc>
+    
+    <lastmod>2024-06-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://flowers-boy.top/posts/afaa72b6.html</loc>
     
     <lastmod>2024-06-12</lastmod>
     
@@ -11,7 +20,7 @@
   </url>
   
   <url>
-    <loc>https://flowers-boy.top/posts/afaa72b6.html</loc>
+    <loc>https://flowers-boy.top/posts/459ba203.html</loc>
     
     <lastmod>2024-06-12</lastmod>
     
@@ -67,7 +76,7 @@
 
   <url>
     <loc>https://flowers-boy.top/</loc>
-    <lastmod>2024-06-14</lastmod>
+    <lastmod>2024-06-16</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -76,22 +85,29 @@
 
   
   <url>
+    <loc>https://flowers-boy.top/categories/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/</loc>
+    <lastmod>2024-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://flowers-boy.top/categories/%E5%8D%9A%E5%AE%A2%E9%85%8D%E7%BD%AE/</loc>
-    <lastmod>2024-06-14</lastmod>
+    <lastmod>2024-06-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://flowers-boy.top/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</loc>
-    <lastmod>2024-06-14</lastmod>
+    <lastmod>2024-06-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://flowers-boy.top/categories/%E7%94%9F%E6%B4%BB/</loc>
-    <lastmod>2024-06-14</lastmod>
+    <lastmod>2024-06-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
