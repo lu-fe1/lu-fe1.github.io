@@ -15,231 +15,6 @@
       </categories>
   </entry>
   <entry>
-    <title>博客配置</title>
-    <url>/posts/459ba203.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
-
-<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
-<p>可选择是否自动播放</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
-<p>音乐代码</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
-<meta name="referrer" content="no-referrer">
-
-<p>例子：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
-<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
-<ul>
-<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
-<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
-</ul>
-<p>在博客根目录文件夹下打开</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-
-<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
-<p><strong>启用主题：</strong></p>
-<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
-<p><strong>验证：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
-
-<p>清空缓存，生成，上传</p>
-<p><strong>分类：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
-
-<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
-<p>以此类推</p>
-<p><strong>标签：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>关于：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>博客配置</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>基于github+Cloudflare搭建个人博客</title>
-    <url>/posts/2f7875ad.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<p>本次搭建</p>
-<p>服务器：github（免费）</p>
-<p>域名：阿里云，西部数码等等（需要付费，第一年大概12左右）</p>
-<p>如果想白嫖搭建到博客上线步骤暂停</p>
-<h2 id="准备工具"><a href="#准备工具" class="headerlink" title="准备工具"></a>准备工具</h2><p>以下工具安装必应搜索网上一堆教程</p>
-<p>node</p>
-<p>git</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v（这个是node附带的）</span><br><span class="line">git -v</span><br></pre></td></tr></table></figure>
-
-<p>下载hexo</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<h2 id="搭建仓库"><a href="#搭建仓库" class="headerlink" title="搭建仓库"></a>搭建仓库</h2><p>github新建仓库</p>
-<p>仓库名一定要设置<code>用户名.github.io</code></p>
-<p>勾选public公共</p>
-<p>勾选Add a READNE file</p>
-<h2 id="生成SSH-Keys"><a href="#生成SSH-Keys" class="headerlink" title="生成SSH Keys"></a>生成SSH Keys</h2><p>任意位置打开<code>open git bash here</code>输入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮件地址&quot;</span><br></pre></td></tr></table></figure>
-
-<p>回车4次</p>
-<p>进入<code>C:\Users\Lenovo\.ssh</code>目录</p>
-<p>复制<code>id_rsa.pub</code>文件代码</p>
-<p>再打开github，设置，sshkeys</p>
-<p>名称随意，代码粘贴到下面创建</p>
-<p><strong>测试是否成功</strong></p>
-<p><code>git bash</code>输入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-
-<p>yes</p>
-<h2 id="生成本地博客内容"><a href="#生成本地博客内容" class="headerlink" title="生成本地博客内容"></a>生成本地博客内容</h2><p>确定位置新建blog文件夹，进入打开<code>git bash</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-
-<p>若出现<code>‘command not find’</code>，就在命令前加入npx</p>
-<p>然后</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo install #安装</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo s #本地加载</span><br></pre></td></tr></table></figure>
-
-<h2 id="博客上线"><a href="#博客上线" class="headerlink" title="博客上线"></a>博客上线</h2><p>打开站点配置<code>_config.yml</code></p>
-<p>注意缩进两个空格</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: </span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
-
-<p>仓库，code，复制https，复制到repository: 注意与冒号之间有空格</p>
-<p>安装自动部署工具</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-<p>配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br><span class="line">git config --global user.name &quot;你的名字&quot;</span><br></pre></td></tr></table></figure>
-
-<p>再次生成，上传</p>
-<p>此时就算搭建成功，网址为：用户名.github.io</p>
-<h2 id="cloudflare部署"><a href="#cloudflare部署" class="headerlink" title="cloudflare部署"></a>cloudflare部署</h2><p>Github提供的网址在国内的访问速度较慢，再通过绑定域名方法会很快</p>
-<p>Vercel和cloudflare作用相同，但是目前Vercel被国内设墙，部分用户可以访问，部分不行，需要搭梯子，导致不能所有用户访问。（Vercel方法随缘，有的人可以全国访问，而我的就不行，Vercel教程<a href="https://blog.fiveth.cc/p/138e/">Hexo搭建进阶：Vercel部署、主题安装、基础用法 (fiveth.cc)</a>）</p>
-<p>不习惯英语可以修改为中文，对于学生来说还是推荐english，多熟悉熟悉英语，以后工作更方便</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232010147-300554834.png" alt="image-20240609232009691"></p>
-<p>点击workers-and-pages进行创建</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232123938-2087969152.png" alt="image-20240609232123559"></p>
-<p>点击pages，连接git，</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232328923-371863785.png" alt="image-20240609232328581"></p>
-<p>选择我们创建的github仓库</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232417450-646256914.png" alt="image-20240609232417384"></p>
-<p>按照提示继续，目前的网址就更新为项目名称.pages.dev</p>
-<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>点击刚部署好的网站</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232633972-113818485.png" alt="image-20240609232633677"></p>
-<p>选择自定义域名，按照提示进行操作即可</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232738778-1698844123.png" alt="image-20240609232738669"></p>
-<p>自此免费服务器+自定义域名搭建成功</p>
-]]></content>
-      <categories>
-        <category>博客配置</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>图床搭建(零成本)</title>
-    <url>/posts/afaa72b6.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
-<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
-<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
-<p>阿里和腾讯都需要收费</p>
-<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
-<p>管理-设置-其他设置</p>
-<p>需要设置令牌</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
-<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
-<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
-<p>进行配置</p>
-<p>id是作者名称</p>
-<p>账号就是登录名</p>
-<p>密码就是令牌</p>
-<p>地址是metaweblog地址</p>
-<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
-<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
-<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
-<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
-<p>点击验证测试</p>
-<p>到此，免费图床就配置好了，祝各位前途无忧</p>
-]]></content>
-      <categories>
-        <category>博客配置</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>旅游vlog</title>
-    <url>/posts/e42dbe7e.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<p>两年的游玩，加上外地比赛，已经累计到6700分数了哈哈哈，可以免费做一次洛阳的火车了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235146437-746849895.png" alt="image-20240609235145981"></p>
-<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
-<p>赛车</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
-<p>看古城</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
-<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>鼓楼，其实也就是个建筑，附近都是小吃，来之前就听说鼓楼附近的小吃坑外地人，到最后发现都一样，可能是女友砍价能力无声侧漏了哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
-<p>期待已久的打铁花，现场很美，博客画质可能在图床被压缩了，效果没展现出来</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
-<p>虽然我没去参加过演唱会，酒吧，但是万岁山的音乐节氛围烘托得也是超级棒，我的牛仔裤就是因为台阶太高冲上台的时候开档了哈哈哈哈哈，挺奇葩的</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
-<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>玩的话应该是龙门石窟比较好，感觉都是景色，千篇一律，旅游就是享受自由的感觉</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
-<p>念念不忘的不是打卡点，而是那天和傻鸟骑车，在空无一人的马路上飞驰的瞬间，在陌生城市漫无目的行走的松弛感</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
-<p>现在回想，当时忘记给傻鸟穿汉服拍照了，真是遗憾啦</p>
-<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>嵩山的景色很美，夏日温度山内外温度简直差别巨大</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
-<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>黄鹤楼</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
-<p>步行街江汉关</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
-<p>长江大桥，那天晚上下着雨刮着大风，傻鸟害怕不敢下来，内心害怕被人杀害，有点小脆弱啊哈哈哈，风凉凉的，吹的很冷也很清醒，很喜欢这种自由的感觉</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
-<p>去许昌，忘记啥原因了没坐上水上公交，但是去武汉去武汉也没坐上，因为下雨船只封闭，有点离谱了哈哈哈，傻鸟还因为这事情心情低落<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
-<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p>必须和本地人去云龙湖对掏</p>
-<p>电鳗，就想看看他和小鲨鱼实战的场景</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
-<p>无忧无虑，囚笼<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
-<p>这还是小个子，压迫感就很强，不敢想见到海洋里的大鲨鱼会不会吓得应激反应</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
-<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>云台山上酒店是真的多，多亏傻鸟找了家性价比很高的崭新酒店</p>
-<p>山上物价几乎和方特一样了</p>
-<p>红石峡应该是景色最好的了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
-<p>一叶扁舟</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
-<p>套你猴子</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
-<p>第一天很新鲜；第二天的内心就是花钱受罪了哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
-<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p>买了将近200的零食在路上吃，就怕无聊，哈哈哈哈</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
-<p>越看越熟悉，原来是现代房玄龄和杜如晦直播的地</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
-<p>感觉大唐不夜城不过尔尔，都是宣传的效果罢了，和开封的建筑风格差不多，都是灯光秀</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-  </entry>
-  <entry>
     <title>struts2框架漏洞</title>
     <url>/posts/48203.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -318,6 +93,63 @@
 ]]></content>
       <categories>
         <category>漏洞复现</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客配置</title>
+    <url>/posts/459ba203.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
+
+<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
+<p>可选择是否自动播放</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
+<p>音乐代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
+<meta name="referrer" content="no-referrer">
+
+<p>例子：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
+<ul>
+<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
+<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
+</ul>
+<p>在博客根目录文件夹下打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
+<p><strong>启用主题：</strong></p>
+<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
+<p><strong>验证：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
+
+<p>清空缓存，生成，上传</p>
+<p><strong>分类：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
+<p>以此类推</p>
+<p><strong>标签：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>博客配置</category>
       </categories>
   </entry>
   <entry>
@@ -709,6 +541,160 @@
       </categories>
   </entry>
   <entry>
+    <title>图床搭建(零成本)</title>
+    <url>/posts/afaa72b6.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
+<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
+<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
+<p>阿里和腾讯都需要收费</p>
+<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
+<p>管理-设置-其他设置</p>
+<p>需要设置令牌</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
+<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
+<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
+<p>进行配置</p>
+<p>id是作者名称</p>
+<p>账号就是登录名</p>
+<p>密码就是令牌</p>
+<p>地址是metaweblog地址</p>
+<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
+<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
+<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
+<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
+<p>点击验证测试</p>
+<p>到此，免费图床就配置好了，祝各位前途无忧</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>内存取证</title>
+    <url>/posts/14937.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="任务二：内存文件取证"><a href="#任务二：内存文件取证" class="headerlink" title="任务二：内存文件取证"></a>任务二：内存文件取证</h2><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>任务描述</th>
+<th>答案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>从内存中获取到用户admin的密码并且破解密码，以Flag{admin,password}形式提交(密码为6位)；</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>获取当前系统ip地址及主机名，以Flag{ip:主机名}形式提交；</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>当前系统中存在的挖矿进程，请获取指向的矿池地址，以Flag{ip}形式提 交；</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>恶意进程在系统中注册了服务，请将服务名以Flag{服务名}形式提交。</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>从内存文件中获取黑客进入系统后下载的flag文件，将文件中的值作为Flag 值提交；</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>分析镜像系统</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem imageinfo</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150423058-776766353.png" alt="image-20240619150424753"></p>
+<p>一般用第一个作为系统版本</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150437853-1464101184.png" alt="image-20240619150439757"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem -- profile=Win7SP1x64 hashdump 查看用户和密码(不是明文)一般破解不出来</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150504638-1392824465.png" alt="image-20240619150506064"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">尝试下破解密码</span><br><span class="line">ctrl+shirt+t快捷打开新窗口</span><br><span class="line">vi 1.txt</span><br><span class="line">将密码写入wq保存</span><br><span class="line">cat 1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150517469-2058002278.png" alt="image-20240619150519326"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">破解密码</span><br><span class="line">john 1.txt</span><br><span class="line">自动分析密码类型，使用默认字典，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150531612-260363863.png" alt="image-20240619150533389"></p>
+<p>kali字典位置 cd &#x2F;usr&#x2F;share&#x2F;wordlists</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150557109-1014596405.png" alt="image-20240619150558827"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用默认字典破解</span><br><span class="line">john --wordlist=/usr/share/wordlists/rockyou.txt --format=LM 1.txt</span><br><span class="line"> windows使用--format=NTLM</span><br><span class="line">显示没成功</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150613603-1910517122.png" alt="image-20240619150615339"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 lsadump</span><br><span class="line">使用lsadump</span><br><span class="line">所以密码就是H8d*or</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150632837-1280567653.png" alt="image-20240619150634522"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">看到开放端口</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150654722-69234278.png" alt="image-20240619150656428"></p>
+<p>所以本机IP就是192.168.232.129</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150711549-689200065.png" alt="image-20240619150713230"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看注册表内容</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 hivelist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150734928-1348737340.png" alt="image-20240619150736509"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">如何查看注册表中有哪些表项-o 指定虚拟地址Virtual printkey</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150755476-639221767.png" alt="image-20240619150757222"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-K &quot;指定表&quot;  K是大写</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001&quot;</span><br><span class="line">有用的是Control</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150808469-1657629284.png" alt="image-20240619150810206"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">加反斜杠\ 进入下一层</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001\Control&quot;</span><br><span class="line">有用的是ComputerName</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150823925-378209424.png" alt="image-20240619150825664"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150837705-35131151.png" alt="image-20240619150839463"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName\ComputerName&quot;</span><br><span class="line">用户名就是CXKKA2ZCLKN</span><br><span class="line">这个路径是固定的，记一下</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150902065-751198085.png" alt="image-20240619150903832"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看连接次数较多，程序名比较诡异的，可能就是向外连接的挖矿地址</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150918780-282749939.png" alt="image-20240619150920511"></p>
+<p>挖矿地址就是51.254.84.37</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150929451-2134456690.png" alt="image-20240619150931161"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist</span><br><span class="line"> pslist可以查看内存中所有的进程</span><br><span class="line">等同于windows下tasklist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150945946-1956630255.png" alt="image-20240619150947590"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150954886-168856547.png" alt="image-20240619150956640"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">windows下关闭进程</span><br><span class="line">taskkill /pid 3988</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151010462-126443852.png" alt="image-20240619151012016"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-p 指定pid</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist -p 1716</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151025371-250007496.png" alt="image-20240619151026920"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line">profile=Win7SP1x64 pstree</span><br><span class="line">pstree 可以树状显示进程</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151038024-245141440.png" alt="image-20240619151039711"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">explorer 就是windows文件资源管理器</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 svcscan</span><br><span class="line"> svcscan可以查看所有服务</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151055357-1985636528.png" alt="image-20240619151057012"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan</span><br><span class="line"> filescan查看内存中所有文件</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan | grep -i &quot;txt\|png\|jpg\|flag\|desktop\|gif&quot;-i 不区分大小写，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151109423-855338997.png" alt="image-20240619151111037"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 dumpfiles -Q 0x000000007f810a70 -D ./-Q 进程号 -D 指定导出位置 ./当前目录</span><br><span class="line">再将flag.txt导出</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151121602-2086704710.png" alt="image-20240619151123498"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151130082-2062314983.png" alt="image-20240619151131946"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151139321-882868819.png" alt="image-20240619151141107"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">将两个文件复制到物理机，使用010打开，分析很明显是两张图片能组成一张</span><br><span class="line">用末尾图片复制到开头图片00位置保存</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151208960-822247532.png" alt="image-20240619151210770"></p>
+]]></content>
+      <categories>
+        <category>writeup</category>
+      </categories>
+  </entry>
+  <entry>
     <title>数字取证</title>
     <url>/posts/21993.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -831,6 +817,142 @@
 ]]></content>
       <categories>
         <category>writeup</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>基于github+Cloudflare搭建个人博客</title>
+    <url>/posts/2f7875ad.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>本次搭建</p>
+<p>服务器：github（免费）</p>
+<p>域名：阿里云，西部数码等等（需要付费，第一年大概12左右）</p>
+<p>如果想白嫖搭建到博客上线步骤暂停</p>
+<h2 id="准备工具"><a href="#准备工具" class="headerlink" title="准备工具"></a>准备工具</h2><p>以下工具安装必应搜索网上一堆教程</p>
+<p>node</p>
+<p>git</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v（这个是node附带的）</span><br><span class="line">git -v</span><br></pre></td></tr></table></figure>
+
+<p>下载hexo</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭建仓库"><a href="#搭建仓库" class="headerlink" title="搭建仓库"></a>搭建仓库</h2><p>github新建仓库</p>
+<p>仓库名一定要设置<code>用户名.github.io</code></p>
+<p>勾选public公共</p>
+<p>勾选Add a READNE file</p>
+<h2 id="生成SSH-Keys"><a href="#生成SSH-Keys" class="headerlink" title="生成SSH Keys"></a>生成SSH Keys</h2><p>任意位置打开<code>open git bash here</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮件地址&quot;</span><br></pre></td></tr></table></figure>
+
+<p>回车4次</p>
+<p>进入<code>C:\Users\Lenovo\.ssh</code>目录</p>
+<p>复制<code>id_rsa.pub</code>文件代码</p>
+<p>再打开github，设置，sshkeys</p>
+<p>名称随意，代码粘贴到下面创建</p>
+<p><strong>测试是否成功</strong></p>
+<p><code>git bash</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>yes</p>
+<h2 id="生成本地博客内容"><a href="#生成本地博客内容" class="headerlink" title="生成本地博客内容"></a>生成本地博客内容</h2><p>确定位置新建blog文件夹，进入打开<code>git bash</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+
+<p>若出现<code>‘command not find’</code>，就在命令前加入npx</p>
+<p>然后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo install #安装</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo s #本地加载</span><br></pre></td></tr></table></figure>
+
+<h2 id="博客上线"><a href="#博客上线" class="headerlink" title="博客上线"></a>博客上线</h2><p>打开站点配置<code>_config.yml</code></p>
+<p>注意缩进两个空格</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: </span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
+
+<p>仓库，code，复制https，复制到repository: 注意与冒号之间有空格</p>
+<p>安装自动部署工具</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br><span class="line">git config --global user.name &quot;你的名字&quot;</span><br></pre></td></tr></table></figure>
+
+<p>再次生成，上传</p>
+<p>此时就算搭建成功，网址为：用户名.github.io</p>
+<h2 id="cloudflare部署"><a href="#cloudflare部署" class="headerlink" title="cloudflare部署"></a>cloudflare部署</h2><p>Github提供的网址在国内的访问速度较慢，再通过绑定域名方法会很快</p>
+<p>Vercel和cloudflare作用相同，但是目前Vercel被国内设墙，部分用户可以访问，部分不行，需要搭梯子，导致不能所有用户访问。（Vercel方法随缘，有的人可以全国访问，而我的就不行，Vercel教程<a href="https://blog.fiveth.cc/p/138e/">Hexo搭建进阶：Vercel部署、主题安装、基础用法 (fiveth.cc)</a>）</p>
+<p>不习惯英语可以修改为中文，对于学生来说还是推荐english，多熟悉熟悉英语，以后工作更方便</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232010147-300554834.png" alt="image-20240609232009691"></p>
+<p>点击workers-and-pages进行创建</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232123938-2087969152.png" alt="image-20240609232123559"></p>
+<p>点击pages，连接git，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232328923-371863785.png" alt="image-20240609232328581"></p>
+<p>选择我们创建的github仓库</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232417450-646256914.png" alt="image-20240609232417384"></p>
+<p>按照提示继续，目前的网址就更新为项目名称.pages.dev</p>
+<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>点击刚部署好的网站</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232633972-113818485.png" alt="image-20240609232633677"></p>
+<p>选择自定义域名，按照提示进行操作即可</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232738778-1698844123.png" alt="image-20240609232738669"></p>
+<p>自此免费服务器+自定义域名搭建成功</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>旅游vlog</title>
+    <url>/posts/e42dbe7e.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>两年的游玩，加上外地比赛，已经累计到6700分数了哈哈哈，可以免费做一次洛阳的火车了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235146437-746849895.png" alt="image-20240609235145981"></p>
+<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
+<p>赛车</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
+<p>看古城</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
+<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>鼓楼，其实也就是个建筑，附近都是小吃，来之前就听说鼓楼附近的小吃坑外地人，到最后发现都一样，可能是女友砍价能力无声侧漏了哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
+<p>期待已久的打铁花，现场很美，博客画质可能在图床被压缩了，效果没展现出来</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
+<p>虽然我没去参加过演唱会，酒吧，但是万岁山的音乐节氛围烘托得也是超级棒，我的牛仔裤就是因为台阶太高冲上台的时候开档了哈哈哈哈哈，挺奇葩的</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
+<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>玩的话应该是龙门石窟比较好，感觉都是景色，千篇一律，旅游就是享受自由的感觉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
+<p>念念不忘的不是打卡点，而是那天和傻鸟骑车，在空无一人的马路上飞驰的瞬间，在陌生城市漫无目的行走的松弛感</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
+<p>现在回想，当时忘记给傻鸟穿汉服拍照了，真是遗憾啦</p>
+<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>嵩山的景色很美，夏日温度山内外温度简直差别巨大</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
+<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>黄鹤楼</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
+<p>步行街江汉关</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
+<p>长江大桥，那天晚上下着雨刮着大风，傻鸟害怕不敢下来，内心害怕被人杀害，有点小脆弱啊哈哈哈，风凉凉的，吹的很冷也很清醒，很喜欢这种自由的感觉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
+<p>去许昌，忘记啥原因了没坐上水上公交，但是去武汉去武汉也没坐上，因为下雨船只封闭，有点离谱了哈哈哈，傻鸟还因为这事情心情低落<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
+<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p>必须和本地人去云龙湖对掏</p>
+<p>电鳗，就想看看他和小鲨鱼实战的场景</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
+<p>无忧无虑，囚笼<img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
+<p>这还是小个子，压迫感就很强，不敢想见到海洋里的大鲨鱼会不会吓得应激反应</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
+<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>云台山上酒店是真的多，多亏傻鸟找了家性价比很高的崭新酒店</p>
+<p>山上物价几乎和方特一样了</p>
+<p>红石峡应该是景色最好的了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
+<p>一叶扁舟</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
+<p>套你猴子</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
+<p>第一天很新鲜；第二天的内心就是花钱受罪了哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
+<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p>买了将近200的零食在路上吃，就怕无聊，哈哈哈哈</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
+<p>越看越熟悉，原来是现代房玄龄和杜如晦直播的地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
+<p>感觉大唐不夜城不过尔尔，都是宣传的效果罢了，和开封的建筑风格差不多，都是灯光秀</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
+]]></content>
+      <categories>
+        <category>生活</category>
       </categories>
   </entry>
 </search>
