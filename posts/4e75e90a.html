@@ -85,20 +85,23 @@
 
 
 
-<meta name="description" content="简历制作一、主体框架 基本信息 教育经历 个人经历 个人优势 获奖经历  二、重要填写部分个人优势： 主要体现你掌握的技能，除了Web方向，尽量补充一些流量分析、安全设备、内网渗透（提权、权限维持、横向）的内容，以及一些漏洞绕过方式。 项目经验： 项目经验可以写工作里接触到的项目（渗透测试、红蓝攻防（护网）、应急响应、溯源、重保、等保等等）。 如果没有项目经验的同学主要写漏洞挖掘和漏洞复现。">
+<meta name="description" content="一、sql注入分类原理：没有对用户输入项进行验证和处理直接拼接到查询语句中 查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 报错注入用到的函数：updatexml、floor、extractva">
 <meta property="og:type" content="article">
 <meta property="og:title" content="护网蓝队面试">
 <meta property="og:url" content="https://flowers-boy.top/posts/4e75e90a.html">
 <meta property="og:site_name" content="关根">
-<meta property="og:description" content="简历制作一、主体框架 基本信息 教育经历 个人经历 个人优势 获奖经历  二、重要填写部分个人优势： 主要体现你掌握的技能，除了Web方向，尽量补充一些流量分析、安全设备、内网渗透（提权、权限维持、横向）的内容，以及一些漏洞绕过方式。 项目经验： 项目经验可以写工作里接触到的项目（渗透测试、红蓝攻防（护网）、应急响应、溯源、重保、等保等等）。 如果没有项目经验的同学主要写漏洞挖掘和漏洞复现。">
+<meta property="og:description" content="一、sql注入分类原理：没有对用户输入项进行验证和处理直接拼接到查询语句中 查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 报错注入用到的函数：updatexml、floor、extractva">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111508548-939463198.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111549318-1473617007.png">
 <meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png">
 <meta property="article:published_time" content="2024-06-10T08:36:32.000Z">
-<meta property="article:modified_time" content="2024-06-16T15:27:49.987Z">
+<meta property="article:modified_time" content="2024-06-27T03:48:43.487Z">
 <meta property="article:author" content="关根">
 <meta property="article:tag" content="关键词">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png">
 
 
 
@@ -357,384 +360,343 @@
       
         <meta name="referrer" content="no-referrer">
 
-<h2 id="简历制作"><a href="#简历制作" class="headerlink" title="简历制作"></a>简历制作</h2><h4 id="一、主体框架"><a href="#一、主体框架" class="headerlink" title="一、主体框架"></a>一、主体框架</h4><ol>
-<li>基本信息</li>
-<li>教育经历</li>
-<li>个人经历</li>
-<li>个人优势</li>
-<li>获奖经历</li>
-</ol>
-<h4 id="二、重要填写部分"><a href="#二、重要填写部分" class="headerlink" title="二、重要填写部分"></a>二、重要填写部分</h4><p><strong>个人优势：</strong></p>
-<p>主要体现你掌握的技能，除了Web方向，尽量补充一些流量分析、安全设备、内网渗透（提权、权限维持、横向）的内容，以及一些漏洞绕过方式。</p>
-<p><strong>项目经验：</strong></p>
-<p>项目经验可以写工作里接触到的项目（渗透测试、红蓝攻防（护网）、应急响应、溯源、重保、等保等等）。</p>
-<p>如果没有项目经验的同学主要写漏洞挖掘和漏洞复现。</p>
-<p>漏洞挖掘可以写：公益SRC、企业SRC、众测项目等。</p>
-<p>漏洞挖掘的案例不要写太细节，主要把成果展示出来即可。</p>
-<p>例如：xx SRC项目</p>
-<p>1、xxx网站xxx页面（功能点）存在xxx漏洞，评级高危，奖金xxx(公益src不用写奖金，奖金几百以上的可以写出来)</p>
-<p>2、xxx网站xxx页面（功能点）存在xxx漏洞 评级xxxx</p>
-<p>例举5个左右比较有代表性的成果即可，如果漏洞数量比较大，可以汇总为共挖掘漏洞xxx个，其中高危xxx个，中危xxx个。</p>
-<p>漏洞复现：入门靶场（sqli-labs、dvwa、pikachu）这类的就不要写上去了，主要写一些CVE的漏洞复现，vulhub靶场复现，理解原理和思路。</p>
-<p>参考《CVE漏洞复现》课程、《vulnhub靶场实战》课程、《Hack The Box》课程。</p>
-<h4 id="三、注意事项"><a href="#三、注意事项" class="headerlink" title="三、注意事项"></a>三、注意事项</h4><ol>
-<li>选用的模板清晰明了，不要花里胡哨，以简洁风格为主（指的是模板）</li>
-<li>照片一定有，尽量用证件照（P一下，蓝底），不要用生活照特别是自己自拍的照片。</li>
-<li>主要去写工作经验&#x2F;项目经历，在xxx的项目中，我担任什么角色，通过什么技术，最终得到什么成果，获得什么成就（可以写漏洞挖掘、攻防演练、重保值守、CTF赛事等等（主要是安全方面））</li>
-<li>尽量多用安全方面的专有词汇去描述。</li>
-<li>可以写一些最近火热的漏洞（Spring，log4j2）为项目经历，关注威胁情报</li>
-</ol>
-<h4 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h4><ul>
-<li>对于没有工作经验的，主要把项目经验写好</li>
-<li>一定要多挖漏洞，大型SRC的挖不到，公益SRC也要去挖。</li>
-<li>一定要学习了解内网渗透、应急响应、溯源等内容，并在简历上体现出来</li>
-<li>如果能拿到漏洞证书比如CNVD、EDUSRC之类的证书也是加分项</li>
-</ul>
-<p>简历是找工作的第一步，也是敲门砖，俗话说人靠衣装，马靠鞍。</p>
-<p>简历就是你的衣装，简历一定要体现你的闪光点。</p>
-<h2 id="十大漏洞"><a href="#十大漏洞" class="headerlink" title="十大漏洞"></a>十大漏洞</h2><h4 id="sql"><a href="#sql" class="headerlink" title="sql"></a>sql</h4><p><strong>原理：</strong>没有对用户输入项进行验证和处理直接拼接到查询语句中</p>
-<p><strong>利用：</strong>查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行</p>
-<p><strong>分类</strong>：</p>
-<p>联合注⼊、报错注⼊、布尔盲注、时间盲注、堆叠注入、⼆次注入</p>
-<p><strong>报错注入函数：</strong>extractvalue()、floor()、updatexml()</p>
-<p><strong>时间盲注函数：</strong>sleep()、BENCHMARK(count, expression)</p>
-<p><strong>危害：</strong></p>
-<p>数据库信息泄露恶意操作、网页篡改挂马、服务器被植入后门</p>
-<p><strong>如何防范：</strong>关闭错误提示、加waf、对输入进行过滤、限制输入长度、限制好数据库权限，drop&#x2F;create&#x2F;truncate等权限谨慎grant</p>
-<h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><strong>原理：</strong>跨站点请求伪造。盗用用户身份，以用户的名义发送恶意请求</p>
-<p><strong>危害：</strong></p>
-<ol>
-<li>对网站管理员进行攻击</li>
-<li>修改用户网站上的用户数据</li>
-<li>账户劫持</li>
-<li>传播csrf蠕虫进行大规模攻击</li>
-<li>利用csrf进行拖库（从数据库导出数据）</li>
-</ol>
-<p><strong>如何防护：</strong></p>
-<ol>
-<li>尽量使用post，限制get</li>
-<li>浏览器cookie策略</li>
-<li>加验证码</li>
-</ol>
-<h4 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h4><p><strong>类型：</strong></p>
-<ol>
-<li>本地文件包含</li>
-<li>远程文件包含：即加载远程文件、在php.ini中开启<code>allow_url_include</code>、<code>allow_url_fopen</code>选项。开启后可以执行任意代码</li>
-</ol>
-<p><strong>php文件包含函数：</strong></p>
+<h2 id="一、sql注入分类"><a href="#一、sql注入分类" class="headerlink" title="一、sql注入分类"></a>一、sql注入分类</h2><p><strong>原理：</strong>没有对用户输入项进行验证和处理直接拼接到查询语句中</p>
+<p>查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行</p>
+<p><strong>从注入参数类型分：</strong>数字型注入、字符型注入</p>
+<p><strong>从注入效果分：</strong>报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入</p>
+<p><strong>从提交方式分：</strong>GET注入、POST注入、HTTP头注入、COOKIE注入</p>
+<p><strong>报错注入用到的函数：</strong>updatexml、floor、extractvalue，exp</p>
+<p><strong>布尔盲注用到的函数：</strong>substr，mid，left，right，ascii，ord，char，length</p>
+<p><strong>时间盲注用到的函数：</strong>sleep</p>
+<p><strong>SQL注入防御对关键函数或字符过滤：</strong>union select order by information_schema 等下载相关 防范注入文件，通过incloude函数包含在网站配置文件里面pdo预处理，使用预编译语句添加白 名单来规范输入验证方法对客户端输入进行控制，限制特殊字符和函数的输入</p>
+<p><strong>SQL注入绕过waf大小写双写使用编码：</strong>unioncode编码 十六进制编码 url编码</p>
+<p><strong>等价函数：</strong>mid，substr（），substring（） &amp;&amp;和||&gt; and 和or &#x3D;号可以用&lt;&gt;因为如果不大于不小于就是等于</p>
+<p><strong>SQL注入写shell条件：</strong>知道web服务器的绝对路径，数据库具有root权限，secure_file_priv函数 没有特殊的值</p>
+<p><strong>SQL写入shell的方式：</strong> 通过本地写入into outfile函数 通过日志写入需要对 general_log 和 general_log_file 变量进行更改 通过sqlmap –os-shell命令写入</p>
+<p><strong>二次注入：</strong>后端代码对用户输入的数据进行了转义，然后在保存到数据库的时候是没有进行转 义，然后再从数据库当中取出数据的时候，没有对数据库中的特殊字符进行转义和验证，就可能 形成闭合，导致注入</p>
+<p><strong>防御：</strong>使用统一编码格式utf-8对用户输入的内容进行验证过滤</p>
+<h3 id="其他常见漏洞"><a href="#其他常见漏洞" class="headerlink" title="其他常见漏洞"></a>其他常见漏洞</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><strong>原理：</strong>跨站点请求伪造。盗用用户身份，以用户的名义发送恶意请求</p>
+<h4 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h4><p><strong>原理：</strong>利用网络请求的服务当跳板攻击内部其他服务</p>
+<h4 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h4><p><strong>原理：</strong>攻击者通过操纵应用程序对文件路径的处理，将恶意文件包含到应用程序中执行</p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p><strong>原理：</strong>对上传文件无限制后缀以及类型或者处理缺陷、导致越过本身权限想服务器上马</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p><strong>原理：</strong>插入恶意脚本、实现对用户浏览器攻击</p>
+<p><strong>类型：</strong>存储、反射、dom</p>
+<p><strong>反射和dom区别：</strong>DOM-XSS是javascript处理输出、⽽反射性xss是后台程序处理 </p>
+<h4 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h4><p><strong>原理：</strong>解析用户传入的xml</p>
+<p><strong>作用：</strong>内⽹端⼝扫描、利⽤file协议等读取⽂件、攻击内⽹web应⽤使⽤get(struts2等) </p>
+<h2 id="二、如何判断文件上传一次攻击"><a href="#二、如何判断文件上传一次攻击" class="headerlink" title="二、如何判断文件上传一次攻击"></a>二、如何判断文件上传一次攻击</h2><p>响应包是200,返回的有没有路径,请求包的报文内容有没有上传木马,尝试访问路径,能不能执行命令</p>
+<h2 id="三、命令执行和代码执行"><a href="#三、命令执行和代码执行" class="headerlink" title="三、命令执行和代码执行"></a>三、命令执行和代码执行</h2><p><strong>命令执行：</strong>Web应用的脚本代码在执行命令的时候过滤不严,从而注入一段攻击者能够控制的代 码,在服务器上以Web服务的后台权限远程执行恶意指令</p>
+<p><strong>原因：</strong>代码层过滤不严，系统的漏洞造成命令注入,调用的第三方组件存在代码执行漏洞常见执行 函数：exec、shell_exec、system、passthru、popen</p>
+<p><strong>代码执行：</strong>由于服务器对危险函数过滤不严,导致用户输入的一些字符串可以被转换成代码来执行, 从而造成代码执行</p>
+<p><strong>漏洞原因：</strong>用户能够控制函数输入,存在可执行代码的危险函数，常见执行函数：eval、assert、 preg_replace()</p>
+<h2 id="四、CSRF-和-XSS-和-XXE-有什么区别"><a href="#四、CSRF-和-XSS-和-XXE-有什么区别" class="headerlink" title="四、CSRF 和 XSS 和 XXE 有什么区别"></a>四、CSRF 和 XSS 和 XXE 有什么区别</h2><p><strong>XSS</strong>是跨站脚本攻击，用户提交的数据中可以构造代码来执行，从而实现窃取用户信息等攻击。</p>
+<p><strong>修复方式：</strong> 对字符实体进行转义</p>
+<p>使用HTTP Only来禁止JavaScript读取Cookie值</p>
+<p>输入时校验</p>
+<p>浏览器与Web应用端采用相同的字符编码</p>
+<p><strong>CSRF</strong>是跨站请求伪造攻击，是由于没有在关键操作执行时进行是否由用户自愿发起的确认，模仿 合法用户对服务器发起请求 。</p>
+<p><strong>修复方式：</strong> 筛选出需要防范CSRF的页面然后嵌入Token</p>
+<p>再次输入密码</p>
+<p>检验Referer</p>
+<p><strong>XXE</strong>是XML外部实体注入攻击，XML中可以通过调用实体来请求本地或者远程内容，和远程文件 保护类似，会引发相关安全问题，例如敏感文件读取。</p>
+<p><strong>修复方式：</strong> XML解析库在调用时严格禁止对外部实体的解析</p>
+<h2 id="五、一些漏洞"><a href="#五、一些漏洞" class="headerlink" title="五、一些漏洞"></a>五、一些漏洞</h2><p><code>shiro是apache的java安全框架，用于执行身份验证、授权、密码和会话管理</code></p>
+<p><code>使用shiro易于理解的API（程序接口），可以快速轻松对应用程序进行保护</code></p>
+<p><strong>Shiro550原理</strong>导致shiro反序列化的主要原因就是<code>shiro提供的记住密码功能</code>，当用户打开这个功 能时会在请求包中生成一个cookie，cookie的value值是经过<code>序列化-&gt;aes加密-&gt;base64加密</code>后 的字符串，关键在于aes加密的秘钥是<code>默认</code>的，如果没有修改这个秘钥，就会导致反序列化漏洞， 攻击者可以构造恶意代码，将恶意代码<code>序列化-AES加密-base64加密</code>后传入cookie，这样就导致 RCE漏洞。</p>
+<p><strong>Shiro 721原理</strong>Shrio所使用的cookie里的rememberMe字段采用了<code>AES-128-CBC</code>的加密模式， 这使得该字段可以被<code>padding oracle</code> 攻击利用。攻击者可以使用一个合法有效的rememberMe  的cookie作为前缀来实施POA，然后制造一个特制的rememberMe来执行Java反序列化攻击。</p>
+<h4 id="shrio550和721的区别主要区别"><a href="#shrio550和721的区别主要区别" class="headerlink" title="shrio550和721的区别主要区别"></a><strong>shrio550和721的区别主要区别</strong></h4><p>在于Shiro550使用已知<code>默认</code>密码，只要有足够的密码，不需要 Rememberme的Cookie；Shiro721的AES加密的key为系统<code>随机生成</code>，需要利用登录后的 rememberMe去爆破正确的key值。利用有效的RememberMe Cookie作为Padding Oracle  Attack的前缀，再去构造反序列化攻击。</p>
+<h4 id="fastjson反序列化漏洞原理："><a href="#fastjson反序列化漏洞原理：" class="headerlink" title="fastjson反序列化漏洞原理："></a><strong>fastjson反序列化漏洞原理：</strong></h4><p><code>fastjson 是一个 有阿里开发的一个开源Java 类库，可以将 Java 对象转换为 JSON 格式(序列化)，当然它也可以将 JSON 字符串转换为 Java 对象（反序列化）</code></p>
+<p>1、fastjson提供的反序列化功能允许用户传入json格式数据的时候<code>通过@type的value值指定任 意反序列化类名</code></p>
+<p>2、fastjson的反序列化机制会将反序列的类进行实例化对象，并调用该对象的<code>setter和部分getter方法</code> </p>
+<p>3、恶意用户可以构造payload是目标应用的代码执行流程进入这部分setter和getter方法，如果 这些方法中存在Gadget，就会造成一些安全问题。</p>
+<p>4、官方采取黑名单过滤的方法，对反序列化的类名进行校验，checkAutoType不断被绕过</p>
+<h4 id="log4j2原理："><a href="#log4j2原理：" class="headerlink" title="log4j2原理："></a><strong>log4j2原理：</strong></h4><p><code>log4j2是apache下的java应用常见的开源日志库，是一个就Java的日志记录工具</code></p>
+<p>Apache Log4j2中存在<code>JNDI注入漏洞</code>，主要原理是利用log4j2的日志输出jndi远程 对象时,<code>调用远程对象没做检查</code>导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可 在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入 点，迫使服务器远程加载和修改配置的前提下使目标系统通过JNDI远程获取数据库源，触发攻击 者的恶意代码</p>
+<h4 id="Struts2原理："><a href="#Struts2原理：" class="headerlink" title="Struts2原理："></a><strong>Struts2原理：</strong></h4><p><code>将用户要求按照业务逻辑执行并且返回结果</code></p>
+<p>用户提交表单数据并且验证失败时，后端会将用户之前提交的参数值使用<code>OGNL表达式 %&#123;value&#125;</code>进行解析，然后重新填充到对应的表单数据中。 </p>
+<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 <code>%&#123;value&#125;</code> 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
+<h4 id="Weblogic："><a href="#Weblogic：" class="headerlink" title="Weblogic："></a><strong>Weblogic：</strong></h4><p><strong>漏洞描述：</strong></p>
+<p>Weblogic Server中的RMI 通信使用T3协议在Weblogic Server和其它Java程序（客户端或者其它Weblogic Server实例）之间传输数据, 服务器实例会跟踪连接到应用程序的每个Java虚拟机（JVM）中, 并创建T3协议通信连接, 将流量传输到Java虚拟机。T3协议在开放WebLogic控制台端口的应用上默认开启。攻击者可以通过T3协议发送恶意的的反序列化数据, 进行反序列化, 实现对存在漏洞的weblogic组件的远程代码执行攻击（开放Weblogic控制台的7001端口，默认会开启T3协议服务，T3协议触发的Weblogic Server WLS Core Components中存在反序列化漏洞，攻击者可以发送构造的恶意T3协议数据，获取目标服务器权限。）</p>
+<p>远程攻击者可利用该漏洞在未授权的情况下发送攻击数据，通过T3协议（EJB支持远程访问，且支持多种协议。这是Web Container和EJB Container的主要区别）在Weblogic Server中执行反序列化操作，利用RMI（远程方法调用） 机制的缺陷，通过JRMP协议（Java Remote Messaging Protocol：java远程消息交换协议）达到执行任意反序列化payload的目的。</p>
+<p><strong>T3协议：</strong>用于在Weblogic服务器和其他类型的Java程序之间传输信息的协议。Weblogic会跟踪连接到应用程序的每个Java虚拟机，要将流量传输到Java虚拟机，Weblogic会创建一个T3连接。该链接会通过消除在网络之间的多个协议来最大化效率，从而使用较少的操作系统资源。用于T3连接的协议还可以最大限度减少数据包大小，提高传输速度。</p>
+<p><strong>RMI：</strong>远程方法调用 </p>
+<p>使用协议：JRMP </p>
+<p>T3就是对JRMP的优化。Java RMI 的基础通信协议是 JRMP ，但是也支持开发其他的协议来优 化 RMI 的传输，这里的 Weblogic 的 T3 协议就是其优化版本，相比于JRMP协议多了一些特 性。T3协议传输过程中就是序列化和反序列化方式</p>
+<p><strong>利用：</strong>将原本存在的序列化内容替换成我们payload的序列化内容，在传输完成后，进行反序列 化达成攻击的目的</p>
+<p><strong>Jboss</strong> </p>
+<p>JBoss是一个基于J2EE的开放源代码应用服务器，代码遵循LGPL许可，可以在任何商业应用中免 费使用；JBoss也是一个管理EJB的容器和服务器，支持EJB 1.1、EJB 2.0和EJB3规范。但JBoss核 心服务不包括支持servlet&#x2F;JSP的WEB容器，一般与Tomcat或Jetty绑定使用。</p>
+<p>两种利用方式，第一种是利用<code>未授权访问</code>进入JBoss后台进行文件上传的漏洞；另一种是利用<code>Java 反序列化</code>进行远程代码执行的漏洞</p>
+<p><strong>弱口令漏洞</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">system:password</span><br><span class="line">weblogic:weblogic</span><br><span class="line">admin:secruity</span><br><span class="line">joe:password</span><br><span class="line">mary:password</span><br><span class="line">system:sercurity</span><br><span class="line">wlcsystem: wlcsystem</span><br><span class="line">weblogic:Oracle@123</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、webshell管理工具"><a href="#六、webshell管理工具" class="headerlink" title="六、webshell管理工具"></a>六、webshell管理工具</h2><p><strong>菜刀</strong></p>
+<p>base64加密，php马有eval，(base64_decode ($POST[z0])),&amp;z0&#x3D;QGluaV9zZXQ</p>
+<p><strong>蚁剑</strong></p>
+<p>以 0x 开头的参数名，@ini_set(“display_errors”,”0”)</p>
+<p><strong>冰蝎</strong></p>
+<p>1、大量的 content-type：application，content-type 为 application&#x2F;octet-stream。</p>
+<p>2、默认内置 16 个 ua，content-length 请求长度payload 都为定长</p>
+<p>3、Accept头有application&#x2F;xhtml+xmlapplication&#x2F;xmlapplication&#x2F;signed-exchange属于弱 特征</p>
+<p><strong>哥斯拉</strong> </p>
+<p>1、pass &#x3D;eval(base64_decode…，pass&#x3D;加密数据</p>
+<p>2、user-agent,accept,accept-language 固定</p>
+<p>一共会产生3个 POST 数据包，POST请求报文中参数名都是 pass （即shell的连接密码），参 数值都是加密数据。</p>
+<h2 id="七、windows-Linux应急响应流程"><a href="#七、windows-Linux应急响应流程" class="headerlink" title="七、windows+Linux应急响应流程"></a>七、windows+Linux应急响应流程</h2><p>检查系统账号安全查看服务器是否有<code>弱口令</code> </p>
+<p>远程管理端口是否对<code>公网</code>开放 </p>
+<p>查看服务器是否存在<code>可疑</code>账号、<code>新增</code>账号</p>
+<p>查看服务器是否存在<code>隐藏</code>账号、<code>克隆</code>账号</p>
+<p>检查<code>异常端口、进程</code></p>
+<p>检查<code>启动项、计划任务、服务</code></p>
+<p>查看<code>可疑文件和目录</code></p>
+<p>查看<code>webshell创建的时间</code></p>
+<h4 id="Windows入侵排查思路"><a href="#Windows入侵排查思路" class="headerlink" title="Windows入侵排查思路"></a><strong>Windows入侵排查思路</strong></h4><p>1.检查系统账号安全 2.查看服务器是否有弱口令，远程管理端口(3389)是否对公网开放（使用 netstat -ano 命令、或者问服务器管理员） 3.lusrmgr.msc(本地用户和本地用户组) 快捷命令查 看服务器是否存在可疑账号、新增账号，如有管理员群组的（Administrators）里的新增账户， 如有，请立即禁用或删除掉 4.用 D 盾或者注册表(regedit)中查看服务器是否存在隐藏账号、克隆 账号 5.结合日志，查看管理员登录时间、用户名是否存在异常，使用eventvwr.msc打开“事件查 看器”，导出 Windows 日志–安全，利用 Log Parser 进行分析 6.检查异常端口、进程 netstat - ano检查端口连接情况，是否有远程连接、可疑连接 然后使用 tasklist |findstr PID 进行定位 7. 使用快捷命令 msconfig查看是否存在命名异常的启动项目， 输入regedit注册表中查看开机启动 项是否正常，输入gpedit.msc查看本地组策略，使用services.msc检查是否有异常服务 8.检查系 统相关信息 systeminfo查看系统版本以及补丁信息 查找可疑目录及文件</p>
+<h4 id="Linux入侵排查思路"><a href="#Linux入侵排查思路" class="headerlink" title="Linux入侵排查思路"></a><strong>Linux入侵排查思路</strong></h4><p>bash的账户，正常为&#x2F;nologin 2.查看本机开启端口服务信息 netstat -anlutp,然后去查看每个开 启服务所产生的日志信息 （var&#x2F;log目录下）（举例如何查看mysql日志，首先登录mysql，然后 使用 show variables like ‘%general_log%’ 查看日志是否开启和路径信息） 二、 服务入侵排查  1.使用last命令检查系统登录日志，统计ip登录错误次数和登录情况 2.使用 ls -l 查看  &#x2F;etc&#x2F;passwd文件 的修改时间 查看是否有特权用户 查看网站开启的端口ss -anlutp 3.使用ps - elf 看UID为0的进程 查看ssh的公钥是否被修改 4.查看网站根目录（&#x2F;var&#x2F;www）下是否存在可疑 文件 5.查看计划任务 &#x2F;etc&#x2F;crontab 三、异常启动排查 1.ps -elf 查看进程 2.查看linux 系统服务  &#x2F;etc&#x2F;rc.d&#x2F;init.d 3.查看用户自定义开机启动程序 &#x2F;etc&#x2F;rc.d&#x2F;rc.local</p>
+<h4 id="应急响应流程"><a href="#应急响应流程" class="headerlink" title="应急响应流程"></a><strong>应急响应流程</strong></h4><p>1、收集信息：搜集客户信息和中毒信息，备份</p>
+<p>2、判断类型：判断是否是安全事件、是何种安全事件（勒索病毒、挖矿、断网、ddos等）</p>
+<p>3、深入分析：日志分析、进程分析、启动项分析、样本分析</p>
+<p>4、清理处置：杀掉恶意进程、删除恶意文件、打补丁、修复文件</p>
+<p>5、产出报告：整理并输出完整的安全事件报告</p>
+<h4 id="windows应急"><a href="#windows应急" class="headerlink" title="windows应急"></a><strong>windows应急</strong></h4><p><strong>1.查看系统账号安全</strong></p>
+<p>查看服务器是否有弱口令、可疑账号、隐藏账号、克隆账号、远程管理端口是否对公网开放</p>
+<p>win+r（eventwmr.msc）查看系统日志，查看管理员登录时间、用户名是否存在异常</p>
+<p><strong>2.检查异常端口、进程</strong></p>
+<p>netstat -ano 检查端口连接情况，是否有远程连接、可疑连接</p>
+<p>tasklist | findstr “PID”根据pid定位进程</p>
+<p>使用功能查杀工具</p>
+<p><strong>3.启动项检查、计划任务、服务</strong></p>
+<p>检查服务器是否有异常的启动项，msconfig看一下启动项是否有可以的启动</p>
+<p>检查计划任务，查看计划任务属性，可以发现木马文件的路径</p>
+<p>见擦汗服务自启动，services.msc注意服务状态和启动类型，检查是否有异常服务</p>
+<p><strong>4.检查系统相关信息</strong></p>
+<p>查看系统版本以及补丁信息 systeminfo</p>
+<p>查找可以目录及文件 是否有新建用户目录 分析最近打开分析可疑文件 （%UserProfile%\Recent）</p>
+<p><strong>5.自动化查杀</strong></p>
+<p>使用360 火绒剑 webshell后门可以使用d盾 河马等</p>
+<p><strong>6.日志分析</strong></p>
+<p>360星图日志分析工具 ELK分析平台</p>
+<h4 id="linux应急"><a href="#linux应急" class="headerlink" title="linux应急"></a>linux应急</h4><p>1、检查用户及密码文件&#x2F;etc&#x2F;passwd、&#x2F;etc&#x2F;shadow 是否存在多余帐号，主要看一下帐号后面 是否是 nologin,如果没有 nologin 就要注意；</p>
+<p>2、通过 who 命令查看当前登录用户（tty 本地登陆 pts 远程登录）、w 命令查看系统信息，想 知道某一时刻用户的行为、uptime查看登陆多久、多少用户，负载；</p>
+<p>3、修改&#x2F;etc&#x2F;profile的文件，在尾部添加相应显示间、日期、ip、命令脚本代码，这样输入 history命令就会详细显示攻击者 ip、时间历史命令等；</p>
+<p>4、用 netstat -antlp|more命令分析可疑端口、IP、PID，查看下 pid 所对应的进程文件路径， 运行ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe（$PID 为对应的pid 号）；</p>
+<p>5、使用ps命令，分析进程 ps aux | grep pid</p>
+<p>6、使用 vi &#x2F;etc&#x2F;inittab 查看系统当前运行级别，通过运行级别找到&#x2F;etc&#x2F;rc.d&#x2F;rc[0~6].d对应目录 是否存在可疑文件；</p>
+<p>7、看一下crontab定时任务是否存在可疑启用脚本；</p>
+<p>8、使用chkconfig –list 查看是否存在可疑服务；</p>
+<p>9、通过grep awk命令分析&#x2F;var&#x2F;log&#x2F;secure安全日志里面是否存在攻击痕迹；</p>
+<p>10、chkrootkit、rkhunter、Clamav 病毒后门查杀工具对 Linux 系统文件查杀；</p>
+<p>11、如果有 Web 站点，可通过 D 盾、河马查杀工具进行查杀或者手工对代码按脚本木马关键 字、关键涵数（evel、system、shell_exec、exec、passthru system、popen）进行查杀 Webshell 后门。</p>
+<h2 id="八、windows事件ID"><a href="#八、windows事件ID" class="headerlink" title="八、windows事件ID"></a>八、windows事件ID</h2><table>
+<thead>
+<tr>
+<th align="center">事件ID</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4624</td>
+<td align="center">登录成功</td>
+</tr>
+<tr>
+<td align="center">4625</td>
+<td align="center">登录失败</td>
+</tr>
+<tr>
+<td align="center">4634</td>
+<td align="center">注销成功</td>
+</tr>
+<tr>
+<td align="center">4647</td>
+<td align="center">用户启动的注销</td>
+</tr>
+<tr>
+<td align="center">4672</td>
+<td align="center">使用超级用户（如管理员）进行登录</td>
+</tr>
+<tr>
+<td align="center">4720</td>
+<td align="center">创建用户</td>
+</tr>
+</tbody></table>
+<h2 id="九、sql注入"><a href="#九、sql注入" class="headerlink" title="九、sql注入"></a>九、sql注入</h2><p><strong>如何判断是攻击还是误报</strong></p>
+<p>把恶意IP放到微步等平台上查看是不是恶意ip，然后看<code>sql查询语句</code>，是不是正常业务语句，如果 是，则是一次误报，然后<code>查看响应</code>，是否跑出数据库，然后自己可以根据<code>payload尝试打一下</code>， 如果得到数据库和数据，就是一次攻击。如果是真实攻击，需要看报文里面的<code>工具语句</code>，判断一 下是什么<code>类型</code>的sql注入攻击，比如常见的sleep函数延时注入，extractvalue、updatexml函数 的报错注入</p>
+<p>注意：真或假语句应通过HTTP<code>状态代码</code>或HTML内容返回不同的<code>响应</code>。如果这些响应与查询的 真&#x2F;假性质一致，则表示注入</p>
+<h2 id="十、ssrf打redis"><a href="#十、ssrf打redis" class="headerlink" title="十、ssrf打redis"></a>十、ssrf打redis</h2><p>ssrf扫描内网,端口<code>6379</code>是<code>redis</code>,然后redis未授权漏洞利用</p>
+<p>利用dict协议可以扫描开放的端口，探测指纹信息，可以攻击redis服务 dict:&#x2F;&#x2F;ip:port&#x2F;info 截获get请求包和post请求包，再构造成符合gopher协议的请求，从而模拟redis通信</p>
+<p>更改redis备份路径为ssh公钥存放目录（一般默认为&#x2F;root&#x2F;.ssh）并设置上传公钥的备份文件名字 为authorized_keys,将一开始生成的SSH公钥写入authorized_keys文件中。</p>
+<h2 id="十一、PHP一句话木马"><a href="#十一、PHP一句话木马" class="headerlink" title="十一、PHP一句话木马"></a>十一、PHP一句话木马</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line">&lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);&lt;/script&gt;</span><br><span class="line">GIF89a? &lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;mima&#x27;</span>])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="十二、序列化反序列化及其流量特征"><a href="#十二、序列化反序列化及其流量特征" class="headerlink" title="十二、序列化反序列化及其流量特征"></a>十二、序列化反序列化及其流量特征</h2><p><strong>序列化：</strong>对象转换为字符串</p>
+<p><strong>反序列化：</strong>字符串转换为对象</p>
+<p><strong>流量特征：</strong> </p>
+<p><strong>shiro反序列化：</strong>查看cookie中rememberme字段，恶意命令要从这里传入。判断是否有漏洞， 查看返回包set cookie：rememberme&#x3D;deleteme，验证失败返回的标识符。</p>
+<p><strong>fastjson反序列化：</strong>请求报文中查找json格式的数据，重点看有无rmi或者出网的一些行为 </p>
+<p><strong>st2-045：</strong>请求头中的Content-Type字段</p>
+<h2 id="十三、常见的设备-出现误报怎么办"><a href="#十三、常见的设备-出现误报怎么办" class="headerlink" title="十三、常见的设备,出现误报怎么办"></a>十三、常见的设备,出现误报怎么办</h2><p>奇安信天眼,设备类型:全流量,天眼、EDR、全流量告警、态势感知、APT、蜜罐设备,微步tdp,青藤云HIDS,明御安全网关先去查看设备的完整流量日志等信息确认是否为误报，误报那就是规则问题，上报处置，提供规则优化建议</p>
+<h2 id="十四、wireshark指令"><a href="#十四、wireshark指令" class="headerlink" title="十四、wireshark指令"></a>十四、wireshark指令</h2><p>http contains “关键字”</p>
+<p>http.response.code &#x3D;&#x3D; 200</p>
+<p>http.request.method &#x3D;&#x3D; POST</p>
+<p>tcp.prot &#x3D;&#x3D; 80 </p>
+<p>ip.addr &#x3D;&#x3D; “10.1.1.1”ip.srcip.dst</p>
+<h2 id="十五、中挖矿病毒怎么解决"><a href="#十五、中挖矿病毒怎么解决" class="headerlink" title="十五、中挖矿病毒怎么解决"></a>十五、中挖矿病毒怎么解决</h2><p>首先ps -aux查看进程分析</p>
+<p>然后top 分析算力，挖矿用到的算力比较多，对流量进行过滤，含有矿池服务器的流量就是挖矿病毒</p>
+<p>最后kill进程，rm掉程序</p>
+<p><strong>删不掉这么办</strong></p>
+<p>先下线，然后检查挖矿是否有在内网传播及时下线所有被传播的主机、上机排查攻击痕迹、一般 可以从cpu占用情况，可以进程、开放端口、计划任务、服务项几个方面排查</p>
+<p>将样本上传到在线分析平台，清除挖矿主程序主要就是双向封禁矿池地址、删除计划任务自启 动、删服务，结束恶意进程、删病毒</p>
+<p><strong>删不掉：</strong>确认一下一下是因为程序在使用，还是权限不够，更具具体情况采取措施 直接降权，降权到没有执行权限</p>
+<h2 id="十六、拿到webshell不出网情况下怎么办"><a href="#十六、拿到webshell不出网情况下怎么办" class="headerlink" title="十六、拿到webshell不出网情况下怎么办"></a>十六、拿到webshell不出网情况下怎么办</h2><p>reg上传去正向连接。探测出网协议，如dns，icmp</p>
+<h2 id="十七、怎么排查java内存马"><a href="#十七、怎么排查java内存马" class="headerlink" title="十七、怎么排查java内存马"></a>十七、怎么排查java内存马</h2><p>直接利用内存马检测工具去找，github也有很多检测脚本，手工的话可以分析web日志，filter或者listener类型的内存马，会有大量路径相同参数不同的url请求，或者页面不存在但是返回200的请求，分析web.xml文件，内存马的Filter是动态注册的，web.xml是没有配置的，也有可能是中间件漏洞通过代码执行加载内存马，这就可以去排查中间件的错误日志，像哥斯拉和冰蝎的内存马也会有跟webshell相似的特征，分析特殊的classloader加载，攻击者喜欢利用TemplatesImpl和bcel加载内存马，因为内存马是驻留在内存里的，本地无class文件，通过检测Filter对应的ClassLoader目录下是否存在class文件来判断，也可以把内存中所有的Filter的class dump出来，使用工具分析是否存在恶意代码</p>
+<h2 id="十八、蜜罐原理"><a href="#十八、蜜罐原理" class="headerlink" title="十八、蜜罐原理"></a>十八、蜜罐原理</h2><p><strong>创建虚拟环境：</strong>在网络中创建一个看似易受攻击的虚拟环境，该环境模拟真实系统的一部分或全 部功能，包括应用程序、服务和操作系统。</p>
+<p><strong>引诱攻击者：</strong>通过暴露蜜罐的存在，例如通过公开可访问的IP地址或虚假的网站，吸引攻击者主 动尝试入侵、扫描或攻击蜜罐系统。</p>
+<p><strong>监测和记录：</strong>一旦攻击者进入蜜罐系统，蜜罐会记录攻击者的行为、攻击技术和使用的工具。  这些信息对于理解攻击者的策略和行为非常有价值。</p>
+<p> <strong>分析和响应：</strong>通过分析记录的数据，研究人员可以识别攻击者的行为模式、漏洞利用方法和漏洞 的目标。</p>
+<p>这些信息可以用于改进真实系统的安全性，及时发现和应对新的威胁。  蜜罐的优势在于能够提供高质量的<code>攻击数据和情报</code>，帮助安全团队更好地了解攻击者的<code>行为模式和目的</code>，加强防御措施并及时应对威胁。</p>
+<p>然而，蜜罐也需要专业人员来设计、部署和管理，以确保其安全性和有效性，并避免对真实系统 造成潜在的风险。</p>
+<h2 id="十九、内存马查杀-原理"><a href="#十九、内存马查杀-原理" class="headerlink" title="十九、内存马查杀&amp;原理"></a>十九、内存马查杀&amp;原理</h2><p><strong>java内存马原理</strong></p>
+<p>通过在Java虚拟机（JVM）中运行的恶意代码，实现对被攻击者系统的远程控制。其原理是通过在Java虚拟机中注入特定的Java类、变量或方法等Java对象，然后在Java虚拟机中运行这些代码，实现对受害者机器的远程控制</p>
+<p><strong>java内存马排查</strong></p>
+<p>利用Java Agent技术遍历所有已经加载到内存中的class。  先判断是否是内存马，是则进入内存查杀。</p>
+<p><strong>识别</strong></p>
+<p>1，filter名字很特别</p>
+<p>2，filter优先级是第一位</p>
+<p>3，对比web.xml中没有filter配置</p>
+<p>4，特殊classloader加载</p>
+<p>5，对应的classloader路径下没有class文件</p>
+<p>6，Filter的doFilter方法中 有恶意代码</p>
+<p><strong>清除</strong></p>
+<p>1、清除内存马中的Filter的恶意代码，2、 模拟中间件注销Filter</p>
+<h2 id="二十、常见的危险PHP函数总结"><a href="#二十、常见的危险PHP函数总结" class="headerlink" title="二十、常见的危险PHP函数总结"></a>二十、常见的危险PHP函数总结</h2><p><strong>eval() — 把字符串作为PHP代码执行</strong></p>
+<p>语法eval( string $code ) : mixed</p>
+<p>把字符串 code 作为PHP代码执行。</p>
+<p>这个函数一般都是攻击者用的，没什么人会拿这个放到自己的源码里面</p>
+<p>PHP官方也给出了警告</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png" alt="image-20240627111043558"></p>
+<p><strong>assert() — 检查一个断言是否为 false （把字符串作为PHP代码执行）</strong></p>
+<p>语法</p>
+<p>PHP 5</p>
+<p>assert( mixed $assertion , string $description &#x3D; ? ) : bool</p>
+<p>PHP 7</p>
+<p>assert( mixed $assertion , Throwable $exception &#x3D; ? ) : bool</p>
+<p>assert()会检查指定的 assertion 并在结果为 false 时采取适当的行动（把字符串  $assertion 作为PHP代码执行）</p>
+<p><strong>preg_replace — 执行一个正则表达式的搜索和替换</strong></p>
+<p>语法</p>
+<p>preg_replace( mixed $pattern , mixed $replacement , mixed $subject , int  $limit &#x3D; -1 , int &amp;$count &#x3D; ? ) : mixed</p>
+<p>搜索 subject 中匹配 pattern 的部分，以 replacement 进行替换。</p>
+<p>&#x2F;e 修正符使 preg_replace() 将 replacement 参数当作 PHP 代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preg_replace(&quot;/test/e&quot;,$_GET[&quot;h&quot;],&quot;jutst test&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>如果我们提交 ?h&#x3D;phpinfo()，&#x2F;e就会将h参数当做PHP代码，phpinfo()将会被执行。</p>
+<h4 id="引发命令执行的危险函数"><a href="#引发命令执行的危险函数" class="headerlink" title="引发命令执行的危险函数"></a>引发命令执行的危险函数</h4><p> <strong>system — 执行外部程序，并且显示输出</strong></p>
+<p>说明</p>
+<p><code>system</code>( string <code>$command</code> , int <code>&amp;$return_var</code> &#x3D; ? ) : string</p>
+<p>同 C 版本的 <code>system()</code>函数一样， 本函数执行 <code>command</code> 参数所指定的命令， 并且输出执行结果。</p>
+<p>如果 PHP 运行在服务器模块中， system()函数还会尝试在每行输出完毕之后， 自动刷新 web服务器的输出缓存。</p>
+<p>如果要获取一个命令未经任何处理的 原始输出，请使用 passthru()函数。</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111508548-939463198.png" alt="image-20240627111507963"></p>
+<p> <strong>exec — 执行一个外部程序</strong></p>
+<p>exec()执行 command 参数所指定的命令</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111549318-1473617007.png" alt="image-20240627111548732"></p>
+<p><strong>shell_exec — 通过 shell 环境执行命令，并且将完整的输出以字 符串的方式返回。</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">shell_exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>passthru — 执行外部程序并且显示原始输出</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">passthru</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="引发文件包含的危险函数"><a href="#引发文件包含的危险函数" class="headerlink" title="引发文件包含的危险函数"></a>引发文件包含的危险函数</h4><p>主要作用为包含并运行指定文件。</p>
 <ol>
 <li>include()：代码执行到此函数时才将文件包含进来，发⽣错误时只警告并继续执行</li>
 <li>include_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
 <li>require()：立即调用此函数包含文件，发⽣错误时，会输出错误信息 并⽴即终⽌程序</li>
 <li>require_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
 </ol>
-<p><strong>利用：</strong></p>
-<ol>
-<li>读取敏感文件</li>
-<li>远程包含shell</li>
-<li>图⽚上传并包含图⽚shell</li>
-<li>使⽤伪协议</li>
-<li>包含⽇志⽂件GetShell</li>
-<li>截断包含</li>
-</ol>
-<p><strong>修复方案：</strong></p>
-<ol>
-<li>禁⽌远程⽂件包含allow_url_include&#x3D;off</li>
-<li>配置open_basedir&#x3D;指定⽬录，限制访问区域</li>
-<li>过滤..&#x2F;等特殊符号</li>
-<li>修改Apache⽇志⽂件的存放地址 </li>
-<li>开启魔术引号magic_quotes_qpc&#x3D;on </li>
-<li>尽量不要使⽤动态变量调⽤⽂件，直接写要包含的⽂件</li>
-</ol>
-<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p><strong>原理：</strong>对上传文件无限制后缀以及类型或者处理缺陷、导致越过本身权限想服务器上马</p>
-<p><strong>危害：</strong>操作木马文件提权、获取网站权限</p>
-<p><strong>绕过方法：</strong></p>
-<ol>
-<li>黑名单<ol>
-<li>后缀名不完整 .php5 .phtml等</li>
-<li>上传.htacess</li>
-<li>⼤⼩写</li>
-<li>在数据包中 后⽂件缀名前加空格 </li>
-<li>后缀名前加.</li>
-<li>加上::$DATA</li>
-<li>未循环验证，可以使⽤x.php..类似的⽅法</li>
-</ol>
-</li>
-<li>白名单（一般需配合其他漏洞一起利用）<ol>
-<li>%00截断</li>
-<li>图⽚⻢</li>
-<li>条件竞争</li>
-</ol>
-</li>
-</ol>
-<p><strong>修复方案：</strong></p>
-<ol>
-<li>后端验证：采⽤服务端验证模式</li>
-<li>后缀验证：基于⽩名单，⿊名单过滤</li>
-<li>MIME验证：基于上传⾃带类型艰检测</li>
-<li>内容检测：⽂件头，完整性检测</li>
-<li>⾃带函数过滤</li>
-<li>WAF防护软件：宝塔、云盾等</li>
-</ol>
-<h4 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h4><p><strong>原理：</strong>利用网络请求的服务当跳板攻击内部其他服务</p>
-<p><strong>危害：</strong></p>
-<ol>
-<li>探测内⽹信息,⽤协议探<code>ftp%26ip=&#123;ip&#125;%26port=&#123;port&#125;</code> </li>
-<li>攻击内⽹或本地其他服务</li>
-<li>穿透防⽕墙</li>
-</ol>
-<p><strong>利用方式：</strong></p>
-<p>具体操作需要查看⽀持的协议，file协议查看⽂件、dict协议探测端⼝、ophergopher协议  ⽀持GET&amp;POST请求，同时在攻击内⽹ftp、redis、telnet、Memcache上有极⼤作⽤利⽤  gopher协议访问redis反弹shell</p>
-<p><strong>漏洞存在的地方：</strong></p>
-<ol>
-<li>能够对外发起⽹络请求的地⽅</li>
-<li>请求远程服务器资源的地⽅</li>
-<li>数据库内置功能</li>
-<li>邮件系统</li>
-<li>⽂件处理</li>
-<li>在线处理⼯具</li>
-</ol>
-<p><strong>举例：</strong></p>
-<ol>
-<li>在线识图，在线⽂档翻译，分享，订阅等，这些有的都会发起⽹络请求。</li>
-<li>根据远程URL上传，静态资源图⽚等，这些会请求远程服务器的资源。</li>
-<li>数据库的⽐如mongodb的copyDatabase函数</li>
-<li>邮件系统就是接收邮件服务器地址这些地⽅</li>
-<li>⽂件就找ImageMagick，xml这些</li>
-<li>从URL关键字中寻找，⽐如：source,share,link,src,imageurl,target等</li>
-</ol>
-<p><strong>绕过姿势：</strong></p>
-<ol>
-<li><a target="_blank" rel="noopener" href="http://example.com@127.0.0.1/">http://example.com@127.0.0.1</a></li>
-<li>利⽤IP地址的省略写法绕过,[::]绕过localhost</li>
-<li>DNS解析 <a target="_blank" rel="noopener" href="http://127.0.0.1.xip.io/%E5%8F%AF%E4%BB%A5%E6%8C%87%E5%90%91%E4%BB%BB%E6%84%8Fip%E7%9A%84%E5%9F%9F%E5%90%8D%EF%BC%9Axip.io">http://127.0.0.1.xip.io/可以指向任意ip的域名：xip.io</a></li>
-<li>利⽤⼋进制IP地址绕过,利⽤⼗六进制IP地址,绕过利⽤⼗进制的IP地址绕过</li>
-</ol>
-<p><strong>修复：</strong></p>
-<ol>
-<li>地址做⽩名单处理</li>
-<li>域名识别IP 过滤内部IP </li>
-<li>校验返回的内容对⽐是否与假定的⼀致</li>
-</ol>
-<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p><strong>原理：</strong>插入恶意脚本、实现对用户浏览器攻击</p>
-<p><strong>类型：</strong>存储、反射、dom</p>
-<p><strong>反射和dom区别：</strong>DOM-XSS是javascript处理输出、⽽反射性xss是后台程序处理 </p>
-<p><strong>XSS绕过：</strong></p>
-<ol>
-<li>⼤⼩写</li>
-<li>js伪协议</li>
-<li>没有分号</li>
-<li>Html5新标签</li>
-<li>双层标签绕过</li>
-</ol>
-<p><strong>修复防御：</strong></p>
-<h4 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h4><p><strong>原理：</strong>解析用户传入的xml</p>
-<p><strong>作用：</strong>内⽹端⼝扫描、利⽤file协议等读取⽂件、攻击内⽹web应⽤使⽤get(struts2等) </p>
-<p><strong>危害：</strong></p>
-<ol>
-<li>加载恶意外部⽂件</li>
-<li>⽂件读取</li>
-<li>内⽹端⼝扫描</li>
-<li>攻击内⽹⽹站</li>
-<li>发起dos攻击等危害</li>
-</ol>
-<p><strong>防御：</strong>过滤⽤户提交的XML数据、libxml_disable_entity_loader设置为TRUE来禁⽤外部实体</p>
-<h2 id="如何快速判定xss类型"><a href="#如何快速判定xss类型" class="headerlink" title="如何快速判定xss类型"></a>如何快速判定xss类型</h2><p><strong>存储型xss：</strong></p>
+<p>include $file;</p>
+<p>在变量 $file 可控的情况下，我们就可以包含任意文件，从而达到 getshell 的目的。</p>
+<p>另外，在不同的配置环境下，可以包含不同的文件。</p>
+<p>因此又分为远程文件包含和本地文件包含。</p>
+<p>包含函数也能够读取任意文件内容，这就需要用到【支持的协议和封装协议】和【过滤器】。</p>
+<p>例如，利用php流filter读取任意文件</p>
+<p>include($_GET[‘file’]); </p>
+<p>?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;index.php</p>
+<p>解释：?file&#x3D;php:&#x2F;&#x2F; 协议 &#x2F; 过滤器 &#x2F; 文件</p>
+<h4 id="引发文件操作的危险函数"><a href="#引发文件操作的危险函数" class="headerlink" title="引发文件操作的危险函数"></a>引发文件操作的危险函数</h4><p>copy</p>
+<p>file_get_contents()</p>
+<p> highlight_file()</p>
+<p> fopen()</p>
+<p> read file()</p>
+<p> fread()</p>
+<p> fgetss()</p>
+<p> fgets()</p>
+<p> parse_ini_file()</p>
+<p> show_source()</p>
+<p> file()</p>
+<p>任意文件读取、写入、删除往往是上面几个函数受到了控制（当然还有其他的函数）。  不同的函数在不同的场景有不同的作用和不同的利用手法。  </p>
+<p>读取：可以读取配置等文件，拿到key  </p>
+<p>写入：可以写入shell代码相关的内容  </p>
+<p>删除：可以删除.lock文件而可以重新安装覆盖  </p>
+<p>更多思路请自行挖掘测试！！</p>
+<h4 id="引发信息泄露的危险函数"><a href="#引发信息泄露的危险函数" class="headerlink" title="引发信息泄露的危险函数"></a>引发信息泄露的危险函数</h4><p>phpinfo — 输出关于 PHP 配置的信息</p>
+<p>getenv — 获取一个环境变量的值</p>
+<p>get_current_user — 获取当前 PHP 脚本所有者名称</p>
+<p>getlastmod — 获取页面最后修改的时间</p>
+<p>ini_get — 获取一个配置选项的值</p>
+<p>glob — 寻找与模式匹配的文件路径</p>
+<h4 id="引发XEE的危险函数"><a href="#引发XEE的危险函数" class="headerlink" title="引发XEE的危险函数"></a>引发XEE的危险函数</h4><p>__construct()</p>
+<p>addAttribute()</p>
+<p>addChild()</p>
+<p>asXML()</p>
+<p>attributes()</p>
+<p>children()</p>
+<p>getDocNamespaces()</p>
+<p>getName()</p>
+<p>getNamespaces()</p>
+<p>registerXPathNamespace()</p>
+<p>simplexml_import_dom()</p>
+<p>simplexml_load_file()</p>
+<p>simplexml_load_string()</p>
+<p>xpath()</p>
+<h4 id="引发反序列化的危险函数"><a href="#引发反序列化的危险函数" class="headerlink" title="引发反序列化的危险函数"></a>引发反序列化的危险函数</h4><p>序列化函数：serialize()</p>
+<p>反序列化函数：unserialize()</p>
+<p>魔术函数：</p>
+<p>__construc()</p>
+<p>__destruct()</p>
+<p>__call()</p>
+<p>__callStatic()  </p>
+<p>__get()  </p>
+<p>__set() </p>
+<p>__isset()  </p>
+<p>__unset() </p>
+<p>__sleep() </p>
+<p>__wakeup()  </p>
+<p>__toString()  </p>
+<p>__invoke()  </p>
+<p>__set_state()  </p>
+<p>__clone()  </p>
+<p>__debuginfo()</p>
+<h2 id="二十一、Java危险函数"><a href="#二十一、Java危险函数" class="headerlink" title="二十一、Java危险函数"></a>二十一、Java危险函数</h2><h4 id="Java命令执行的函数"><a href="#Java命令执行的函数" class="headerlink" title="Java命令执行的函数"></a>Java命令执行的函数</h4><p><strong>Runtime类</strong></p>
+<p>Runtime类是私有的， 类的对象无法通过这种方式注册： Runtime r &#x3D; new Runtime() ; </p>
+<p>只能通过静态方法（getRuntime）获取： Runtime r &#x3D; Runtime.getRuntime()；</p>
+<p><strong>ProcessBuilder类</strong></p>
+<p>这种复现本质意义不大，重点是记一下敏感函数，</p>
+<p>rce2Servlet.java</p>
+<p><strong>ProcessImpl类ProcessImpl类通常是为ProcessBuilder.start()创建新进 程服务的，不能直接去调用。</strong></p>
+<p>看到ProcessImpl类构造器私有，所以不能直接对其进行实例化，为了演示可以用反射进行调 用。</p>
+<p>在获取到一个静态方法后，必须用setAccessible修改它的作用域，否则不能调用。</p>
+<h2 id="二十二、如何快速判定xss类型"><a href="#二十二、如何快速判定xss类型" class="headerlink" title="二十二、如何快速判定xss类型"></a>二十二、如何快速判定xss类型</h2><p><strong>存储型xss：</strong></p>
 <p>发送⼀次带XSS代码的请求，以后这个⻚⾯的返回包⾥都会有XSS代码</p>
 <p><strong>反射型xss：</strong></p>
 <p>发送⼀次带XSS代码的请求，只能在当前返回的数据包中发现XSS代码</p>
 <p><strong>dom型xss：</strong></p>
 <p>发送⼀次带XSS代码的请求，在返回包⾥压根⼉就找不到XSS代码的影⼦</p>
-<h2 id="csrf、ssrf和重放攻击有什么区别"><a href="#csrf、ssrf和重放攻击有什么区别" class="headerlink" title="csrf、ssrf和重放攻击有什么区别"></a>csrf、ssrf和重放攻击有什么区别</h2><p>CSRF是跨站请求伪造攻击，由客户端发起</p>
+<h2 id="二十三、csrf、ssrf和重放攻击有什么区别"><a href="#二十三、csrf、ssrf和重放攻击有什么区别" class="headerlink" title="二十三、csrf、ssrf和重放攻击有什么区别"></a>二十三、csrf、ssrf和重放攻击有什么区别</h2><p>CSRF是跨站请求伪造攻击，由客户端发起</p>
 <p>SSRF是服务器端请求伪造，由服务器发起</p>
 <p>重放攻击是将截获的数据包进⾏重放，达到身份认证等⽬的</p>
-<h2 id="csrf和xss和xxe有什么区别，以及修复方式"><a href="#csrf和xss和xxe有什么区别，以及修复方式" class="headerlink" title="csrf和xss和xxe有什么区别，以及修复方式"></a>csrf和xss和xxe有什么区别，以及修复方式</h2><p>XSS是跨站脚本攻击，⽤户提交的数据中可以构造代码来执⾏，从⽽实现窃取⽤户信息等攻击</p>
-<p>修复⽅ 式：对字符实体进⾏转义、使⽤HTTP Only来禁⽌JavaScript读取Cookie值、输⼊时校验、浏览器与 Web应⽤端采⽤相同的字符编码</p>
-<p>CSRF是跨站请求伪造攻击，XSS是实现CSRF的诸多⼿段中的⼀种，是由于没有在关键操作执⾏时进⾏ 是否由⽤户⾃愿发起的确认。</p>
-<p>修复⽅式：筛选出需要防范CSRF的⻚⾯然后嵌⼊Token、再次输⼊密码、检验Referer</p>
-<p>XXE是XML外部实体注⼊攻击，XML中可以通过调⽤实体来请求本地或者远程内容，和远程⽂件保护类 似，会引发相关安全问题，例如敏感⽂件读取。</p>
-<p>修复⽅式：XML解析库在调⽤时严格禁⽌对外部实体的解析</p>
-<h2 id="中间件漏洞"><a href="#中间件漏洞" class="headerlink" title="中间件漏洞"></a>中间件漏洞</h2><p><strong>IIS：</strong>⽬录解析漏洞、分号截断、CGI解析漏洞、PUT⽂件上传漏洞、MS15-034  </p>
-<p><strong>Apache：</strong>多后缀名解析漏洞、⽬录遍历、命令执⾏漏洞：CVE-2021-42013  </p>
-<p><strong>Nginx：</strong>CGI解析漏洞 </p>
-<p><strong>Tomcat：</strong>后台部署war包、PUT⽂件上传漏洞、反序列化漏洞、样例⽬录session操控漏洞  </p>
-<p><strong>Weblogic：</strong>后台部署war包、⼀⼤堆反序列化漏洞、未授权RCE漏洞</p>
-<p><strong>Jboss：</strong>后台部署war包、⼀堆反序列化</p>
-<h2 id="mysql提权方式"><a href="#mysql提权方式" class="headerlink" title="mysql提权方式"></a>mysql提权方式</h2><h2 id="常见对应端口及服务"><a href="#常见对应端口及服务" class="headerlink" title="常见对应端口及服务"></a>常见对应端口及服务</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png" alt="image-20240610192109884"></p>
-<h4 id="常用端口类（扫描弱口令-端口爆破）"><a href="#常用端口类（扫描弱口令-端口爆破）" class="headerlink" title="常用端口类（扫描弱口令&#x2F;端口爆破）"></a>常用端口类（扫描弱口令&#x2F;端口爆破）</h4><p>20 ftp数据端口（传输数据）</p>
-<p>21 ftp控制端口（传输控制信息）</p>
-<p>22 ssh root密码爆破 后⻔⽤户</p>
-<p>23 telnet 路由器 或者交换机 嵌⼊式设备 管理端⼝ 攻击⽅法 弱⼝令</p>
-<p>25 smtp 默认⽤户 默认密码 邮件账号爆破</p>
-<p>80  web 常⻅的Owasp top 10 中间件反序列化 中间件溢出 fastcgi配置不  当 造成fastcgi端⼝泄露 </p>
-<p>110 pop3 默认⽤户 默认密码 邮件账号爆破</p>
-<p>445：ms06_040，蠕⾍，勒索病毒、MS17-010</p>
-<p>2601、2604 zebra路由，默认密码zebra</p>
-<p>3389 远程桌面 rdp漏洞、弱⼝令、cve-2019-0708、ms12-20</p>
-<h4 id="数据库类"><a href="#数据库类" class="headerlink" title="数据库类"></a>数据库类</h4><p>1433 mysql</p>
-<p>1521 oracle</p>
-<p>3306 mysql</p>
-<p>5432 postgresql</p>
-<h4 id="特殊服务类（未授权-命令执行-漏洞）"><a href="#特殊服务类（未授权-命令执行-漏洞）" class="headerlink" title="特殊服务类（未授权&#x2F;命令执行&#x2F;漏洞）"></a>特殊服务类（未授权&#x2F;命令执行&#x2F;漏洞）</h4><p>443 ssl心脏滴血</p>
-<p>873 rsync未授权</p>
-<p>5984 couchDB</p>
-<p>6379 redis未授权</p>
-<p>7001、7002 weblogic默认弱口令、反序列化</p>
-<p>9200、9300 elasticsearch</p>
-<p>11211 memcache未授权访问</p>
-<p>50000 sap命令执行</p>
-<p>50070、50030  hadoop默认端⼝未授权访问</p>
-<h2 id="渗透测试流程"><a href="#渗透测试流程" class="headerlink" title="渗透测试流程"></a>渗透测试流程</h2><p><strong>信息收集：</strong>whois、⽹站源IP、旁站、C段⽹站、服务器系统版本、容器版本、程序版本、数据库类 型、⼆级域名、防⽕墙、维护者信息</p>
-<p><strong>漏洞扫描：</strong>Nessus, AWVS</p>
-<p><strong>⼿动挖掘：</strong>逻辑漏洞</p>
-<p>验证漏洞</p>
-<p>修复建议</p>
-<p>（如果有）基线检查&#x2F;复验漏洞</p>
-<p>输出报告</p>
-<h2 id="应急流程"><a href="#应急流程" class="headerlink" title="应急流程"></a>应急流程</h2><ol>
-<li>抑制范围：主机断⽹或者隔离使受害⾯不继续扩⼤</li>
-<li>收集信息：收集客户信息和中毒主机信息，包括样本</li>
-<li>判断类型：判断是否是安全事件，何种安全事件，勒索、挖矿、断⽹、DoS 等等</li>
-<li>深⼊分析：⽇志分析、进程分析、启动项分析、样本分析⽅便后期溯源</li>
-<li>清理处置：杀掉进程，删除⽂件，打补丁，删除异常系统服务，清除后⻔账号防⽌事件扩⼤，处理完毕后恢复⽣产</li>
-<li>产出报告：整理并输出完整的安全事件报告</li>
-</ol>
-<h2 id="如何绕过CDN查真实IP"><a href="#如何绕过CDN查真实IP" class="headerlink" title="如何绕过CDN查真实IP"></a>如何绕过CDN查真实IP</h2><ol>
-<li>多地ping看是否有cdn</li>
-<li>⼆级域名可能不会做cdn</li>
-<li>nslookup <a target="_blank" rel="noopener" href="http://xxx.com/">http://xxx.com</a> 国外dns</li>
-<li>查找域名历史解析记录，因为域名在上CDN之前⽤的IP，很有可能就是CDN的真实源IP地址</li>
-<li>phpinfo上显示的信息</li>
-<li>cloudflare github可以获取真实IP</li>
-<li>⽹站有icon 可以根据icon hash 来查找真实IP</li>
-<li>⼦域名绑定 测试⼦域可能回源</li>
-</ol>
-<h2 id="登录页面漏洞"><a href="#登录页面漏洞" class="headerlink" title="登录页面漏洞"></a>登录页面漏洞</h2><h4 id="1、仅登录功能"><a href="#1、仅登录功能" class="headerlink" title="1、仅登录功能"></a>1、仅登录功能</h4><ul>
-<li>测万能密码</li>
-<li>弱口令</li>
-<li>暴力破解</li>
-</ul>
-<h4 id="2、有注册功能、忘记密码功能"><a href="#2、有注册功能、忘记密码功能" class="headerlink" title="2、有注册功能、忘记密码功能"></a>2、有注册功能、忘记密码功能</h4><ul>
-<li>逻辑漏洞</li>
-<li>越权</li>
-<li>任意用户密码重置</li>
-<li>短信轰炸</li>
-</ul>
-<h4 id="3、带有验证码"><a href="#3、带有验证码" class="headerlink" title="3、带有验证码"></a>3、带有验证码</h4><ul>
-<li>验证码的绕过</li>
-<li>手机4位验证码爆破</li>
-</ul>
-<p>验证码绕过的话我们判断是前段验证码，还是后端验证码。验证码是否过期、是否可以爆破、是否可以复用</p>
-<p><strong>只要有输入点的地方，我们就都可以测一下有没有sql注入、xss、csrf</strong></p>
-<h4 id="4、信息收集方面"><a href="#4、信息收集方面" class="headerlink" title="4、信息收集方面"></a>4、信息收集方面</h4><ul>
-<li><p>ICP备案号</p>
-</li>
-<li><p>F12查看js代码中有无敏感信息泄露，以及找出页面url、ip，看看有无可以无授权访问的页面，api接口</p>
-</li>
-<li><p>收集一下网站的指纹、cms框架、开发语言、服务器版本、中间件、子域名、ip、c段、旁站、waf</p>
-</li>
-<li><p>判断有无cdn，绕过cdn拿到真实的ip</p>
-</li>
-<li><p>github源码泄露</p>
-</li>
-<li><p>网站目录扫描，看看有无未授权可访问的页面、api接口</p>
-</li>
-<li><p>看看有无robots文件</p>
-</li>
-<li><p>网站备份文件扫描</p>
-</li>
-</ul>
-<h2 id="linux提权方式"><a href="#linux提权方式" class="headerlink" title="linux提权方式"></a>linux提权方式</h2><ul>
-<li>利⽤内核栈溢出提权</li>
-<li>&#x2F;etc&#x2F;passwd root 密码提权 </li>
-<li>sudo -l</li>
-<li>nfs</li>
-<li>suid </li>
-<li>计划任务</li>
-</ul>
-<h2 id="框架"><a href="#框架" class="headerlink" title="框架"></a>框架</h2><h4 id="struts2框架漏洞"><a href="#struts2框架漏洞" class="headerlink" title="struts2框架漏洞"></a><strong>struts2框架漏洞</strong></h4><p> java 的 web 框架</p>
-<p><strong>特征</strong></p>
-<ul>
-<li>.do .action后缀常会出现，.jsp也可能 </li>
-<li>能够处理OGNL表达式</li>
-</ul>
-<p><strong>攻击特征：</strong></p>
-<ul>
-<li>RCE试图传⼊的命令以及执⾏结果</li>
-<li>参数伪造，试图传⼊OGNL表达式</li>
-</ul>
-<h4 id="weblogic权限绕过"><a href="#weblogic权限绕过" class="headerlink" title="weblogic权限绕过"></a>weblogic权限绕过</h4><p>CVE-2020-14882：  </p>
-<p>远程攻击者可以构造特殊的HTTP请求，在未经身份验证的情况下接管 WebLogic 管理控制台。 攻击者 可以构造特殊请求的URL，即可未授权访问到管理后台⻚⾯，访问后台后是⼀个低权限的⽤ 户，⽆法安 装应⽤， 也⽆法直接执⾏任意代码。</p>
-<p>CVE-2020-14883：</p>
-<p>允许后台任意⽤户通过HTTP协议执⾏任意命令。使⽤这两个漏洞组成的利⽤链，可通过⼀个HTTP 请求 在远程Weblogic 服务器上以未授权的任意⽤户身份执⾏命令</p>
-<h4 id="log4j反序列化"><a href="#log4j反序列化" class="headerlink" title="log4j反序列化"></a>log4j反序列化</h4><h4 id="Shiro反序列化漏洞"><a href="#Shiro反序列化漏洞" class="headerlink" title="Shiro反序列化漏洞"></a>Shiro反序列化漏洞</h4><p><strong>如何判断shiro：</strong></p>
-<ul>
-<li>登录界⾯的“ 记住我”“ 记住密码” 等</li>
-<li>请求包Cookie中存在rememberMe字段</li>
-<li>登录失败返回rememberMe&#x3D;deleteMe字段</li>
-</ul>
-<p><strong>shiro550与shiro721的区别，利⽤⽅式以及原理</strong> </p>
-<ul>
-<li>550可直接跑默认key，shiro721默认key跑不了，需要⼀个登录成功的cookie</li>
-<li>Cookie中这个rememberMe字段，它是先对相关信息序列化，通过AES加密，再base64 编码，然后传⼊服务器，到服务器那⾥base64解码，AES解密，然后反序列化  AES这个Key曾经是固定的⼀个默认key，我们轻⽽易举能够构造恶意代码传⼊服务器，对于更 改过的key可以进⾏爆破爆出来，还是可以打这个反序列化</li>
-<li>使⽤ysoserial，通过检测出来的CC链⼦监听⼀个JRMP端⼝，我们向服务器传⼊的 payload就是指向这个端⼝，然后⼀旦Cookie发送到服务器，服务器连接到我们的JRMP服务 器，ysoserial⾃动通过CC链⼦把弹shell的命令打过去getshell</li>
-</ul>
-<h4 id="weblogic有⼏种漏洞"><a href="#weblogic有⼏种漏洞" class="headerlink" title="weblogic有⼏种漏洞"></a>weblogic有⼏种漏洞</h4><h4 id="fastjson反序列化漏洞"><a href="#fastjson反序列化漏洞" class="headerlink" title="fastjson反序列化漏洞"></a>fastjson反序列化漏洞</h4><p>使⽤ysoserial，通过检测出来的CC链⼦监听⼀个JRMP端⼝，我们向服务器传⼊的 payload就是指向这个端⼝，然后⼀旦Cookie发送到服务器，服务器连接到我们的JRMP服务 器，ysoserial⾃动通过CC链⼦把弹shell的命令打过去getshell</p>
-<h4 id="redis未授权与权限获取"><a href="#redis未授权与权限获取" class="headerlink" title="redis未授权与权限获取"></a>redis未授权与权限获取</h4><h2 id="常见反序列化流量特征"><a href="#常见反序列化流量特征" class="headerlink" title="常见反序列化流量特征"></a>常见反序列化流量特征</h2><p>shiro就看cookie中Rememberme字段，什么都要从这⾥传</p>
-<p>fastjson：可以在提交的包中找找json格式的数据，重点看⼀下有⽆rmi或者出⽹的⼀些⾏  为，（在⼗六进制中会呈现ACED开头，这段不确定）</p>
-<p>st2-045：请求头中的Content-Type字段</p>
-<h2 id="webshell工具流量特征"><a href="#webshell工具流量特征" class="headerlink" title="webshell工具流量特征"></a>webshell工具流量特征</h2><h4 id="蚁剑（PHP用base64加密）"><a href="#蚁剑（PHP用base64加密）" class="headerlink" title="蚁剑（PHP用base64加密）"></a>蚁剑（<strong>PHP用base64加密</strong>）</h4><p>将蚁剑的正文内容进行URL解码后，流量最中明显的特征为<code>@ini_set(&quot;display_errors&quot;,&quot;0&quot;);</code>这段代码基本是所有WebShell客户端链接PHP类WebShell都有的一种代码，但是有的客户端会将这段编码或者加密，而蚁剑是明文，所以较好发现，同时蚁剑也有eval这种明显的特征。</p>
-<p>由于蚁剑中包含了很多加密、绕过插件，所以导致很多流量被加密后无法识别，但是蚁剑混淆加密后还有一个比较明显的特征，即为参数名大多以<code>“_0x.....=”</code>这种形式（下划线可替换为其他）所以，以_0x开头的参数名，后面为加密数据的数据包也可识别为蚁剑的流量特征。</p>
-<h4 id="冰蝎（AES对称加密）"><a href="#冰蝎（AES对称加密）" class="headerlink" title="冰蝎（AES对称加密）"></a>冰蝎（<strong>AES对称加密</strong>）</h4><p><strong>2.0</strong></p>
-<p>第一阶段返回包<code>密钥16</code>位</p>
-<p>请求包：<code>*q=.2, \*/*; q=.2*</code></p>
-<p><strong>3.0</strong></p>
-<p>请求头存在：<code>Cache-Control: no-cache Pragma: no-cache</code></p>
-<h4 id="哥斯拉"><a href="#哥斯拉" class="headerlink" title="哥斯拉"></a>哥斯拉</h4><p>请求cookie最后都存在<code>;</code></p>
-<p>第一次发送大量数据不包含cookie；响应无数据，会自动设置PHPSESSID</p>
-<p>第二次发送一段固定代码，执行结果为固定内容</p>
-<p>第三次发送一段固定代码</p>
-<h4 id="菜刀"><a href="#菜刀" class="headerlink" title="菜刀"></a>菜刀</h4><p>最开始是明文传输，后来采用base64加密：</p>
-<p>PHP类WebShell链接流量</p>
-<p>如下：</p>
-<p>第一：“eval”，eval函数用于执行传递的攻击payload，这是必不可少的；</p>
-<p>第二：(base64_decode(POST[z0] ) ) ， ( base64decode(_POST[z0]))，(base64_decode( POST[z0]))，(base64 decode(_POST[z0]))将攻击payload进行Base64解码，因为菜刀默认是使用Base64编码，以避免被检测；</p>
-<p>第三：&amp;z0&#x3D;QGluaV9zZXQ…，该部分是传递攻击payload，此参数z0对应$_POST[z0]接收到的数据，该参数值是使用Base64编码的，所以可以利用base64解码可以看到攻击明文。</p>
-<p>注：</p>
-<p>1.有少数时候eval方法会被assert方法替代。</p>
-<p>2.post也会被<code>_GET、$_REQUEST</code>替代。</p>
-<p>3.z0是菜刀默认的参数，这个地方也有可能被修改为其他参数名。</p>
-<h2 id="windows登录成功-失败的id"><a href="#windows登录成功-失败的id" class="headerlink" title="windows登录成功&#x2F;失败的id"></a>windows登录成功&#x2F;失败的id</h2><p>4624&#x2F;4625 </p>
-<h2 id="⽹站被挂⻢如何应急"><a href="#⽹站被挂⻢如何应急" class="headerlink" title="⽹站被挂⻢如何应急"></a>⽹站被挂⻢如何应急</h2><ul>
-<li>取证，登录服务器，备份，检查服务器敏感⽬录，查毒（搜索后⻔⽂件-注意⽂件的时间， ⽤户，后缀等属性），调取⽇志（系统，中间件⽇志，WAF⽇志等）；</li>
-<li>处理，恢复备份（快照回滚最近⼀次），确定⼊侵⽅法（漏洞检测并进⾏修复）</li>
-<li>溯源，查⼊侵IP，⼊侵⼿法（⽹路攻击事件）的确定等 </li>
-<li>记录，归档——–预防-事件检测-抑制-根除-恢复-跟踪-记录通⽤漏洞的应对等其他安全应急事件</li>
-</ul>
-<h2 id="Windows中毒了-如何应急"><a href="#Windows中毒了-如何应急" class="headerlink" title="Windows中毒了 如何应急"></a>Windows中毒了 如何应急</h2><h4 id="检查系统账号安全"><a href="#检查系统账号安全" class="headerlink" title="检查系统账号安全"></a>检查系统账号安全</h4><p>查看服务器是否有弱⼝令、可疑账号、隐藏账号、克隆账号、远 程管理端⼝是否对公⽹开放。</p>
-<p>Win+R 打开运⾏，输⼊“eventvwr.msc”打开操作系统⽇志，查  看管理员登录时间、⽤户名是否存在异常</p>
-<h4 id="检查异常端⼝、进程"><a href="#检查异常端⼝、进程" class="headerlink" title="检查异常端⼝、进程"></a>检查异常端⼝、进程</h4><p>使⽤ netstat -ano 检查端⼝连接情况，是否有远程连接、可疑  连接（主要定位 ESTABLISHED）</p>
-<p>根据 netstat 定位出的 pid，再通过 tasklist 命令进⾏进程定位  tasklist | findstr “PID” </p>
-<p>也可以使⽤ D 盾_web 查杀⼯具、⽕绒剑、XueTr 等⼯具进⾏判断可疑进程（如蓝⾊、  红⾊进程、没有签名验证信息的进程、没有描述信息的进程、进程的属主、进程的路径是否合 法、 CPU 或内存资源占⽤⻓时间过⾼的进程） </p>
-<h4 id="检查启动项、计划任务、服务"><a href="#检查启动项、计划任务、服务" class="headerlink" title="检查启动项、计划任务、服务"></a>检查启动项、计划任务、服务</h4><p>检查服务器是否有异常的启动项，如：单击开始菜单 &gt;【运⾏】，输⼊ msconfig看⼀下  启动项是否存在可疑启动，注册表run键值是否存在可疑启⽤⽂件，组策略，运⾏  gpedit.msc 查看脚本启动是否存在启⽤⽂件等 </p>
-<p>检查计划任务，如单击【开始】&gt;【设置】&gt;【控制⾯板】&gt;【任务计划】，查看计划任务属  性，便可以发现⽊⻢⽂件的路径</p>
-<p>检查服务⾃启动，如单击【开始】&gt;【运⾏】，输⼊ services.msc，注意服务状态和启  动类型，检查是否有异常服务</p>
-<h4 id="检查系统相关信息"><a href="#检查系统相关信息" class="headerlink" title="检查系统相关信息"></a>检查系统相关信息</h4><p>单击【开始】&gt;【运⾏】，输⼊ systeminfo，查看系统信息是否打了补丁</p>
-<p>查看⽤户⽬录，新建账号会在这个⽬录⽣成⼀个⽤户⽬录，查看  是否有新建⽤户⽬录</p>
-<p>在服务器各个⽬录，可根据⽂件夹内⽂件列表时间进⾏排序，查  找可疑⽂件</p>
-<h4 id="⾃动化查杀"><a href="#⾃动化查杀" class="headerlink" title="⾃动化查杀"></a>⾃动化查杀</h4><p>⽤360、卡巴斯基等病毒查杀系统病毒⽊⻢，Web 可以⽤ D 盾、河⻢  ⼯具查杀 Webshell 后⻔</p>
-<h4 id="⽇志分析"><a href="#⽇志分析" class="headerlink" title="⽇志分析"></a>⽇志分析</h4><p>⽤ 360 星图⽇志分析⼯具进⾏分析攻击痕迹或⼿⼯结合 EmEditor 进  ⾏⽇志分析</p>
-<h2 id="常⻅的安全设备"><a href="#常⻅的安全设备" class="headerlink" title="常⻅的安全设备"></a>常⻅的安全设备</h2><ul>
-<li>防⽕墙 utm 负载均衡设备 </li>
-<li>IPS IDS(HIDS基于主机型⼊侵检测系统)  </li>
-<li>堡垒机 </li>
-<li>蜜罐 </li>
-<li>⽹闸 </li>
-<li>waf  </li>
-<li>扫描器 </li>
-<li>soc(ossim开源安全信息管理系统)</li>
-</ul>
-<h2 id="apache⽇志位置"><a href="#apache⽇志位置" class="headerlink" title="apache⽇志位置"></a>apache⽇志位置</h2><p>&#x2F;var&#x2F;log&#x2F;apache2&#x2F;</p>
+<h2 id="常见对应端口及服务"><a href="#常见对应端口及服务" class="headerlink" title="常见对应端口及服务"></a>常见对应端口及服务</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png" alt="image-20240610192109884"></p>
 
       
     </div>
@@ -920,7 +882,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8E%86%E5%88%B6%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">简历制作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%BB%E4%BD%93%E6%A1%86%E6%9E%B6"><span class="nav-number">1.0.1.</span> <span class="nav-text">一、主体框架</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%87%8D%E8%A6%81%E5%A1%AB%E5%86%99%E9%83%A8%E5%88%86"><span class="nav-number">1.0.2.</span> <span class="nav-text">二、重要填写部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.0.3.</span> <span class="nav-text">三、注意事项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">1.0.4.</span> <span class="nav-text">四、总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%A4%A7%E6%BC%8F%E6%B4%9E"><span class="nav-number">2.</span> <span class="nav-text">十大漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sql"><span class="nav-number">2.0.1.</span> <span class="nav-text">sql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#csrf"><span class="nav-number">2.0.2.</span> <span class="nav-text">csrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">2.0.3.</span> <span class="nav-text">文件包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">2.0.4.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssrf"><span class="nav-number">2.0.5.</span> <span class="nav-text">ssrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xss"><span class="nav-number">2.0.6.</span> <span class="nav-text">xss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xxe"><span class="nav-number">2.0.7.</span> <span class="nav-text">xxe</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%88%A4%E5%AE%9Axss%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">如何快速判定xss类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#csrf%E3%80%81ssrf%E5%92%8C%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">csrf、ssrf和重放攻击有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#csrf%E5%92%8Cxss%E5%92%8Cxxe%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%8C%E4%BB%A5%E5%8F%8A%E4%BF%AE%E5%A4%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">csrf和xss和xxe有什么区别，以及修复方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E6%BC%8F%E6%B4%9E"><span class="nav-number">6.</span> <span class="nav-text">中间件漏洞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">mysql提权方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%AF%B9%E5%BA%94%E7%AB%AF%E5%8F%A3%E5%8F%8A%E6%9C%8D%E5%8A%A1"><span class="nav-number">8.</span> <span class="nav-text">常见对应端口及服务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%AB%AF%E5%8F%A3%E7%B1%BB%EF%BC%88%E6%89%AB%E6%8F%8F%E5%BC%B1%E5%8F%A3%E4%BB%A4-%E7%AB%AF%E5%8F%A3%E7%88%86%E7%A0%B4%EF%BC%89"><span class="nav-number">8.0.1.</span> <span class="nav-text">常用端口类（扫描弱口令&#x2F;端口爆破）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B1%BB"><span class="nav-number">8.0.2.</span> <span class="nav-text">数据库类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%9C%8D%E5%8A%A1%E7%B1%BB%EF%BC%88%E6%9C%AA%E6%8E%88%E6%9D%83-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C-%E6%BC%8F%E6%B4%9E%EF%BC%89"><span class="nav-number">8.0.3.</span> <span class="nav-text">特殊服务类（未授权&#x2F;命令执行&#x2F;漏洞）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="nav-number">9.</span> <span class="nav-text">渗透测试流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E6%80%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">10.</span> <span class="nav-text">应急流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%BB%95%E8%BF%87CDN%E6%9F%A5%E7%9C%9F%E5%AE%9EIP"><span class="nav-number">11.</span> <span class="nav-text">如何绕过CDN查真实IP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2%E6%BC%8F%E6%B4%9E"><span class="nav-number">12.</span> <span class="nav-text">登录页面漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E4%BB%85%E7%99%BB%E5%BD%95%E5%8A%9F%E8%83%BD"><span class="nav-number">12.0.1.</span> <span class="nav-text">1、仅登录功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E6%9C%89%E6%B3%A8%E5%86%8C%E5%8A%9F%E8%83%BD%E3%80%81%E5%BF%98%E8%AE%B0%E5%AF%86%E7%A0%81%E5%8A%9F%E8%83%BD"><span class="nav-number">12.0.2.</span> <span class="nav-text">2、有注册功能、忘记密码功能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%B8%A6%E6%9C%89%E9%AA%8C%E8%AF%81%E7%A0%81"><span class="nav-number">12.0.3.</span> <span class="nav-text">3、带有验证码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E6%96%B9%E9%9D%A2"><span class="nav-number">12.0.4.</span> <span class="nav-text">4、信息收集方面</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#linux%E6%8F%90%E6%9D%83%E6%96%B9%E5%BC%8F"><span class="nav-number">13.</span> <span class="nav-text">linux提权方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6"><span class="nav-number">14.</span> <span class="nav-text">框架</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#struts2%E6%A1%86%E6%9E%B6%E6%BC%8F%E6%B4%9E"><span class="nav-number">14.0.1.</span> <span class="nav-text">struts2框架漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#weblogic%E6%9D%83%E9%99%90%E7%BB%95%E8%BF%87"><span class="nav-number">14.0.2.</span> <span class="nav-text">weblogic权限绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#log4j%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">14.0.3.</span> <span class="nav-text">log4j反序列化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Shiro%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="nav-number">14.0.4.</span> <span class="nav-text">Shiro反序列化漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#weblogic%E6%9C%89%E2%BC%8F%E7%A7%8D%E6%BC%8F%E6%B4%9E"><span class="nav-number">14.0.5.</span> <span class="nav-text">weblogic有⼏种漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E"><span class="nav-number">14.0.6.</span> <span class="nav-text">fastjson反序列化漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#redis%E6%9C%AA%E6%8E%88%E6%9D%83%E4%B8%8E%E6%9D%83%E9%99%90%E8%8E%B7%E5%8F%96"><span class="nav-number">14.0.7.</span> <span class="nav-text">redis未授权与权限获取</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="nav-number">15.</span> <span class="nav-text">常见反序列化流量特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#webshell%E5%B7%A5%E5%85%B7%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="nav-number">16.</span> <span class="nav-text">webshell工具流量特征</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%9A%81%E5%89%91%EF%BC%88PHP%E7%94%A8base64%E5%8A%A0%E5%AF%86%EF%BC%89"><span class="nav-number">16.0.1.</span> <span class="nav-text">蚁剑（PHP用base64加密）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%B0%E8%9D%8E%EF%BC%88AES%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%EF%BC%89"><span class="nav-number">16.0.2.</span> <span class="nav-text">冰蝎（AES对称加密）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%93%A5%E6%96%AF%E6%8B%89"><span class="nav-number">16.0.3.</span> <span class="nav-text">哥斯拉</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8F%9C%E5%88%80"><span class="nav-number">16.0.4.</span> <span class="nav-text">菜刀</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#windows%E7%99%BB%E5%BD%95%E6%88%90%E5%8A%9F-%E5%A4%B1%E8%B4%A5%E7%9A%84id"><span class="nav-number">17.</span> <span class="nav-text">windows登录成功&#x2F;失败的id</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%BD%B9%E7%AB%99%E8%A2%AB%E6%8C%82%E2%BB%A2%E5%A6%82%E4%BD%95%E5%BA%94%E6%80%A5"><span class="nav-number">18.</span> <span class="nav-text">⽹站被挂⻢如何应急</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Windows%E4%B8%AD%E6%AF%92%E4%BA%86-%E5%A6%82%E4%BD%95%E5%BA%94%E6%80%A5"><span class="nav-number">19.</span> <span class="nav-text">Windows中毒了 如何应急</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%B3%BB%E7%BB%9F%E8%B4%A6%E5%8F%B7%E5%AE%89%E5%85%A8"><span class="nav-number">19.0.1.</span> <span class="nav-text">检查系统账号安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%BC%82%E5%B8%B8%E7%AB%AF%E2%BC%9D%E3%80%81%E8%BF%9B%E7%A8%8B"><span class="nav-number">19.0.2.</span> <span class="nav-text">检查异常端⼝、进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%90%AF%E5%8A%A8%E9%A1%B9%E3%80%81%E8%AE%A1%E5%88%92%E4%BB%BB%E5%8A%A1%E3%80%81%E6%9C%8D%E5%8A%A1"><span class="nav-number">19.0.3.</span> <span class="nav-text">检查启动项、计划任务、服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3%E4%BF%A1%E6%81%AF"><span class="nav-number">19.0.4.</span> <span class="nav-text">检查系统相关信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%BE%83%E5%8A%A8%E5%8C%96%E6%9F%A5%E6%9D%80"><span class="nav-number">19.0.5.</span> <span class="nav-text">⾃动化查杀</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E2%BD%87%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">19.0.6.</span> <span class="nav-text">⽇志分析</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E2%BB%85%E7%9A%84%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87"><span class="nav-number">20.</span> <span class="nav-text">常⻅的安全设备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#apache%E2%BD%87%E5%BF%97%E4%BD%8D%E7%BD%AE"><span class="nav-number">21.</span> <span class="nav-text">apache⽇志位置</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81sql%E6%B3%A8%E5%85%A5%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">一、sql注入分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E"><span class="nav-number">1.1.</span> <span class="nav-text">其他常见漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#csrf"><span class="nav-number">1.1.1.</span> <span class="nav-text">csrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssrf"><span class="nav-number">1.1.2.</span> <span class="nav-text">ssrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.1.3.</span> <span class="nav-text">文件包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.1.4.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xss"><span class="nav-number">1.1.5.</span> <span class="nav-text">xss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xxe"><span class="nav-number">1.1.6.</span> <span class="nav-text">xxe</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%80%E6%AC%A1%E6%94%BB%E5%87%BB"><span class="nav-number">2.</span> <span class="nav-text">二、如何判断文件上传一次攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%92%8C%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">三、命令执行和代码执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81CSRF-%E5%92%8C-XSS-%E5%92%8C-XXE-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">四、CSRF 和 XSS 和 XXE 有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%B8%80%E4%BA%9B%E6%BC%8F%E6%B4%9E"><span class="nav-number">5.</span> <span class="nav-text">五、一些漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shrio550%E5%92%8C721%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="nav-number">5.0.1.</span> <span class="nav-text">shrio550和721的区别主要区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.2.</span> <span class="nav-text">fastjson反序列化漏洞原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#log4j2%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.3.</span> <span class="nav-text">log4j2原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Struts2%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.4.</span> <span class="nav-text">Struts2原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Weblogic%EF%BC%9A"><span class="nav-number">5.0.5.</span> <span class="nav-text">Weblogic：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="nav-number">6.</span> <span class="nav-text">六、webshell管理工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81windows-Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">七、windows+Linux应急响应流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">7.0.1.</span> <span class="nav-text">Windows入侵排查思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">7.0.2.</span> <span class="nav-text">Linux入侵排查思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%B5%81%E7%A8%8B"><span class="nav-number">7.0.3.</span> <span class="nav-text">应急响应流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#windows%E5%BA%94%E6%80%A5"><span class="nav-number">7.0.4.</span> <span class="nav-text">windows应急</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%BA%94%E6%80%A5"><span class="nav-number">7.0.5.</span> <span class="nav-text">linux应急</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81windows%E4%BA%8B%E4%BB%B6ID"><span class="nav-number">8.</span> <span class="nav-text">八、windows事件ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81sql%E6%B3%A8%E5%85%A5"><span class="nav-number">9.</span> <span class="nav-text">九、sql注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81ssrf%E6%89%93redis"><span class="nav-number">10.</span> <span class="nav-text">十、ssrf打redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81PHP%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="nav-number">11.</span> <span class="nav-text">十一、PHP一句话木马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8A%E5%85%B6%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="nav-number">12.</span> <span class="nav-text">十二、序列化反序列化及其流量特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AE%BE%E5%A4%87-%E5%87%BA%E7%8E%B0%E8%AF%AF%E6%8A%A5%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">13.</span> <span class="nav-text">十三、常见的设备,出现误报怎么办</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81wireshark%E6%8C%87%E4%BB%A4"><span class="nav-number">14.</span> <span class="nav-text">十四、wireshark指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E4%B8%AD%E6%8C%96%E7%9F%BF%E7%97%85%E6%AF%92%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3"><span class="nav-number">15.</span> <span class="nav-text">十五、中挖矿病毒怎么解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%8B%BF%E5%88%B0webshell%E4%B8%8D%E5%87%BA%E7%BD%91%E6%83%85%E5%86%B5%E4%B8%8B%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">16.</span> <span class="nav-text">十六、拿到webshell不出网情况下怎么办</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5java%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">17.</span> <span class="nav-text">十七、怎么排查java内存马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E8%9C%9C%E7%BD%90%E5%8E%9F%E7%90%86"><span class="nav-number">18.</span> <span class="nav-text">十八、蜜罐原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80-%E5%8E%9F%E7%90%86"><span class="nav-number">19.</span> <span class="nav-text">十九、内存马查杀&amp;原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8D%B1%E9%99%A9PHP%E5%87%BD%E6%95%B0%E6%80%BB%E7%BB%93"><span class="nav-number">20.</span> <span class="nav-text">二十、常见的危险PHP函数总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.1.</span> <span class="nav-text">引发命令执行的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.2.</span> <span class="nav-text">引发文件包含的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.3.</span> <span class="nav-text">引发文件操作的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.4.</span> <span class="nav-text">引发信息泄露的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91XEE%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.5.</span> <span class="nav-text">引发XEE的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.6.</span> <span class="nav-text">引发反序列化的危险函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%80%E3%80%81Java%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">21.</span> <span class="nav-text">二十一、Java危险函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">21.0.1.</span> <span class="nav-text">Java命令执行的函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%88%A4%E5%AE%9Axss%E7%B1%BB%E5%9E%8B"><span class="nav-number">22.</span> <span class="nav-text">二十二、如何快速判定xss类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%89%E3%80%81csrf%E3%80%81ssrf%E5%92%8C%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">23.</span> <span class="nav-text">二十三、csrf、ssrf和重放攻击有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%AF%B9%E5%BA%94%E7%AB%AF%E5%8F%A3%E5%8F%8A%E6%9C%8D%E5%8A%A1"><span class="nav-number">24.</span> <span class="nav-text">常见对应端口及服务</span></a></li></ol></div>
             
 
           </div>
