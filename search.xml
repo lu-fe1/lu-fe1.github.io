@@ -140,6 +140,247 @@
       </categories>
   </entry>
   <entry>
+    <title>信安管评一阶段</title>
+    <url>/posts/2590.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="赛前准备"><a href="#赛前准备" class="headerlink" title="赛前准备"></a>赛前准备</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 梳理网线</span><br><span class="line">2. 配置BC、WFA、FW设备IP地址</span><br><span class="line">3. 连接设备检查是否能正常登录</span><br><span class="line">4. 查看拓扑图，子网划分表，vlan划分进行连线思路整理，细心耐心整理连接</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">型号</th>
+<th align="center">端口</th>
+<th align="center">登录</th>
+<th align="center">用户名</th>
+<th align="center">密码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">DCFW-1800E-N3002</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.1.1/">https://192.168.1.1</a></td>
+<td align="center">admin</td>
+<td align="center">admin</td>
+</tr>
+<tr>
+<td align="center">DCFW-1800E-WAF-P</td>
+<td align="center">G0-G5</td>
+<td align="center"><a href="https://192.168.254.1/">https://192.168.254.1</a></td>
+<td align="center">admin</td>
+<td align="center">yunke1234!</td>
+</tr>
+<tr>
+<td align="center">DCBC-NetLog</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.0.1:9090/">https://192.168.0.1:9090</a></td>
+<td align="center">admin</td>
+<td align="center">admin*PWD</td>
+</tr>
+<tr>
+<td align="center">DCWS-6028P</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">CS6200-28X-Pro</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<p>必须熟记三个web网站及对应型号，节省一阶段时间</p>
+<h2 id="任务一"><a href="#任务一" class="headerlink" title="任务一"></a>任务一</h2><p>使用笔记本模板配置最快速 </p>
+<p>连接AP，FW都为trunk  </p>
+<p>连接AP时设置native vlan</p>
+<h3 id="FW"><a href="#FW" class="headerlink" title="FW"></a>FW</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.1.1</span><br><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
+
+<p><strong>策略放行</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rule id 1</span><br><span class="line">   action permit</span><br><span class="line">   src-addr any</span><br><span class="line">   dst-addr any</span><br><span class="line">   service any</span><br><span class="line">zone trust1</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enabel</span><br><span class="line">interface e0/1</span><br><span class="line">manage ping </span><br><span class="line">zone trust</span><br><span class="line">ip ad 192.168.0.1/24</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">interface aggregate1</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">lacp enable</span><br><span class="line">exit</span><br><span class="line">interface aggregate1.113</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.1/24</span><br><span class="line">interface aggregate1.114</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.2/24</span><br><span class="line">exit</span><br><span class="line">interface e0/1</span><br><span class="line">aggregate aggregate1</span><br><span class="line">interface e0/2</span><br><span class="line">aggregate aggregate1</span><br><span class="line">show configuration  interface  aggregate1</span><br></pre></td></tr></table></figure>
+
+<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enable</span><br><span class="line">config</span><br><span class="line">hostname CS</span><br><span class="line">vlan xx;xx;xx</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enable</span><br><span class="line">interface vlan xx</span><br><span class="line">ipv6 enable </span><br><span class="line">ip ad 192.168.0.1/24</span><br><span class="line">ipv6 ....</span><br></pre></td></tr></table></figure>
+
+<p><strong>捆绑vlan</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int e1/0/1</span><br><span class="line">sw ac vlan  xx</span><br><span class="line">int e1/0/2</span><br><span class="line">sw mode trunk</span><br><span class="line">sw trunk all vlan 140;150 </span><br><span class="line">sw trunk native vlan 11 此时管理vlan就是11 140;150是通过此端口的vlan就比如vlan140;150是APvlan</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">port-group  1 </span><br><span class="line">interface ethernet  1/0/1-2</span><br><span class="line">port-group 1 mode active 主动模式</span><br><span class="line">interface  port-channel 1 </span><br><span class="line">switchport mode trunk 设置为trunk端口，看题目而定，access可不设置</span><br><span class="line">switchport trunk allowed vlan 100</span><br></pre></td></tr></table></figure>
+
+<h3 id="WS"><a href="#WS" class="headerlink" title="WS"></a>WS</h3><p>同CS配置一样</p>
+<h3 id="BC"><a href="#BC" class="headerlink" title="BC"></a>BC</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.0.1:9090 </span><br><span class="line">admin</span><br><span class="line">admin*PWD</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 增加安全策略</span><br><span class="line">3. 配置端口、IP</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184833754-1912863813.png" alt="image-20240619184834859"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184849177-962736332.png" alt="image-20240619184850332"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184905358-1318996520.png" alt="image-20240619184906940"></p>
+<h3 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.254.1</span><br><span class="line">admin</span><br><span class="line">yunke1234!</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 配置端口、IP、默认路由</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184952246-32313762.png" alt="image-20240619184953903"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185000429-1283664333.png" alt="image-20240619185002200"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185009251-1309281478.png" alt="image-20240619185010997"></p>
+<h2 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h2><p>首先要明白主机IP32位由 网络位+主机位构成<br>二进制计算：<br>0  |0 |0 |0 |0|0|0|0<br>128|64|32|16|8|4|2|1 相加就是255</p>
+<p>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24<br>网络地址是主机号全为0<br>广播地址是主机号全为1<br>比如192.168.0.1&#x2F;24二进制表达就是<br>主机： 11000000 10101000 00000000 00000001<br>掩码： 11111111 11111111 11111111 00000000<br>子网： 11000000 10101000 00000000 00000000<br>主机掩码变化到子网就是同1化1，异化0<br>根据子网算出网络地址和广播地址<br>子网： 11000000 10101000 00000000 | 00000000 #因为掩码是24所以前24位是固定的，变化的都是<br>主机号<br>      —-     网络位          —| –主机位–<br>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24</p>
+<h3 id="解决思路："><a href="#解决思路：" class="headerlink" title="解决思路："></a>解决思路：</h3><p><strong>第一步：</strong>找出题目中给出的网络号<br><strong>第二部：</strong>计算出网络地址和广播地址 #目的就是划分网络不超出这个范围<br><strong>第三步：</strong>进行子网划分，遵循从大到小原则，先算大，再算小<br><strong>第四步：</strong>通过子网掩码计算可用主机数量<br><strong>第五步：</strong>从大到小计算网络地址和广播地址</p>
+<h3 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h3><p>某公司获得了一个 IP 地址段为172.16.24.0&#x2F;23 的网络。该公司需要将这个网络划分为多个子网以满足不<br>同部门的需求。根据给定的要求，请回答以下问题：<br>公司有三个部门，各部门所需最少子网地址数量，销售（60）、技术（10）、营销（129）<br>基于上述划分，确定每个子网的子网掩码、网络地址范围和广播地址</p>
+<p><strong>第一步：</strong>172.16.24.0&#x2F;23<br><strong>第二部：</strong>自己按照上面提示求出子网<br>子网：10101100 00010000 00011000 00000000<br>这次掩码变为23了，所以主机位就是9，前23位不动，后9位变化<br>子网：10101100 00010000 0001100|0 00000000—<br>            —              网络位                   —|—    主机位  —<br>网络地址：172.16.24.0&#x2F;23<br>广播地址：172.16.25.255&#x2F;23<br><strong>第三步：</strong>先算营销、再销售、再技术<br><strong>第四步：</strong>营销所需129个 销售所需60 技术所需10个 +2是因为.0和.255不可用就是网络地址和广播地址不<br>可用</p>
+<p>2的x的平方&gt;&#x3D;129+2 x&gt;&#x3D;8 32-8&#x3D;24 所以营销部门子网掩码就是24</p>
+<p>2的x的平方&gt;&#x3D;60+2 x&gt;&#x3D;6 32-6&#x3D;26 所以销售部门子网掩码就是26 </p>
+<p>2的x的平方&gt;&#x3D;10+2 x&gt;&#x3D;4 32-4&#x3D;28 所以技术部门子网掩码就是28</p>
+<p><strong>第五步：</strong><br><strong>1.营销：</strong>172.16.24.0&#x2F;24<br> 172.16.24.00000000<br>网络-广播：172.16.24.0-172.16.24.255&#x2F;24<br>可用主机：172.16.24.1-172.16.24.254<br>因为172.16.24.0&#x2F;24的地址均用完，接下来就要使用172.16.25.0网段</p>
+<p><strong>2.销售：</strong>172.16.25.0&#x2F;26<br> 172.16.24.00|000000<br>网络-广播：172.16.25.0-172.16.25.63&#x2F;26<br>可用主机：172.16.25.1-172.16.25.62&#x2F;26<br> <strong>3.技术：</strong>172.16.25.64&#x2F;28<br> 172.16.24.0100|0000<br>网路-广播：172.16.25.64-172.16.25.79&#x2F;28<br>可用主机：172.16.25.65-172.16.25.78&#x2F;28</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客配置</title>
+    <url>/posts/459ba203.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
+
+<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
+<p>可选择是否自动播放</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
+<p>音乐代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
+<meta name="referrer" content="no-referrer">
+
+<p>例子：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
+<ul>
+<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
+<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
+</ul>
+<p>在博客根目录文件夹下打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
+<p><strong>启用主题：</strong></p>
+<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
+<p><strong>验证：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
+
+<p>清空缓存，生成，上传</p>
+<p><strong>分类：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
+<p>以此类推</p>
+<p><strong>标签：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>基于github+Cloudflare搭建个人博客</title>
+    <url>/posts/2f7875ad.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>本次搭建</p>
+<p>服务器：github（免费）</p>
+<p>域名：阿里云，西部数码等等（需要付费，第一年大概12左右）</p>
+<p>如果想白嫖搭建到博客上线步骤暂停</p>
+<h2 id="准备工具"><a href="#准备工具" class="headerlink" title="准备工具"></a>准备工具</h2><p>以下工具安装必应搜索网上一堆教程</p>
+<p>node</p>
+<p>git</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v（这个是node附带的）</span><br><span class="line">git -v</span><br></pre></td></tr></table></figure>
+
+<p>下载hexo</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭建仓库"><a href="#搭建仓库" class="headerlink" title="搭建仓库"></a>搭建仓库</h2><p>github新建仓库</p>
+<p>仓库名一定要设置<code>用户名.github.io</code></p>
+<p>勾选public公共</p>
+<p>勾选Add a READNE file</p>
+<h2 id="生成SSH-Keys"><a href="#生成SSH-Keys" class="headerlink" title="生成SSH Keys"></a>生成SSH Keys</h2><p>任意位置打开<code>open git bash here</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮件地址&quot;</span><br></pre></td></tr></table></figure>
+
+<p>回车4次</p>
+<p>进入<code>C:\Users\Lenovo\.ssh</code>目录</p>
+<p>复制<code>id_rsa.pub</code>文件代码</p>
+<p>再打开github，设置，sshkeys</p>
+<p>名称随意，代码粘贴到下面创建</p>
+<p><strong>测试是否成功</strong></p>
+<p><code>git bash</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>yes</p>
+<h2 id="生成本地博客内容"><a href="#生成本地博客内容" class="headerlink" title="生成本地博客内容"></a>生成本地博客内容</h2><p>确定位置新建blog文件夹，进入打开<code>git bash</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+
+<p>若出现<code>‘command not find’</code>，就在命令前加入npx</p>
+<p>然后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo install #安装</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo s #本地加载</span><br></pre></td></tr></table></figure>
+
+<h2 id="博客上线"><a href="#博客上线" class="headerlink" title="博客上线"></a>博客上线</h2><p>打开站点配置<code>_config.yml</code></p>
+<p>注意缩进两个空格</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: </span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
+
+<p>仓库，code，复制https，复制到repository: 注意与冒号之间有空格</p>
+<p>安装自动部署工具</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br><span class="line">git config --global user.name &quot;你的名字&quot;</span><br></pre></td></tr></table></figure>
+
+<p>再次生成，上传</p>
+<p>此时就算搭建成功，网址为：用户名.github.io</p>
+<h2 id="cloudflare部署"><a href="#cloudflare部署" class="headerlink" title="cloudflare部署"></a>cloudflare部署</h2><p>Github提供的网址在国内的访问速度较慢，再通过绑定域名方法会很快</p>
+<p>Vercel和cloudflare作用相同，但是目前Vercel被国内设墙，部分用户可以访问，部分不行，需要搭梯子，导致不能所有用户访问。（Vercel方法随缘，有的人可以全国访问，而我的就不行，Vercel教程<a href="https://blog.fiveth.cc/p/138e/">Hexo搭建进阶：Vercel部署、主题安装、基础用法 (fiveth.cc)</a>）</p>
+<p>不习惯英语可以修改为中文，对于学生来说还是推荐english，多熟悉熟悉英语，以后工作更方便</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232010147-300554834.png" alt="image-20240609232009691"></p>
+<p>点击workers-and-pages进行创建</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232123938-2087969152.png" alt="image-20240609232123559"></p>
+<p>点击pages，连接git，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232328923-371863785.png" alt="image-20240609232328581"></p>
+<p>选择我们创建的github仓库</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232417450-646256914.png" alt="image-20240609232417384"></p>
+<p>按照提示继续，目前的网址就更新为项目名称.pages.dev</p>
+<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>点击刚部署好的网站</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232633972-113818485.png" alt="image-20240609232633677"></p>
+<p>选择自定义域名，按照提示进行操作即可</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232738778-1698844123.png" alt="image-20240609232738669"></p>
+<p>自此免费服务器+自定义域名搭建成功</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
     <title>图床搭建(零成本)</title>
     <url>/posts/afaa72b6.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -253,203 +494,125 @@
       </categories>
   </entry>
   <entry>
-    <title>数字取证</title>
-    <url>/posts/21993.html</url>
+    <title>内存取证</title>
+    <url>/posts/14937.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
 
-<h2 id="任务三：数字文件取证"><a href="#任务三：数字文件取证" class="headerlink" title="任务三：数字文件取证"></a>任务三：数字文件取证</h2><table>
+<h2 id="任务二：内存文件取证"><a href="#任务二：内存文件取证" class="headerlink" title="任务二：内存文件取证"></a>任务二：内存文件取证</h2><table>
 <thead>
 <tr>
-<th align="center">证据编号</th>
-<th align="center">在取证镜像中的文件名</th>
-<th align="center">镜像中原文件Hash码（MD5，不区分大小写）</th>
+<th>序号</th>
+<th>任务描述</th>
+<th>答案</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">evidence 1</td>
-<td align="center">eg2kx.jpg</td>
-<td align="center">85cdf73518b32a37f74c4bfa42d856a6</td>
+<td>1</td>
+<td>从内存中获取到用户admin的密码并且破解密码，以Flag{admin,password}形式提交(密码为6位)；</td>
+<td></td>
 </tr>
 <tr>
-<td align="center">evidence 2</td>
-<td align="center">ZQOo2.zip</td>
-<td align="center">9e69763ec7dac69e2c5b07a5955a5868</td>
+<td>2</td>
+<td>获取当前系统ip地址及主机名，以Flag{ip:主机名}形式提交；</td>
+<td></td>
 </tr>
 <tr>
-<td align="center">evidence 3</td>
-<td align="center">p3qQ4.jpg</td>
-<td align="center">a9a18aecec905a7742042461595b4b5c</td>
+<td>3</td>
+<td>当前系统中存在的挖矿进程，请获取指向的矿池地址，以Flag{ip}形式提 交；</td>
+<td></td>
 </tr>
 <tr>
-<td align="center">evidence 4</td>
-<td align="center">nsOh2.png</td>
-<td align="center">f5b9ce3e485314c23c40a89d994b2dc8</td>
+<td>4</td>
+<td>恶意进程在系统中注册了服务，请将服务名以Flag{服务名}形式提交。</td>
+<td></td>
 </tr>
 <tr>
-<td align="center">evidence 5</td>
-<td align="center">RVlYt.zip</td>
-<td align="center">3f67593f11669c72a36bad4d41a83a78</td>
-</tr>
-<tr>
-<td align="center">evidence 6</td>
-<td align="center">mkjRv.7z</td>
-<td align="center">e610fcd2a0cd53d158e8ee4bb088100a</td>
-</tr>
-<tr>
-<td align="center">evidence 7</td>
-<td align="center">OR8iq.xml</td>
-<td align="center">28ba933c31fd60f8c4461aed14a8c447</td>
-</tr>
-<tr>
-<td align="center">evidence 8</td>
-<td align="center">8cFQj.py</td>
-<td align="center">7fccfb1778b15fbc09deb6690afc776a</td>
-</tr>
-<tr>
-<td align="center">evidence 9</td>
-<td align="center">jMH7w.xlsx</td>
-<td align="center">523c407180d54dde6eca700405599c8a</td>
-</tr>
-<tr>
-<td align="center">evidence 10</td>
-<td align="center">01d98.gif</td>
-<td align="center">d708444963b79da344fd71e5c72f7f02</td>
+<td>5</td>
+<td>从内存文件中获取黑客进入系统后下载的flag文件，将文件中的值作为Flag 值提交；</td>
+<td></td>
 </tr>
 </tbody></table>
-<h3 id="evidence-1"><a href="#evidence-1" class="headerlink" title="evidence 1"></a>evidence 1</h3><p>在auto中找到eg2kx.jpg，保存到本地</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png" alt="image-20240619144319921"></p>
-<p>放到kali里查看下文件，发现里面有个压缩包</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png" alt="image-20240619144344786"></p>
-<p>后缀修改.zip，打开压缩包</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png" alt="image-20240619144400692"></p>
-<p>certutil -hashfile filename md5 使用cmd终端求出源文件hash码</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png" alt="image-20240619144423655"></p>
-<h3 id="evidence-2"><a href="#evidence-2" class="headerlink" title="evidence 2"></a>evidence 2</h3><p>ZQOo2.jpg用kali分析</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png" alt="image-20240619144450039"></p>
-<p>修改成zip文件需要密码，拉到010修改参数</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png" alt="image-20240619144531862"></p>
-<h3 id="evidence-3"><a href="#evidence-3" class="headerlink" title="evidence 3"></a>evidence 3</h3><p>p3qQ4.jpg</p>
-<p>打开就是图片没显示完全 </p>
-<p>HEX 十六进制 </p>
-<p>DEC 十进制 </p>
-<p>OCT 八进制 </p>
-<p>BIN 二进制 </p>
-<p>00 00 02 80 代表宽度 </p>
-<p>00 00 01 92 代表高度</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png" alt="image-20240619144803532"></p>
-<p>将高度十进制修改成1000，十六进制就是03 E8</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png" alt="image-20240619144822803"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png" alt="image-20240619144837626"></p>
-<h3 id="evidence-4"><a href="#evidence-4" class="headerlink" title="evidence 4"></a>evidence 4</h3><p>nsOh2.png 直接显示了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png" alt="image-20240619144904197"></p>
-<h3 id="evidence-5"><a href="#evidence-5" class="headerlink" title="evidence 5"></a>evidence 5</h3><p>RVlYt.zip</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png" alt="image-20240619145024416"></p>
-<p>另一张图片并没有什么 用010打开发现两张图片中间含有base64解码 搜索45 4E 44 是结尾16进制表示</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png" alt="image-20240619145040368"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png" alt="image-20240619145050523"></p>
-<p>或者使用kali解码</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png" alt="image-20240619145105118"></p>
-<h3 id="evidence-6"><a href="#evidence-6" class="headerlink" title="evidence 6"></a>evidence 6</h3><p>mkjRv.7z</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png" alt="image-20240619145154340"></p>
-<p> kali分析 修改成mpeg文件 使用audacity打开</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png" alt="image-20240619145209317"></p>
-<h3 id="evidence-7"><a href="#evidence-7" class="headerlink" title="evidence 7"></a>evidence 7</h3><p>OR8iq.xml</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png" alt="image-20240619145301158"></p>
-<p>stegsolve查看</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png" alt="image-20240619145311255"></p>
-<h3 id="evidence-8"><a href="#evidence-8" class="headerlink" title="evidence 8"></a>evidence 8</h3><p>8cFQj.py</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png" alt="image-20240619145402450"></p>
-<p>010 查看到末尾都是二进制，用python进行每8组为单位转换对应十进制 发现结尾都是base32</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png" alt="image-20240619145427107"></p>
-<p>进行在线转换，32-&gt;64-&gt;32-&gt;hex-&gt;32-&gt;64-&gt;32</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png" alt="image-20240619145445087"></p>
-<h3 id="evidence-9"><a href="#evidence-9" class="headerlink" title="evidence 9"></a>evidence 9</h3><p> jMH7w.js</p>
-<p>kali分析</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png" alt="image-20240619145532632"></p>
-<p>改成压缩包后打开xlsx表格，拉住界面标红</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png" alt="image-20240619145539415"></p>
-<h3 id="evidence-10"><a href="#evidence-10" class="headerlink" title="evidence 10"></a>evidence 10</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png" alt="image-20240619145602089"></p>
-<p>Stegsolve.jar打开</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png" alt="image-20240619145614500"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png" alt="image-20240619145624224"></p>
+<p>分析镜像系统</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem imageinfo</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150423058-776766353.png" alt="image-20240619150424753"></p>
+<p>一般用第一个作为系统版本</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150437853-1464101184.png" alt="image-20240619150439757"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem -- profile=Win7SP1x64 hashdump 查看用户和密码(不是明文)一般破解不出来</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150504638-1392824465.png" alt="image-20240619150506064"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">尝试下破解密码</span><br><span class="line">ctrl+shirt+t快捷打开新窗口</span><br><span class="line">vi 1.txt</span><br><span class="line">将密码写入wq保存</span><br><span class="line">cat 1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150517469-2058002278.png" alt="image-20240619150519326"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">破解密码</span><br><span class="line">john 1.txt</span><br><span class="line">自动分析密码类型，使用默认字典，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150531612-260363863.png" alt="image-20240619150533389"></p>
+<p>kali字典位置 cd &#x2F;usr&#x2F;share&#x2F;wordlists</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150557109-1014596405.png" alt="image-20240619150558827"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用默认字典破解</span><br><span class="line">john --wordlist=/usr/share/wordlists/rockyou.txt --format=LM 1.txt</span><br><span class="line"> windows使用--format=NTLM</span><br><span class="line">显示没成功</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150613603-1910517122.png" alt="image-20240619150615339"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 lsadump</span><br><span class="line">使用lsadump</span><br><span class="line">所以密码就是H8d*or</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150632837-1280567653.png" alt="image-20240619150634522"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">看到开放端口</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150654722-69234278.png" alt="image-20240619150656428"></p>
+<p>所以本机IP就是192.168.232.129</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150711549-689200065.png" alt="image-20240619150713230"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看注册表内容</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 hivelist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150734928-1348737340.png" alt="image-20240619150736509"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">如何查看注册表中有哪些表项-o 指定虚拟地址Virtual printkey</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150755476-639221767.png" alt="image-20240619150757222"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-K &quot;指定表&quot;  K是大写</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001&quot;</span><br><span class="line">有用的是Control</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150808469-1657629284.png" alt="image-20240619150810206"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">加反斜杠\ 进入下一层</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001\Control&quot;</span><br><span class="line">有用的是ComputerName</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150823925-378209424.png" alt="image-20240619150825664"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150837705-35131151.png" alt="image-20240619150839463"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName\ComputerName&quot;</span><br><span class="line">用户名就是CXKKA2ZCLKN</span><br><span class="line">这个路径是固定的，记一下</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150902065-751198085.png" alt="image-20240619150903832"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看连接次数较多，程序名比较诡异的，可能就是向外连接的挖矿地址</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150918780-282749939.png" alt="image-20240619150920511"></p>
+<p>挖矿地址就是51.254.84.37</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150929451-2134456690.png" alt="image-20240619150931161"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist</span><br><span class="line"> pslist可以查看内存中所有的进程</span><br><span class="line">等同于windows下tasklist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150945946-1956630255.png" alt="image-20240619150947590"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150954886-168856547.png" alt="image-20240619150956640"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">windows下关闭进程</span><br><span class="line">taskkill /pid 3988</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151010462-126443852.png" alt="image-20240619151012016"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-p 指定pid</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist -p 1716</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151025371-250007496.png" alt="image-20240619151026920"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line">profile=Win7SP1x64 pstree</span><br><span class="line">pstree 可以树状显示进程</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151038024-245141440.png" alt="image-20240619151039711"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">explorer 就是windows文件资源管理器</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 svcscan</span><br><span class="line"> svcscan可以查看所有服务</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151055357-1985636528.png" alt="image-20240619151057012"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan</span><br><span class="line"> filescan查看内存中所有文件</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan | grep -i &quot;txt\|png\|jpg\|flag\|desktop\|gif&quot;-i 不区分大小写，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151109423-855338997.png" alt="image-20240619151111037"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 dumpfiles -Q 0x000000007f810a70 -D ./-Q 进程号 -D 指定导出位置 ./当前目录</span><br><span class="line">再将flag.txt导出</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151121602-2086704710.png" alt="image-20240619151123498"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151130082-2062314983.png" alt="image-20240619151131946"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151139321-882868819.png" alt="image-20240619151141107"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">将两个文件复制到物理机，使用010打开，分析很明显是两张图片能组成一张</span><br><span class="line">用末尾图片复制到开头图片00位置保存</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151208960-822247532.png" alt="image-20240619151210770"></p>
 ]]></content>
       <categories>
         <category>writeup</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>基于github+Cloudflare搭建个人博客</title>
-    <url>/posts/2f7875ad.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<p>本次搭建</p>
-<p>服务器：github（免费）</p>
-<p>域名：阿里云，西部数码等等（需要付费，第一年大概12左右）</p>
-<p>如果想白嫖搭建到博客上线步骤暂停</p>
-<h2 id="准备工具"><a href="#准备工具" class="headerlink" title="准备工具"></a>准备工具</h2><p>以下工具安装必应搜索网上一堆教程</p>
-<p>node</p>
-<p>git</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v（这个是node附带的）</span><br><span class="line">git -v</span><br></pre></td></tr></table></figure>
-
-<p>下载hexo</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
-
-<h2 id="搭建仓库"><a href="#搭建仓库" class="headerlink" title="搭建仓库"></a>搭建仓库</h2><p>github新建仓库</p>
-<p>仓库名一定要设置<code>用户名.github.io</code></p>
-<p>勾选public公共</p>
-<p>勾选Add a READNE file</p>
-<h2 id="生成SSH-Keys"><a href="#生成SSH-Keys" class="headerlink" title="生成SSH Keys"></a>生成SSH Keys</h2><p>任意位置打开<code>open git bash here</code>输入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮件地址&quot;</span><br></pre></td></tr></table></figure>
-
-<p>回车4次</p>
-<p>进入<code>C:\Users\Lenovo\.ssh</code>目录</p>
-<p>复制<code>id_rsa.pub</code>文件代码</p>
-<p>再打开github，设置，sshkeys</p>
-<p>名称随意，代码粘贴到下面创建</p>
-<p><strong>测试是否成功</strong></p>
-<p><code>git bash</code>输入</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
-
-<p>yes</p>
-<h2 id="生成本地博客内容"><a href="#生成本地博客内容" class="headerlink" title="生成本地博客内容"></a>生成本地博客内容</h2><p>确定位置新建blog文件夹，进入打开<code>git bash</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
-
-<p>若出现<code>‘command not find’</code>，就在命令前加入npx</p>
-<p>然后</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo install #安装</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo s #本地加载</span><br></pre></td></tr></table></figure>
-
-<h2 id="博客上线"><a href="#博客上线" class="headerlink" title="博客上线"></a>博客上线</h2><p>打开站点配置<code>_config.yml</code></p>
-<p>注意缩进两个空格</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: </span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
-
-<p>仓库，code，复制https，复制到repository: 注意与冒号之间有空格</p>
-<p>安装自动部署工具</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
-
-<p>配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br><span class="line">git config --global user.name &quot;你的名字&quot;</span><br></pre></td></tr></table></figure>
-
-<p>再次生成，上传</p>
-<p>此时就算搭建成功，网址为：用户名.github.io</p>
-<h2 id="cloudflare部署"><a href="#cloudflare部署" class="headerlink" title="cloudflare部署"></a>cloudflare部署</h2><p>Github提供的网址在国内的访问速度较慢，再通过绑定域名方法会很快</p>
-<p>Vercel和cloudflare作用相同，但是目前Vercel被国内设墙，部分用户可以访问，部分不行，需要搭梯子，导致不能所有用户访问。（Vercel方法随缘，有的人可以全国访问，而我的就不行，Vercel教程<a href="https://blog.fiveth.cc/p/138e/">Hexo搭建进阶：Vercel部署、主题安装、基础用法 (fiveth.cc)</a>）</p>
-<p>不习惯英语可以修改为中文，对于学生来说还是推荐english，多熟悉熟悉英语，以后工作更方便</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232010147-300554834.png" alt="image-20240609232009691"></p>
-<p>点击workers-and-pages进行创建</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232123938-2087969152.png" alt="image-20240609232123559"></p>
-<p>点击pages，连接git，</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232328923-371863785.png" alt="image-20240609232328581"></p>
-<p>选择我们创建的github仓库</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232417450-646256914.png" alt="image-20240609232417384"></p>
-<p>按照提示继续，目前的网址就更新为项目名称.pages.dev</p>
-<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>点击刚部署好的网站</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232633972-113818485.png" alt="image-20240609232633677"></p>
-<p>选择自定义域名，按照提示进行操作即可</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232738778-1698844123.png" alt="image-20240609232738669"></p>
-<p>自此免费服务器+自定义域名搭建成功</p>
-]]></content>
-      <categories>
-        <category>博客配置</category>
       </categories>
   </entry>
   <entry>
@@ -966,288 +1129,125 @@
       </categories>
   </entry>
   <entry>
-    <title>博客配置</title>
-    <url>/posts/459ba203.html</url>
+    <title>数字取证</title>
+    <url>/posts/21993.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
 
-<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
-
-<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
-<p>可选择是否自动播放</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
-<p>音乐代码</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
-<meta name="referrer" content="no-referrer">
-
-<p>例子：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
-<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
-<ul>
-<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
-<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
-</ul>
-<p>在博客根目录文件夹下打开</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-
-<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
-<p><strong>启用主题：</strong></p>
-<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
-<p><strong>验证：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
-
-<p>清空缓存，生成，上传</p>
-<p><strong>分类：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
-
-<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
-<p>以此类推</p>
-<p><strong>标签：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>关于：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>博客配置</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>信安管评一阶段</title>
-    <url>/posts/2590.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="赛前准备"><a href="#赛前准备" class="headerlink" title="赛前准备"></a>赛前准备</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 梳理网线</span><br><span class="line">2. 配置BC、WFA、FW设备IP地址</span><br><span class="line">3. 连接设备检查是否能正常登录</span><br><span class="line">4. 查看拓扑图，子网划分表，vlan划分进行连线思路整理，细心耐心整理连接</span><br></pre></td></tr></table></figure>
-
-<table>
+<h2 id="任务三：数字文件取证"><a href="#任务三：数字文件取证" class="headerlink" title="任务三：数字文件取证"></a>任务三：数字文件取证</h2><table>
 <thead>
 <tr>
-<th align="center">型号</th>
-<th align="center">端口</th>
-<th align="center">登录</th>
-<th align="center">用户名</th>
-<th align="center">密码</th>
+<th align="center">证据编号</th>
+<th align="center">在取证镜像中的文件名</th>
+<th align="center">镜像中原文件Hash码（MD5，不区分大小写）</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">DCFW-1800E-N3002</td>
-<td align="center">eth0</td>
-<td align="center"><a href="https://192.168.1.1/">https://192.168.1.1</a></td>
-<td align="center">admin</td>
-<td align="center">admin</td>
+<td align="center">evidence 1</td>
+<td align="center">eg2kx.jpg</td>
+<td align="center">85cdf73518b32a37f74c4bfa42d856a6</td>
 </tr>
 <tr>
-<td align="center">DCFW-1800E-WAF-P</td>
-<td align="center">G0-G5</td>
-<td align="center"><a href="https://192.168.254.1/">https://192.168.254.1</a></td>
-<td align="center">admin</td>
-<td align="center">yunke1234!</td>
+<td align="center">evidence 2</td>
+<td align="center">ZQOo2.zip</td>
+<td align="center">9e69763ec7dac69e2c5b07a5955a5868</td>
 </tr>
 <tr>
-<td align="center">DCBC-NetLog</td>
-<td align="center">eth0</td>
-<td align="center"><a href="https://192.168.0.1:9090/">https://192.168.0.1:9090</a></td>
-<td align="center">admin</td>
-<td align="center">admin*PWD</td>
+<td align="center">evidence 3</td>
+<td align="center">p3qQ4.jpg</td>
+<td align="center">a9a18aecec905a7742042461595b4b5c</td>
 </tr>
 <tr>
-<td align="center">DCWS-6028P</td>
-<td align="center"></td>
-<td align="center">console</td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">evidence 4</td>
+<td align="center">nsOh2.png</td>
+<td align="center">f5b9ce3e485314c23c40a89d994b2dc8</td>
 </tr>
 <tr>
-<td align="center">CS6200-28X-Pro</td>
-<td align="center"></td>
-<td align="center">console</td>
-<td align="center"></td>
-<td align="center"></td>
+<td align="center">evidence 5</td>
+<td align="center">RVlYt.zip</td>
+<td align="center">3f67593f11669c72a36bad4d41a83a78</td>
+</tr>
+<tr>
+<td align="center">evidence 6</td>
+<td align="center">mkjRv.7z</td>
+<td align="center">e610fcd2a0cd53d158e8ee4bb088100a</td>
+</tr>
+<tr>
+<td align="center">evidence 7</td>
+<td align="center">OR8iq.xml</td>
+<td align="center">28ba933c31fd60f8c4461aed14a8c447</td>
+</tr>
+<tr>
+<td align="center">evidence 8</td>
+<td align="center">8cFQj.py</td>
+<td align="center">7fccfb1778b15fbc09deb6690afc776a</td>
+</tr>
+<tr>
+<td align="center">evidence 9</td>
+<td align="center">jMH7w.xlsx</td>
+<td align="center">523c407180d54dde6eca700405599c8a</td>
+</tr>
+<tr>
+<td align="center">evidence 10</td>
+<td align="center">01d98.gif</td>
+<td align="center">d708444963b79da344fd71e5c72f7f02</td>
 </tr>
 </tbody></table>
-<p>必须熟记三个web网站及对应型号，节省一阶段时间</p>
-<h2 id="任务一"><a href="#任务一" class="headerlink" title="任务一"></a>任务一</h2><p>使用笔记本模板配置最快速 </p>
-<p>连接AP，FW都为trunk  </p>
-<p>连接AP时设置native vlan</p>
-<h3 id="FW"><a href="#FW" class="headerlink" title="FW"></a>FW</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.1.1</span><br><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
-
-<p><strong>策略放行</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rule id 1</span><br><span class="line">   action permit</span><br><span class="line">   src-addr any</span><br><span class="line">   dst-addr any</span><br><span class="line">   service any</span><br><span class="line">zone trust1</span><br></pre></td></tr></table></figure>
-
-<p><strong>配置IP</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enabel</span><br><span class="line">interface e0/1</span><br><span class="line">manage ping </span><br><span class="line">zone trust</span><br><span class="line">ip ad 192.168.0.1/24</span><br></pre></td></tr></table></figure>
-
-<p><strong>链路聚合配置</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">interface aggregate1</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">lacp enable</span><br><span class="line">exit</span><br><span class="line">interface aggregate1.113</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.1/24</span><br><span class="line">interface aggregate1.114</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.2/24</span><br><span class="line">exit</span><br><span class="line">interface e0/1</span><br><span class="line">aggregate aggregate1</span><br><span class="line">interface e0/2</span><br><span class="line">aggregate aggregate1</span><br><span class="line">show configuration  interface  aggregate1</span><br></pre></td></tr></table></figure>
-
-<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enable</span><br><span class="line">config</span><br><span class="line">hostname CS</span><br><span class="line">vlan xx;xx;xx</span><br></pre></td></tr></table></figure>
-
-<p><strong>配置IP</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enable</span><br><span class="line">interface vlan xx</span><br><span class="line">ipv6 enable </span><br><span class="line">ip ad 192.168.0.1/24</span><br><span class="line">ipv6 ....</span><br></pre></td></tr></table></figure>
-
-<p><strong>捆绑vlan</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int e1/0/1</span><br><span class="line">sw ac vlan  xx</span><br><span class="line">int e1/0/2</span><br><span class="line">sw mode trunk</span><br><span class="line">sw trunk all vlan 140;150 </span><br><span class="line">sw trunk native vlan 11 此时管理vlan就是11 140;150是通过此端口的vlan就比如vlan140;150是APvlan</span><br></pre></td></tr></table></figure>
-
-<p><strong>链路聚合配置</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">port-group  1 </span><br><span class="line">interface ethernet  1/0/1-2</span><br><span class="line">port-group 1 mode active 主动模式</span><br><span class="line">interface  port-channel 1 </span><br><span class="line">switchport mode trunk 设置为trunk端口，看题目而定，access可不设置</span><br><span class="line">switchport trunk allowed vlan 100</span><br></pre></td></tr></table></figure>
-
-<h3 id="WS"><a href="#WS" class="headerlink" title="WS"></a>WS</h3><p>同CS配置一样</p>
-<h3 id="BC"><a href="#BC" class="headerlink" title="BC"></a>BC</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.0.1:9090 </span><br><span class="line">admin</span><br><span class="line">admin*PWD</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 增加安全策略</span><br><span class="line">3. 配置端口、IP</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184833754-1912863813.png" alt="image-20240619184834859"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184849177-962736332.png" alt="image-20240619184850332"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184905358-1318996520.png" alt="image-20240619184906940"></p>
-<h3 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.254.1</span><br><span class="line">admin</span><br><span class="line">yunke1234!</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 配置端口、IP、默认路由</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184952246-32313762.png" alt="image-20240619184953903"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185000429-1283664333.png" alt="image-20240619185002200"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185009251-1309281478.png" alt="image-20240619185010997"></p>
-<h2 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h2><p>首先要明白主机IP32位由 网络位+主机位构成<br>二进制计算：<br>0  |0 |0 |0 |0|0|0|0<br>128|64|32|16|8|4|2|1 相加就是255</p>
-<p>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24<br>网络地址是主机号全为0<br>广播地址是主机号全为1<br>比如192.168.0.1&#x2F;24二进制表达就是<br>主机： 11000000 10101000 00000000 00000001<br>掩码： 11111111 11111111 11111111 00000000<br>子网： 11000000 10101000 00000000 00000000<br>主机掩码变化到子网就是同1化1，异化0<br>根据子网算出网络地址和广播地址<br>子网： 11000000 10101000 00000000 | 00000000 #因为掩码是24所以前24位是固定的，变化的都是<br>主机号<br>      —-     网络位          —| –主机位–<br>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24</p>
-<h3 id="解决思路："><a href="#解决思路：" class="headerlink" title="解决思路："></a>解决思路：</h3><p><strong>第一步：</strong>找出题目中给出的网络号<br><strong>第二部：</strong>计算出网络地址和广播地址 #目的就是划分网络不超出这个范围<br><strong>第三步：</strong>进行子网划分，遵循从大到小原则，先算大，再算小<br><strong>第四步：</strong>通过子网掩码计算可用主机数量<br><strong>第五步：</strong>从大到小计算网络地址和广播地址</p>
-<h3 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h3><p>某公司获得了一个 IP 地址段为172.16.24.0&#x2F;23 的网络。该公司需要将这个网络划分为多个子网以满足不<br>同部门的需求。根据给定的要求，请回答以下问题：<br>公司有三个部门，各部门所需最少子网地址数量，销售（60）、技术（10）、营销（129）<br>基于上述划分，确定每个子网的子网掩码、网络地址范围和广播地址</p>
-<p><strong>第一步：</strong>172.16.24.0&#x2F;23<br><strong>第二部：</strong>自己按照上面提示求出子网<br>子网：10101100 00010000 00011000 00000000<br>这次掩码变为23了，所以主机位就是9，前23位不动，后9位变化<br>子网：10101100 00010000 0001100|0 00000000—<br>            —              网络位                   —|—    主机位  —<br>网络地址：172.16.24.0&#x2F;23<br>广播地址：172.16.25.255&#x2F;23<br><strong>第三步：</strong>先算营销、再销售、再技术<br><strong>第四步：</strong>营销所需129个 销售所需60 技术所需10个 +2是因为.0和.255不可用就是网络地址和广播地址不<br>可用</p>
-<p>2的x的平方&gt;&#x3D;129+2 x&gt;&#x3D;8 32-8&#x3D;24 所以营销部门子网掩码就是24</p>
-<p>2的x的平方&gt;&#x3D;60+2 x&gt;&#x3D;6 32-6&#x3D;26 所以销售部门子网掩码就是26 </p>
-<p>2的x的平方&gt;&#x3D;10+2 x&gt;&#x3D;4 32-4&#x3D;28 所以技术部门子网掩码就是28</p>
-<p><strong>第五步：</strong><br><strong>1.营销：</strong>172.16.24.0&#x2F;24<br> 172.16.24.00000000<br>网络-广播：172.16.24.0-172.16.24.255&#x2F;24<br>可用主机：172.16.24.1-172.16.24.254<br>因为172.16.24.0&#x2F;24的地址均用完，接下来就要使用172.16.25.0网段</p>
-<p><strong>2.销售：</strong>172.16.25.0&#x2F;26<br> 172.16.24.00|000000<br>网络-广播：172.16.25.0-172.16.25.63&#x2F;26<br>可用主机：172.16.25.1-172.16.25.62&#x2F;26<br> <strong>3.技术：</strong>172.16.25.64&#x2F;28<br> 172.16.24.0100|0000<br>网路-广播：172.16.25.64-172.16.25.79&#x2F;28<br>可用主机：172.16.25.65-172.16.25.78&#x2F;28</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>内存取证</title>
-    <url>/posts/14937.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="任务二：内存文件取证"><a href="#任务二：内存文件取证" class="headerlink" title="任务二：内存文件取证"></a>任务二：内存文件取证</h2><table>
-<thead>
-<tr>
-<th>序号</th>
-<th>任务描述</th>
-<th>答案</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1</td>
-<td>从内存中获取到用户admin的密码并且破解密码，以Flag{admin,password}形式提交(密码为6位)；</td>
-<td></td>
-</tr>
-<tr>
-<td>2</td>
-<td>获取当前系统ip地址及主机名，以Flag{ip:主机名}形式提交；</td>
-<td></td>
-</tr>
-<tr>
-<td>3</td>
-<td>当前系统中存在的挖矿进程，请获取指向的矿池地址，以Flag{ip}形式提 交；</td>
-<td></td>
-</tr>
-<tr>
-<td>4</td>
-<td>恶意进程在系统中注册了服务，请将服务名以Flag{服务名}形式提交。</td>
-<td></td>
-</tr>
-<tr>
-<td>5</td>
-<td>从内存文件中获取黑客进入系统后下载的flag文件，将文件中的值作为Flag 值提交；</td>
-<td></td>
-</tr>
-</tbody></table>
-<p>分析镜像系统</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem imageinfo</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150423058-776766353.png" alt="image-20240619150424753"></p>
-<p>一般用第一个作为系统版本</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150437853-1464101184.png" alt="image-20240619150439757"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem -- profile=Win7SP1x64 hashdump 查看用户和密码(不是明文)一般破解不出来</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150504638-1392824465.png" alt="image-20240619150506064"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">尝试下破解密码</span><br><span class="line">ctrl+shirt+t快捷打开新窗口</span><br><span class="line">vi 1.txt</span><br><span class="line">将密码写入wq保存</span><br><span class="line">cat 1.txt</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150517469-2058002278.png" alt="image-20240619150519326"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">破解密码</span><br><span class="line">john 1.txt</span><br><span class="line">自动分析密码类型，使用默认字典，</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150531612-260363863.png" alt="image-20240619150533389"></p>
-<p>kali字典位置 cd &#x2F;usr&#x2F;share&#x2F;wordlists</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150557109-1014596405.png" alt="image-20240619150558827"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用默认字典破解</span><br><span class="line">john --wordlist=/usr/share/wordlists/rockyou.txt --format=LM 1.txt</span><br><span class="line"> windows使用--format=NTLM</span><br><span class="line">显示没成功</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150613603-1910517122.png" alt="image-20240619150615339"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 lsadump</span><br><span class="line">使用lsadump</span><br><span class="line">所以密码就是H8d*or</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150632837-1280567653.png" alt="image-20240619150634522"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">看到开放端口</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150654722-69234278.png" alt="image-20240619150656428"></p>
-<p>所以本机IP就是192.168.232.129</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150711549-689200065.png" alt="image-20240619150713230"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看注册表内容</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 hivelist</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150734928-1348737340.png" alt="image-20240619150736509"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">如何查看注册表中有哪些表项-o 指定虚拟地址Virtual printkey</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150755476-639221767.png" alt="image-20240619150757222"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-K &quot;指定表&quot;  K是大写</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001&quot;</span><br><span class="line">有用的是Control</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150808469-1657629284.png" alt="image-20240619150810206"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">加反斜杠\ 进入下一层</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001\Control&quot;</span><br><span class="line">有用的是ComputerName</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150823925-378209424.png" alt="image-20240619150825664"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName&quot;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150837705-35131151.png" alt="image-20240619150839463"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName\ComputerName&quot;</span><br><span class="line">用户名就是CXKKA2ZCLKN</span><br><span class="line">这个路径是固定的，记一下</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150902065-751198085.png" alt="image-20240619150903832"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看连接次数较多，程序名比较诡异的，可能就是向外连接的挖矿地址</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150918780-282749939.png" alt="image-20240619150920511"></p>
-<p>挖矿地址就是51.254.84.37</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150929451-2134456690.png" alt="image-20240619150931161"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist</span><br><span class="line"> pslist可以查看内存中所有的进程</span><br><span class="line">等同于windows下tasklist</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150945946-1956630255.png" alt="image-20240619150947590"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150954886-168856547.png" alt="image-20240619150956640"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">windows下关闭进程</span><br><span class="line">taskkill /pid 3988</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151010462-126443852.png" alt="image-20240619151012016"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-p 指定pid</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist -p 1716</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151025371-250007496.png" alt="image-20240619151026920"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line">profile=Win7SP1x64 pstree</span><br><span class="line">pstree 可以树状显示进程</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151038024-245141440.png" alt="image-20240619151039711"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">explorer 就是windows文件资源管理器</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 svcscan</span><br><span class="line"> svcscan可以查看所有服务</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151055357-1985636528.png" alt="image-20240619151057012"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan</span><br><span class="line"> filescan查看内存中所有文件</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan | grep -i &quot;txt\|png\|jpg\|flag\|desktop\|gif&quot;-i 不区分大小写，</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151109423-855338997.png" alt="image-20240619151111037"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 dumpfiles -Q 0x000000007f810a70 -D ./-Q 进程号 -D 指定导出位置 ./当前目录</span><br><span class="line">再将flag.txt导出</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151121602-2086704710.png" alt="image-20240619151123498"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151130082-2062314983.png" alt="image-20240619151131946"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151139321-882868819.png" alt="image-20240619151141107"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">将两个文件复制到物理机，使用010打开，分析很明显是两张图片能组成一张</span><br><span class="line">用末尾图片复制到开头图片00位置保存</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151208960-822247532.png" alt="image-20240619151210770"></p>
+<h3 id="evidence-1"><a href="#evidence-1" class="headerlink" title="evidence 1"></a>evidence 1</h3><p>在auto中找到eg2kx.jpg，保存到本地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png" alt="image-20240619144319921"></p>
+<p>放到kali里查看下文件，发现里面有个压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png" alt="image-20240619144344786"></p>
+<p>后缀修改.zip，打开压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png" alt="image-20240619144400692"></p>
+<p>certutil -hashfile filename md5 使用cmd终端求出源文件hash码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png" alt="image-20240619144423655"></p>
+<h3 id="evidence-2"><a href="#evidence-2" class="headerlink" title="evidence 2"></a>evidence 2</h3><p>ZQOo2.jpg用kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png" alt="image-20240619144450039"></p>
+<p>修改成zip文件需要密码，拉到010修改参数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png" alt="image-20240619144531862"></p>
+<h3 id="evidence-3"><a href="#evidence-3" class="headerlink" title="evidence 3"></a>evidence 3</h3><p>p3qQ4.jpg</p>
+<p>打开就是图片没显示完全 </p>
+<p>HEX 十六进制 </p>
+<p>DEC 十进制 </p>
+<p>OCT 八进制 </p>
+<p>BIN 二进制 </p>
+<p>00 00 02 80 代表宽度 </p>
+<p>00 00 01 92 代表高度</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png" alt="image-20240619144803532"></p>
+<p>将高度十进制修改成1000，十六进制就是03 E8</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png" alt="image-20240619144822803"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png" alt="image-20240619144837626"></p>
+<h3 id="evidence-4"><a href="#evidence-4" class="headerlink" title="evidence 4"></a>evidence 4</h3><p>nsOh2.png 直接显示了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png" alt="image-20240619144904197"></p>
+<h3 id="evidence-5"><a href="#evidence-5" class="headerlink" title="evidence 5"></a>evidence 5</h3><p>RVlYt.zip</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png" alt="image-20240619145024416"></p>
+<p>另一张图片并没有什么 用010打开发现两张图片中间含有base64解码 搜索45 4E 44 是结尾16进制表示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png" alt="image-20240619145040368"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png" alt="image-20240619145050523"></p>
+<p>或者使用kali解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png" alt="image-20240619145105118"></p>
+<h3 id="evidence-6"><a href="#evidence-6" class="headerlink" title="evidence 6"></a>evidence 6</h3><p>mkjRv.7z</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png" alt="image-20240619145154340"></p>
+<p> kali分析 修改成mpeg文件 使用audacity打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png" alt="image-20240619145209317"></p>
+<h3 id="evidence-7"><a href="#evidence-7" class="headerlink" title="evidence 7"></a>evidence 7</h3><p>OR8iq.xml</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png" alt="image-20240619145301158"></p>
+<p>stegsolve查看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png" alt="image-20240619145311255"></p>
+<h3 id="evidence-8"><a href="#evidence-8" class="headerlink" title="evidence 8"></a>evidence 8</h3><p>8cFQj.py</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png" alt="image-20240619145402450"></p>
+<p>010 查看到末尾都是二进制，用python进行每8组为单位转换对应十进制 发现结尾都是base32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png" alt="image-20240619145427107"></p>
+<p>进行在线转换，32-&gt;64-&gt;32-&gt;hex-&gt;32-&gt;64-&gt;32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png" alt="image-20240619145445087"></p>
+<h3 id="evidence-9"><a href="#evidence-9" class="headerlink" title="evidence 9"></a>evidence 9</h3><p> jMH7w.js</p>
+<p>kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png" alt="image-20240619145532632"></p>
+<p>改成压缩包后打开xlsx表格，拉住界面标红</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png" alt="image-20240619145539415"></p>
+<h3 id="evidence-10"><a href="#evidence-10" class="headerlink" title="evidence 10"></a>evidence 10</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png" alt="image-20240619145602089"></p>
+<p>Stegsolve.jar打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png" alt="image-20240619145614500"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png" alt="image-20240619145624224"></p>
 ]]></content>
       <categories>
         <category>writeup</category>
