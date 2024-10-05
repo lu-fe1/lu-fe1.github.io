@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="数据分析01http.request.method &#x3D;&#x3D;POST筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18黑客IP是172.16.1.110或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110的易受攻击端⼝短时间内发送了⼤量的建⽴连">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数据流量分析">
+<meta property="og:url" content="https://flowers-boy.top/posts/51705.html">
+<meta property="og:site_name" content="关根">
+<meta property="og:description" content="数据分析01http.request.method &#x3D;&#x3D;POST筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18黑客IP是172.16.1.110或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110的易受攻击端⼝短时间内发送了⼤量的建⽴连">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153457056-1932560292.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153517745-455823692.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153536364-602711919.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153552223-862063718.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153614598-407397050.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153629369-2074965379.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153642021-889017229.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153720217-2116545314.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153736181-1390259469.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153858445-328000929.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153910382-1025583693.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153957174-1098027555.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154019106-813217475.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154035722-792054202.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154140357-490746339.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154147095-2085816783.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154234908-1254783750.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154253099-1154840722.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154312607-953563727.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154334154-145866405.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154356475-927600043.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154408997-1749416248.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154457719-25275776.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154525742-70105635.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154540454-1625652965.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154554493-1232244455.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154610429-1615102666.png">
+<meta property="article:published_time" content="2024-06-19T07:24:37.000Z">
+<meta property="article:modified_time" content="2024-06-19T08:20:32.956Z">
+<meta property="article:author" content="关根">
+<meta property="article:tag" content="关根">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://flowers-boy.top/posts/51705.html"/>
+
+
+
+
+
+  <title>数据流量分析 | 关根</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">关根</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">爱具体的人 做具体的事</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://flowers-boy.top/posts/51705.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="关根">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数据流量分析</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2024-06-19T15:24:37+08:00">
+                2024-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h2 id="数据分析01"><a href="#数据分析01" class="headerlink" title="数据分析01"></a>数据分析01</h2><p>http.request.method &#x3D;&#x3D;POST<br>筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18<br>黑客IP是172.16.1.110<br>或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110<br>的易受攻击端⼝短时间内发送了⼤量的建⽴连接请求，因此判定 172.16.1.110 为攻击机 172.16.1.18为<br>服务器<br>FLAG: 172.16.1.110</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png" alt="image-20240619153436773"></p>
+<p>ip.src &#x3D;&#x3D; 172.16.1.110 and ip.dst &#x3D;&#x3D; 172.16.1.18 and tcp.connection.syn<br> TCP连接的SYN标志被设置。SYN标志表示一个TCP连接请求，用于建立一个新的连接<br>FLAG: 21&#x2F;22&#x2F;23&#x2F;80&#x2F;3306</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153457056-1932560292.png" alt="image-20240619153458454"></p>
+<p>统计-&gt;协议分级 发现数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、igmp、arp<br>其中telnet和ssh都是远程终端协议，telnet是明⽂传输⽽ssh是加密传输，ftp是命令控制协议，ftp<br>data是真正文件传输走的协议，因此只要看到存在ftp-data协议，就证明从ftp服务器传输了数据<br>vnc协议是磐云平台上连接虚拟机⾛的协议，这个可以忽略</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153517745-455823692.png" alt="image-20240619153519164"></p>
+<p>综上所述，能查看服务器主机名的协议有：<br>telnet<br> ssh (加密的，可以适当性忽略)<br> http(如果存在命令执⾏漏洞，就有可能查看主机名)<br>其实telnet协议在不登录服务器的情况下，就会显示其主机名。主机名 login 主机名可能会变，但是<br>login始终固定，因此我们可以构造如下过滤规则，筛选出所有内容包含login的telnet数据包<br>telnet contains “login”</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153536364-602711919.png" alt="image-20240619153538045"></p>
+<p>或点击筛选出来的telnet数据包右键追踪流 -&gt; TCP流<br>FLAG: SecTestLabs</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153552223-862063718.png" alt="image-20240619153554014"></p>
+<p>数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、IGMP、arp<br>设计密码认证有telnet、mysql、ftp、ssh (加密的，可以适当性忽略)<br>如上图查看telnet登录都是显示登录错误<br>mysql.command<br>使用过滤规则过滤出mysql执行命令<br>可以看出mysql是登录成功了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153614598-407397050.png" alt="image-20240619153616271"></p>
+<p>追踪流-&gt;tcp流<br>FLAG: 5.7.26</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153629369-2074965379.png" alt="image-20240619153631079"></p>
+<p>顺便看下是不是暴力破解，数据库登录错误会显示：ERROR 1045 (28000): Access denied for user<br>‘用户名‘@’主机名’ (using password: YES)<br>使用mysql.error_code&#x3D;&#x3D;1045 过滤规则查看到就是暴力破解</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153642021-889017229.png" alt="image-20240619153643725"></p>
+<p>查看最后几个数据直接看到一句话木马<br>FLAG: horse<br>FLAG：lqsym</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153720217-2116545314.png" alt="image-20240619153721896"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">知道木马名称horse.php，利用木马肯定会进行post请求，一种方法是过滤http包含horse.php数据包，另</span><br><span class="line">一种是查看所有post请求数据，前者方便些</span><br><span class="line">http contains &quot;horse.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153736181-1390259469.png" alt="image-20240619153737828"></p>
+<p>查看tcp流，需要解码，显示查看etc目录，再看下一个数据流 FLAG: passwd</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153858445-328000929.png" alt="image-20240619153900215"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153910382-1025583693.png" alt="image-20240619153912146"></p>
+<p>找到了异常⽤户并且使⽤该⽤户名对某个服务进⾏密码爆破枚举，那么该异常⽤户肯定是 通过读<br>取&#x2F;etc&#x2F;passwd⽂件所看到的，通过查看该⽂件我们发现，只有⽤户suictsr247可以登录到系统，并且是⾮<br>系统⽤户，其还在root组 ⾥⾯</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153957174-1098027555.png" alt="image-20240619153958861"></p>
+<p>由于诸多协议都是基于tcp的，因此我们使⽤ tcp contains “suictsr247”<br>我们看到大部分都是FTP服务，剩下俩是http，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154019106-813217475.png" alt="image-20240619154020568"></p>
+<p>FTP登录成功显示的状态码是230，使用过滤规则<br>ftp.response.code&#x3D;&#x3D;230</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154035722-792054202.png" alt="image-20240619154037492"></p>
+<p>看到第一个数据流没有做任何操作，RETR是FTP中的命令RETR flag.jpg 意思是下载名为flag.jpg文件，<br>接下我们要做的事情就是，将该⽂件导出，前⾯说过，ftp在进⾏⽂件传输的时候，⾛的是ftp-data协议，因<br>此我们直接过滤该协议即可，由于⽂件传输⾛的是切⽚传输，会将⼀个⽂件分为多次发送，最终进⾏合并，意<br>思有很多flag.jpg，只需要选择任意⼀个追踪流即可<br>FLAG: harmony</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154140357-490746339.png" alt="image-20240619154141810"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154147095-2085816783.png" alt="image-20240619154148808"></p>
+<h2 id="数据分析02"><a href="#数据分析02" class="headerlink" title="数据分析02"></a>数据分析02</h2><p>通过直接分析端口得出<br>黑客ip：192.168.1.25<br>服务器ip：192.168.1.5</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154234908-1254783750.png" alt="image-20240619154236618"></p>
+<p>做个过滤，查看一下<br>ip.src&#x3D;&#x3D;192.168.1.25<br> flag：1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154253099-1154840722.png" alt="image-20240619154254788"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">使用过滤ip.src==192.168.1.25 and tcp.connection.syn没查看的</span><br><span class="line">修改下参数ip.src==192.168.1.25 and tcp.connection.rst</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154312607-953563727.png" alt="image-20240619154314250"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154334154-145866405.png" alt="image-20240619154335799"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flag：21,23,80,445,3306,3389</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154356475-927600043.png" alt="image-20240619154358175"></p>
+<p>筛选http，字符串筛选login寻找，应该是post请求，点开就找到了 flag：’or’1’&#x3D;’1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154408997-1749416248.png" alt="image-20240619154410672"></p>
+<p>登录成功后发现上传了一张图片，而 content-type 值为 image&#x2F;jpeg，那么很明显这里就是文件上传 MIME 绕过</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154457719-25275776.png" alt="image-20240619154459430"></p>
+<p>使用过滤出post请求，找到一句话木马密码<br>http.request.method &#x3D;&#x3D;POST<br> flag：Q</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154525742-70105635.png" alt="image-20240619154527456"></p>
+<p>继续往下查看，显示出变化 flag：c:&#x2F;phpstudy&#x2F;www&#x2F;shell2.php</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154540454-1625652965.png" alt="image-20240619154542154"></p>
+<p>下载文件应该还是post请求，使用过滤http.request.method &#x3D;&#x3D;POST</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154554493-1232244455.png" alt="image-20240619154556238"></p>
+<p>将内容查看tcp流保存原始数据为zip格式打开<br>flag：DPS</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154610429-1615102666.png" alt="image-20240619154612186"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/14937.html" rel="next" title="内存取证">
+                <i class="fa fa-chevron-left"></i> 内存取证
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/2590.html" rel="prev" title="信安管评一阶段">
+                信安管评一阶段 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lu-fe1" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:2186533588@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://blog.csdn.net/2301_82000839?spm=1000.2115.3001.5343" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%9001"><span class="nav-number">1.</span> <span class="nav-text">数据分析01</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%9002"><span class="nav-number">2.</span> <span class="nav-text">数据分析02</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">关根</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>本站总访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

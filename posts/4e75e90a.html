@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一、sql注入分类原理：没有对用户输入项进行验证和处理直接拼接到查询语句中 查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 报错注入用到的函数：updatexml、floor、extractva">
+<meta property="og:type" content="article">
+<meta property="og:title" content="护网蓝队面试">
+<meta property="og:url" content="https://flowers-boy.top/posts/4e75e90a.html">
+<meta property="og:site_name" content="关根">
+<meta property="og:description" content="一、sql注入分类原理：没有对用户输入项进行验证和处理直接拼接到查询语句中 查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行 从注入参数类型分：数字型注入、字符型注入 从注入效果分：报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入 从提交方式分：GET注入、POST注入、HTTP头注入、COOKIE注入 报错注入用到的函数：updatexml、floor、extractva">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111508548-939463198.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111549318-1473617007.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png">
+<meta property="article:published_time" content="2024-06-10T08:36:32.000Z">
+<meta property="article:modified_time" content="2024-06-30T13:04:19.731Z">
+<meta property="article:author" content="关根">
+<meta property="article:tag" content="关根">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://flowers-boy.top/posts/4e75e90a.html"/>
+
+
+
+
+
+  <title>护网蓝队面试 | 关根</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">关根</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">爱具体的人 做具体的事</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://flowers-boy.top/posts/4e75e90a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="关根">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">护网蓝队面试</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2024-06-10T16:36:32+08:00">
+                2024-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习笔记</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h2 id="一、sql注入分类"><a href="#一、sql注入分类" class="headerlink" title="一、sql注入分类"></a>一、sql注入分类</h2><p><strong>原理：</strong>没有对用户输入项进行验证和处理直接拼接到查询语句中</p>
+<p>查询语句中插⼊恶意SQL代码传递后台sql服务器分析执行</p>
+<p><strong>从注入参数类型分：</strong>数字型注入、字符型注入</p>
+<p><strong>从注入效果分：</strong>报错注入、布尔注入、延时注入、联合注入、堆叠注入、宽字节注入</p>
+<p><strong>从提交方式分：</strong>GET注入、POST注入、HTTP头注入、COOKIE注入</p>
+<p><strong>报错注入用到的函数：</strong>updatexml、floor、extractvalue，exp</p>
+<p><strong>布尔盲注用到的函数：</strong>substr，mid，left，right，ascii，ord，char，length</p>
+<p><strong>时间盲注用到的函数：</strong>sleep</p>
+<p><strong>SQL注入防御</strong></p>
+<ul>
+<li>对关键函数或字符过滤：union select order by information_schema等</li>
+<li>下载相关防范注入文件，通过incloude函数包含在网站配置文件里面</li>
+<li>pdo预处理，使用预编译语句</li>
+<li>添加白名单来规范输入验证方法</li>
+<li>对客户端输入进行控制，限制特殊字符和函数的输入</li>
+</ul>
+<p><strong>SQL注入绕过waf</strong>：</p>
+<ul>
+<li>大小写双写、双写关键字、空格、</li>
+<li>使用编码：unioncode编码 十六进制编码 url编码</li>
+<li>等价函数：mid，substr（），substring（） &amp;&amp;和||&gt; and 和or &#x3D;号可以用&lt;&gt;因为如果不大于不小于就是等于</li>
+</ul>
+<p><strong>SQL注入写shell条件：</strong></p>
+<ul>
+<li>知道web服务器的绝对路径</li>
+<li>数据库具有root权限</li>
+<li>secure_file_priv函数 没有特殊的值</li>
+<li>PHP关闭魔术引号，php主动转义功能关闭</li>
+</ul>
+<p><strong>SQL写入shell的方式：</strong> </p>
+<p>通过本地写入into outfile函数 </p>
+<p>通过日志写入需要对 general_log 和 general_log_file 变量进行更改 </p>
+<p>通过sqlmap –os-shell命令写入</p>
+<p><strong>二次注入：</strong>后端代码对用户输入的数据进行了转义，然后在保存到数据库的时候是没有进行转 义，然后再从数据库当中取出数据的时候，没有对数据库中的特殊字符进行转义和验证，就可能 形成闭合，导致注入</p>
+<p>防御：使用统一编码格式utf-8对用户输入的内容进行验证过滤</p>
+<h3 id="其他常见漏洞"><a href="#其他常见漏洞" class="headerlink" title="其他常见漏洞"></a>其他常见漏洞</h3><h4 id="csrf"><a href="#csrf" class="headerlink" title="csrf"></a>csrf</h4><p><strong>原理：</strong>跨站点请求伪造。盗用用户身份，以用户的名义发送恶意请求</p>
+<h4 id="ssrf"><a href="#ssrf" class="headerlink" title="ssrf"></a>ssrf</h4><p><strong>原理：</strong>利用网络请求的服务当跳板攻击内部其他服务</p>
+<h4 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h4><p><strong>原理：</strong>攻击者通过操纵应用程序对文件路径的处理，将恶意文件包含到应用程序中执行</p>
+<h4 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h4><p><strong>原理：</strong>对上传文件无限制后缀以及类型或者处理缺陷、导致越过本身权限向服务器上马</p>
+<p><strong>绕过方法：</strong></p>
+<p>上传特殊可解析后缀</p>
+<p>上传.htaccess（可帮助修改文件扩展名）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.user.ini文件里的意思是：所有的php文件都自动包含指定的文件</span><br></pre></td></tr></table></figure>
+
+<p>后缀大小写、双后缀名、空格（黑名单）</p>
+<p>MIME、%00截断、0x00截断绕过（白名单）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在url中%00表示ascll码的0 ，而ascii码的0，表示字符串结束，所以当url中出现%00时就会认为读取已结束</span><br><span class="line">0x00原理相同</span><br></pre></td></tr></table></figure>
+
+<p>文件头</p>
+<h4 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h4><p><strong>原理：</strong>插入恶意脚本、实现对用户浏览器攻击</p>
+<p><strong>类型：</strong>存储、反射、dom</p>
+<p><strong>反射和dom区别：</strong>DOM-XSS是javascript处理输出、⽽反射性xss是后台程序处理 </p>
+<h4 id="xxe"><a href="#xxe" class="headerlink" title="xxe"></a>xxe</h4><p><strong>原理：</strong>解析用户传入的xml</p>
+<p><strong>作用：</strong>内⽹端⼝扫描、利⽤file协议等读取⽂件、攻击内⽹web应⽤使⽤get(struts2等) </p>
+<h2 id="二、如何判断文件上传一次攻击"><a href="#二、如何判断文件上传一次攻击" class="headerlink" title="二、如何判断文件上传一次攻击"></a>二、如何判断文件上传一次攻击</h2><p>响应包是200,返回的有没有路径,请求包的报文内容有没有上传木马,尝试访问路径,能不能执行命令</p>
+<h2 id="三、命令执行和代码执行"><a href="#三、命令执行和代码执行" class="headerlink" title="三、命令执行和代码执行"></a>三、命令执行和代码执行</h2><p><strong>命令执行：</strong>Web应用的脚本代码在执行命令的时候过滤不严,从而注入一段攻击者能够控制的代 码,在服务器上以Web服务的后台权限远程执行恶意指令</p>
+<p><strong>原因：</strong>代码层过滤不严，系统的漏洞造成命令注入,调用的第三方组件存在代码执行漏洞常见执行 函数：exec、shell_exec、system、passthru、popen</p>
+<p><strong>代码执行：</strong>由于服务器对危险函数过滤不严,导致用户输入的一些字符串可以被转换成代码来执行, 从而造成代码执行</p>
+<p><strong>原因：</strong>用户能够控制函数输入,存在可执行代码的危险函数，常见执行函数：eval、assert、 preg_replace()</p>
+<h2 id="四、CSRF-和-XSS-和-XXE-有什么区别"><a href="#四、CSRF-和-XSS-和-XXE-有什么区别" class="headerlink" title="四、CSRF 和 XSS 和 XXE 有什么区别"></a>四、CSRF 和 XSS 和 XXE 有什么区别</h2><p><strong>XSS</strong>是跨站脚本攻击，用户提交的数据中可以构造代码来执行，从而实现窃取用户信息等攻击。</p>
+<p><strong>修复方式：</strong> 对字符实体进行转义</p>
+<p>使用HTTP Only来禁止JavaScript读取Cookie值</p>
+<p>输入时校验</p>
+<p>浏览器与Web应用端采用相同的字符编码</p>
+<p><strong>CSRF</strong>是跨站请求伪造攻击，是由于没有在关键操作执行时进行是否由用户自愿发起的确认，模仿合法用户对服务器发起请求 。</p>
+<p><strong>修复方式：</strong> 筛选出需要防范CSRF的页面然后嵌入Token</p>
+<p>再次输入密码</p>
+<p>检验Referer</p>
+<p><strong>XXE</strong>是XML外部实体注入攻击，XML中可以通过调用实体来请求本地或者远程内容，和远程文件保护类似，会引发相关安全问题，例如敏感文件读取。</p>
+<p><strong>修复方式：</strong> XML解析库在调用时严格禁止对外部实体的解析</p>
+<h2 id="五、一些漏洞"><a href="#五、一些漏洞" class="headerlink" title="五、一些漏洞"></a>五、一些漏洞</h2><p><code>shiro是apache的java安全框架，用于执行身份验证、授权、密码和会话管理</code></p>
+<p><code>使用shiro易于理解的API（程序接口），可以快速轻松对应用程序进行保护</code></p>
+<p><strong>Shiro550原理</strong>导致shiro反序列化的主要原因就是<code>shiro提供的记住密码功能</code>，当用户打开这个功 能时会在请求包中生成一个cookie，cookie的value值是经过<code>序列化-&gt;aes加密-&gt;base64加密</code>后 的字符串，关键在于aes加密的秘钥是<code>默认</code>的，如果没有修改这个秘钥，就会导致反序列化漏洞， 攻击者可以构造恶意代码，将恶意代码<code>序列化-AES加密-base64加密</code>后传入cookie，这样就导致 RCE漏洞。</p>
+<p><strong>Shiro 721原理</strong>Shrio所使用的cookie里的rememberMe字段采用了<code>AES-128-CBC</code>的加密模式， 这使得该字段可以被<code>padding oracle</code> 攻击利用。攻击者可以使用一个合法有效的rememberMe  的cookie作为前缀来实施POA，然后制造一个特制的rememberMe来执行Java反序列化攻击。</p>
+<h4 id="shrio550和721的区别主要区别"><a href="#shrio550和721的区别主要区别" class="headerlink" title="shrio550和721的区别主要区别"></a><strong>shrio550和721的区别主要区别</strong></h4><p>在于Shiro550使用已知<code>默认</code>密码，只要有足够的密码，不需要 Rememberme的Cookie；Shiro721的AES加密的key为系统<code>随机生成</code>，需要利用登录后的 rememberMe去爆破正确的key值。利用有效的RememberMe Cookie作为Padding Oracle  Attack的前缀，再去构造反序列化攻击。</p>
+<h4 id="fastjson反序列化漏洞原理："><a href="#fastjson反序列化漏洞原理：" class="headerlink" title="fastjson反序列化漏洞原理："></a><strong>fastjson反序列化漏洞原理：</strong></h4><p><code>fastjson 是一个 有阿里开发的一个开源Java 类库，可以将 Java 对象转换为 JSON 格式(序列化)，当然它也可以将 JSON 字符串转换为 Java 对象（反序列化）</code></p>
+<p>1、fastjson提供的反序列化功能允许用户传入json格式数据的时候<code>通过@type的value值指定任 意反序列化类名</code></p>
+<p>2、fastjson的反序列化机制会将反序列的类进行实例化对象，并调用该对象的<code>setter和部分getter方法</code> </p>
+<p>3、恶意用户可以构造payload是目标应用的代码执行流程进入这部分setter和getter方法，如果 这些方法中存在Gadget，就会造成一些安全问题。</p>
+<p>4、官方采取黑名单过滤的方法，对反序列化的类名进行校验，checkAutoType不断被绕过</p>
+<h4 id="log4j2原理："><a href="#log4j2原理：" class="headerlink" title="log4j2原理："></a><strong>log4j2原理：</strong></h4><p><code>log4j2是apache下的java应用常见的开源日志库，是一个就Java的日志记录工具</code></p>
+<p>Apache Log4j2中存在<code>JNDI注入漏洞</code>，主要原理是利用log4j2的日志输出jndi远程 对象时,<code>调用远程对象没做检查</code>导致，程序将用户输入的数据进行日志记录时即可触发该漏洞并可 在目标服务器上执行任意代码。该漏洞利用过程需要找到一个能触发远程加载并应用配置的输入 点，迫使服务器远程加载和修改配置的前提下使目标系统通过JNDI远程获取数据库源，触发攻击者的恶意代码</p>
+<h4 id="Struts2原理："><a href="#Struts2原理：" class="headerlink" title="Struts2原理："></a><strong>Struts2原理：</strong></h4><p><code>将用户要求按照业务逻辑执行并且返回结果</code></p>
+<p>用户提交表单数据并且验证失败时，后端会将用户之前提交的参数值使用<code>OGNL表达式 %&#123;value&#125;</code>进行解析，然后重新填充到对应的表单数据中。 </p>
+<p>例如注册或登录页面，提交失败后端一般会默认返回之前提交的数据，由于后端使用 <code>%&#123;value&#125;</code> 对提交的数据执行了一次 OGNL 表达式解析，所以可以直接构造 Payload 进行命令执行</p>
+<h4 id="Weblogic："><a href="#Weblogic：" class="headerlink" title="Weblogic："></a><strong>Weblogic：</strong></h4><p><strong>漏洞描述：</strong></p>
+<p>Weblogic Server中的RMI 通信使用T3协议在Weblogic Server和其它Java程序（客户端或者其它Weblogic Server实例）之间传输数据, 服务器实例会跟踪连接到应用程序的每个Java虚拟机（JVM）中, 并创建T3协议通信连接, 将流量传输到Java虚拟机。T3协议在开放WebLogic控制台端口的应用上默认开启。攻击者可以通过T3协议发送恶意的的反序列化数据, 进行反序列化, 实现对存在漏洞的weblogic组件的远程代码执行攻击（开放Weblogic控制台的7001端口，默认会开启T3协议服务，T3协议触发的Weblogic Server WLS Core Components中存在反序列化漏洞，攻击者可以发送构造的恶意T3协议数据，获取目标服务器权限。）</p>
+<p>远程攻击者可利用该漏洞在未授权的情况下发送攻击数据，通过T3协议（EJB支持远程访问，且支持多种协议。这是Web Container和EJB Container的主要区别）在Weblogic Server中执行反序列化操作，利用RMI（远程方法调用） 机制的缺陷，通过JRMP协议（Java Remote Messaging Protocol：java远程消息交换协议）达到执行任意反序列化payload的目的。</p>
+<p><strong>T3协议：</strong>用于在Weblogic服务器和其他类型的Java程序之间传输信息的协议。Weblogic会跟踪连接到应用程序的每个Java虚拟机，要将流量传输到Java虚拟机，Weblogic会创建一个T3连接。该链接会通过消除在网络之间的多个协议来最大化效率，从而使用较少的操作系统资源。用于T3连接的协议还可以最大限度减少数据包大小，提高传输速度。</p>
+<p><strong>RMI：</strong>远程方法调用 </p>
+<p>使用协议：JRMP </p>
+<p>T3就是对JRMP的优化。Java RMI 的基础通信协议是 JRMP ，但是也支持开发其他的协议来优 化 RMI 的传输，这里的 Weblogic 的 T3 协议就是其优化版本，相比于JRMP协议多了一些特 性。T3协议传输过程中就是序列化和反序列化方式</p>
+<p><strong>利用：</strong>将原本存在的序列化内容替换成我们payload的序列化内容，在传输完成后，进行反序列 化达成攻击的目的</p>
+<h4 id="Jboss"><a href="#Jboss" class="headerlink" title="Jboss"></a><strong>Jboss</strong></h4><p>JBoss是一个基于J2EE的开放源代码应用服务器，代码遵循LGPL许可，可以在任何商业应用中免 费使用；JBoss也是一个管理EJB的容器和服务器，支持EJB 1.1、EJB 2.0和EJB3规范。但JBoss核 心服务不包括支持servlet&#x2F;JSP的WEB容器，一般与Tomcat或Jetty绑定使用。</p>
+<p>两种利用方式，第一种是利用<code>未授权访问</code>进入JBoss后台进行文件上传的漏洞；另一种是利用<code>Java 反序列化</code>进行远程代码执行的漏洞</p>
+<p><strong>弱口令漏洞</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">system:password</span><br><span class="line">weblogic:weblogic</span><br><span class="line">admin:secruity</span><br><span class="line">joe:password</span><br><span class="line">mary:password</span><br><span class="line">system:sercurity</span><br><span class="line">wlcsystem: wlcsystem</span><br><span class="line">weblogic:Oracle@123</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、webshell管理工具"><a href="#六、webshell管理工具" class="headerlink" title="六、webshell管理工具"></a>六、webshell管理工具</h2><p><strong>菜刀</strong></p>
+<p>base64加密，php马有eval，(base64_decode ($POST[z0])),&amp;z0&#x3D;QGluaV9zZXQ</p>
+<p><strong>蚁剑</strong></p>
+<p>以 0x 开头的参数名，@ini_set(“display_errors”,”0”)</p>
+<p><strong>冰蝎</strong></p>
+<p>1、大量的 content-type：application，content-type 为 application&#x2F;octet-stream。</p>
+<p>2、默认内置 16 个 ua，content-length 请求长度payload 都为定长</p>
+<p>3、Accept头有application&#x2F;xhtml+xmlapplication&#x2F;xmlapplication&#x2F;signed-exchange属于弱 特征</p>
+<p><strong>哥斯拉</strong> </p>
+<p>1、pass &#x3D;eval(base64_decode…，pass&#x3D;加密数据</p>
+<p>2、user-agent,accept,accept-language 固定</p>
+<p>一共会产生3个 POST 数据包，POST请求报文中参数名都是 pass （即shell的连接密码），参 数值都是加密数据。</p>
+<h2 id="七、windows-Linux应急响应流程"><a href="#七、windows-Linux应急响应流程" class="headerlink" title="七、windows+Linux应急响应流程"></a>七、windows+Linux应急响应流程</h2><p>检查系统账号安全查看服务器是否有<code>弱口令</code> </p>
+<p>远程管理端口是否对<code>公网</code>开放 </p>
+<p>查看服务器是否存在<code>可疑</code>账号、<code>新增</code>账号</p>
+<p>查看服务器是否存在<code>隐藏</code>账号、<code>克隆</code>账号</p>
+<p>检查<code>异常端口、进程</code></p>
+<p>检查<code>启动项、计划任务、服务</code></p>
+<p>查看<code>可疑文件和目录</code></p>
+<p>查看<code>webshell创建的时间</code></p>
+<h4 id="Windows入侵排查思路"><a href="#Windows入侵排查思路" class="headerlink" title="Windows入侵排查思路"></a><strong>Windows入侵排查思路</strong></h4><p>1.检查<code>系统账号</code>安全 2.查看服务器是否有弱口令，<code>远程管理端口</code>(3389)是否对<code>公网开放</code>（使用 <code>netstat -ano</code> 命令、或者问服务器管理员） 3.lusrmgr.msc(本地用户和本地用户组) 快捷命令查 看服务器是否存在<code>可疑账号</code>、新增账号，如有管理员群组的（Administrators）里的新增账户， 如有，请立即禁用或删除掉 4.用 D 盾或者注册表(regedit)中查看服务器是否存在隐藏账号、克隆 账号 5.结合日志，查看管理员登录时间、用户名是否存在异常，使用eventvwr.msc打开“<code>事件查</code> 看器”，导出 <code>Windows 日志–安全</code>，利用 Log Parser 进行分析 6.检查异常端口、进程 netstat - ano检查端口连接情况，是否有远程连接、<code>可疑连接</code> 然后使用 tasklist |findstr PID 进行定位 7. 使用快捷命令 msconfig查看是否存在命名异常的启动项目， 输入regedit<code>注册表</code>中查看<code>开机启动项</code>是否正常，输入gpedit.msc查看本地组策略，使用<code>services.msc检查</code>是否有异常服务 8.检查系统相关信息 systeminfo查看系统版本以及补丁信息 查找可疑目录及文件</p>
+<h4 id="Linux入侵排查思路"><a href="#Linux入侵排查思路" class="headerlink" title="Linux入侵排查思路"></a><strong>Linux入侵排查思路</strong></h4><p>bash的账户，正常为&#x2F;nologin 2.查看本机开启端口服务信息 netstat -anlutp,然后去查看每个开 启服务所产生的日志信息 （var&#x2F;log目录下）（举例如何查看mysql日志，首先登录mysql，然后 使用 show variables like ‘%general_log%’ 查看日志是否开启和路径信息） 二、 服务入侵排查  1.使用last命令检查系统登录日志，统计ip登录错误次数和登录情况 2.使用 ls -l 查看  &#x2F;etc&#x2F;passwd文件 的修改时间 查看是否有特权用户 查看网站开启的端口ss -anlutp 3.使用ps - elf 看UID为0的进程 查看ssh的公钥是否被修改 4.查看网站根目录（&#x2F;var&#x2F;www）下是否存在可疑 文件 5.查看计划任务 &#x2F;etc&#x2F;crontab 三、异常启动排查 1.ps -elf 查看进程 2.查看linux 系统服务  &#x2F;etc&#x2F;rc.d&#x2F;init.d 3.查看用户自定义开机启动程序 &#x2F;etc&#x2F;rc.d&#x2F;rc.local</p>
+<h4 id="应急响应流程"><a href="#应急响应流程" class="headerlink" title="应急响应流程"></a><strong>应急响应流程</strong></h4><p>1、收集信息：搜集客户信息和中毒信息，备份</p>
+<p>2、判断类型：判断是否是安全事件、是何种安全事件（勒索病毒、挖矿、断网、ddos等）</p>
+<p>3、深入分析：日志分析、进程分析、启动项分析、样本分析</p>
+<p>4、清理处置：杀掉恶意进程、删除恶意文件、打补丁、修复文件</p>
+<p>5、产出报告：整理并输出完整的安全事件报告</p>
+<h4 id="windows应急"><a href="#windows应急" class="headerlink" title="windows应急"></a><strong>windows应急</strong></h4><p><strong>1.查看系统账号安全</strong></p>
+<p>查看服务器是否有弱口令、可疑账号、隐藏账号、克隆账号、远程管理端口是否对公网开放</p>
+<p>win+r（eventwmr.msc）查看系统日志，查看管理员登录时间、用户名是否存在异常</p>
+<p><strong>2.检查异常端口、进程</strong></p>
+<p>netstat -ano 检查端口连接情况，是否有远程连接、可疑连接</p>
+<p>tasklist | findstr “PID”根据pid定位进程</p>
+<p>使用功能查杀工具</p>
+<p><strong>3.启动项检查、计划任务、服务</strong></p>
+<p>检查服务器是否有异常的启动项，msconfig看一下启动项是否有可以的启动</p>
+<p>检查计划任务，查看计划任务属性，可以发现木马文件的路径</p>
+<p>见擦汗服务自启动，services.msc注意服务状态和启动类型，检查是否有异常服务</p>
+<p><strong>4.检查系统相关信息</strong></p>
+<p>查看系统版本以及补丁信息 systeminfo</p>
+<p>查找可以目录及文件 是否有新建用户目录 分析最近打开分析可疑文件 （%UserProfile%\Recent）</p>
+<p><strong>5.自动化查杀</strong></p>
+<p>使用360 火绒剑 webshell后门可以使用d盾 河马等</p>
+<p><strong>6.日志分析</strong></p>
+<p>360星图日志分析工具 ELK分析平台</p>
+<h4 id="linux应急"><a href="#linux应急" class="headerlink" title="linux应急"></a>linux应急</h4><p>1、检查用户及密码文件&#x2F;etc&#x2F;passwd、&#x2F;etc&#x2F;shadow 是否存在多余帐号，主要看一下帐号后面 是否是 nologin,如果没有 nologin 就要注意；</p>
+<p>2、通过 who 命令查看当前登录用户（tty 本地登陆 pts 远程登录）、w 命令查看系统信息，想 知道某一时刻用户的行为、uptime查看登陆多久、多少用户，负载；</p>
+<p>3、修改&#x2F;etc&#x2F;profile的文件，在尾部添加相应显示间、日期、ip、命令脚本代码，这样输入 history命令就会详细显示攻击者 ip、时间历史命令等；</p>
+<p>4、用 netstat -antlp|more命令分析可疑端口、IP、PID，查看下 pid 所对应的进程文件路径， 运行ls -l &#x2F;proc&#x2F;$PID&#x2F;exe 或 file &#x2F;proc&#x2F;$PID&#x2F;exe（$PID 为对应的pid 号）；</p>
+<p>5、使用ps命令，分析进程 ps aux | grep pid</p>
+<p>6、使用 vi &#x2F;etc&#x2F;inittab 查看系统当前运行级别，通过运行级别找到&#x2F;etc&#x2F;rc.d&#x2F;rc[0~6].d对应目录 是否存在可疑文件；</p>
+<p>7、看一下crontab定时任务是否存在可疑启用脚本；</p>
+<p>8、使用chkconfig –list 查看是否存在可疑服务；</p>
+<p>9、通过grep awk命令分析&#x2F;var&#x2F;log&#x2F;secure安全日志里面是否存在攻击痕迹；</p>
+<p>10、chkrootkit、rkhunter、Clamav 病毒后门查杀工具对 Linux 系统文件查杀；</p>
+<p>11、如果有 Web 站点，可通过 D 盾、河马查杀工具进行查杀或者手工对代码按脚本木马关键 字、关键涵数（evel、system、shell_exec、exec、passthru system、popen）进行查杀 Webshell 后门。</p>
+<h2 id="八、windows事件ID"><a href="#八、windows事件ID" class="headerlink" title="八、windows事件ID"></a>八、windows事件ID</h2><table>
+<thead>
+<tr>
+<th align="center">事件ID</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">4624</td>
+<td align="center">登录成功</td>
+</tr>
+<tr>
+<td align="center">4625</td>
+<td align="center">登录失败</td>
+</tr>
+<tr>
+<td align="center">4634</td>
+<td align="center">注销成功</td>
+</tr>
+<tr>
+<td align="center">4647</td>
+<td align="center">用户启动的注销</td>
+</tr>
+<tr>
+<td align="center">4672</td>
+<td align="center">使用超级用户（如管理员）进行登录</td>
+</tr>
+<tr>
+<td align="center">4720</td>
+<td align="center">创建用户</td>
+</tr>
+</tbody></table>
+<h2 id="九、sql注入"><a href="#九、sql注入" class="headerlink" title="九、sql注入"></a>九、sql注入</h2><p><strong>如何判断是攻击还是误报</strong></p>
+<p>第一时间去判断内网还是外网，内网大部分都是172 192 10 如果是内网对内网，大概率是真实业务，很少见打到内网，查询字段内容，响应包是否是正常业务，看状态码判断攻击成功</p>
+<p>如果是外网，先去看状态码 如果是200，微步平台看是否是恶意ip 先上报封禁，攻击报文如果是正常业务 那我们对这个业务监控，如果是sql语句攻击，看里面报文的攻击语句，比如常见sleep函数延时注入，extractvalue、updatexml函数 的报错注入，把攻击行为给客服反馈过去</p>
+<h2 id="十、ssrf打redis"><a href="#十、ssrf打redis" class="headerlink" title="十、ssrf打redis"></a>十、ssrf打redis</h2><p>ssrf扫描内网,端口<code>6379</code>是<code>redis</code>,然后redis未授权漏洞利用</p>
+<p>利用dict协议可以扫描开放的端口，探测指纹信息，可以攻击redis服务 dict:&#x2F;&#x2F;ip:port&#x2F;info 截获get请求包和post请求包，再构造成符合gopher协议的请求，从而模拟redis通信</p>
+<p>更改redis备份路径为ssh公钥存放目录（一般默认为&#x2F;root&#x2F;.ssh）并设置上传公钥的备份文件名字 为authorized_keys,将一开始生成的SSH公钥写入authorized_keys文件中。</p>
+<h2 id="十一、PHP一句话木马"><a href="#十一、PHP一句话木马" class="headerlink" title="十一、PHP一句话木马"></a>十一、PHP一句话木马</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line"><span class="meta">&lt;?php</span> @<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;cmd&#x27;</span>]); <span class="meta">?&gt;</span></span><br><span class="line">&lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;cmd&#x27;</span>]);&lt;/script&gt;</span><br><span class="line">GIF89a? &lt;script language=<span class="string">&quot;php&quot;</span>&gt;<span class="keyword">eval</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;mima&#x27;</span>])&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="十二、序列化反序列化及其流量特征"><a href="#十二、序列化反序列化及其流量特征" class="headerlink" title="十二、序列化反序列化及其流量特征"></a>十二、序列化反序列化及其流量特征</h2><p><strong>序列化：</strong>对象转换为字符串</p>
+<p><strong>反序列化：</strong>字符串转换为对象</p>
+<p><strong>流量特征：</strong> </p>
+<p><strong>shiro反序列化：</strong>查看cookie中rememberme字段，恶意命令要从这里传入。判断是否有漏洞， 查看返回包set cookie：rememberme&#x3D;deleteme，验证失败返回的标识符。</p>
+<p><strong>fastjson反序列化：</strong>请求报文中查找json格式的数据，重点看有无rmi或者出网的一些行为 </p>
+<p><strong>st2-045：</strong>请求头中的Content-Type字段</p>
+<h2 id="十三、常见的设备-出现误报怎么办"><a href="#十三、常见的设备-出现误报怎么办" class="headerlink" title="十三、常见的设备,出现误报怎么办"></a>十三、常见的设备,出现误报怎么办</h2><p>奇安信天眼,设备类型:全流量,天眼、EDR、全流量告警、态势感知、APT、蜜罐设备,微步tdp,青藤云HIDS,明御安全网关先去查看设备的完整流量日志等信息确认是否为误报，误报那就是规则问题，上报处置，提供规则优化建议</p>
+<h2 id="十四、wireshark指令"><a href="#十四、wireshark指令" class="headerlink" title="十四、wireshark指令"></a>十四、wireshark指令</h2><p>http contains “关键字”</p>
+<p>http.response.code &#x3D;&#x3D; 200</p>
+<p>http.request.method &#x3D;&#x3D; POST</p>
+<p>tcp.prot &#x3D;&#x3D; 80 </p>
+<p>ip.addr &#x3D;&#x3D; “10.1.1.1”ip.srcip.dst</p>
+<h2 id="十五、中挖矿病毒怎么解决"><a href="#十五、中挖矿病毒怎么解决" class="headerlink" title="十五、中挖矿病毒怎么解决"></a>十五、中挖矿病毒怎么解决</h2><p>首先ps -aux查看进程分析</p>
+<p>然后top 分析算力，挖矿用到的算力比较多，对流量进行过滤，含有矿池服务器的流量就是挖矿病毒</p>
+<p>最后kill进程，rm掉程序</p>
+<p><strong>删不掉这么办</strong></p>
+<p>先下线，然后检查挖矿是否有在内网传播及时下线所有被传播的主机、上机排查攻击痕迹、一般 可以从cpu占用情况，可以进程、开放端口、计划任务、服务项几个方面排查</p>
+<p>将样本上传到在线分析平台，清除挖矿主程序主要就是双向封禁矿池地址、删除计划任务自启 动、删服务，结束恶意进程、删病毒</p>
+<p><strong>删不掉：</strong>确认一下一下是因为程序在使用，还是权限不够，更具具体情况采取措施 直接降权，降权到没有执行权限</p>
+<h2 id="十六、拿到webshell不出网情况下怎么办"><a href="#十六、拿到webshell不出网情况下怎么办" class="headerlink" title="十六、拿到webshell不出网情况下怎么办"></a>十六、拿到webshell不出网情况下怎么办</h2><p>reg上传去正向连接。探测出网协议，如dns，icmp</p>
+<h2 id="十七、怎么排查java内存马"><a href="#十七、怎么排查java内存马" class="headerlink" title="十七、怎么排查java内存马"></a>十七、怎么排查java内存马</h2><p>直接利用内存马检测工具去找，github也有很多检测脚本，手工的话可以分析web日志，filter或者listener类型的内存马，会有大量路径相同参数不同的url请求，或者页面不存在但是返回200的请求，分析web.xml文件，内存马的Filter是动态注册的，web.xml是没有配置的，也有可能是中间件漏洞通过代码执行加载内存马，这就可以去排查中间件的错误日志，像哥斯拉和冰蝎的内存马也会有跟webshell相似的特征，分析特殊的classloader加载，攻击者喜欢利用TemplatesImpl和<code>bcel</code>加载内存马，因为内存马是驻留在内存里的，本地无class文件，通过检测Filter对应的ClassLoader目录下是否存在class文件来判断，也可以把内存中所有的Filter的class dump出来，使用工具分析是否存在恶意代码</p>
+<h2 id="十八、蜜罐原理"><a href="#十八、蜜罐原理" class="headerlink" title="十八、蜜罐原理"></a>十八、蜜罐原理</h2><p><strong>创建虚拟环境：</strong>在网络中创建一个看似易受攻击的虚拟环境，该环境模拟真实系统的一部分或全 部功能，包括应用程序、服务和操作系统。</p>
+<p><strong>引诱攻击者：</strong>通过暴露蜜罐的存在，例如通过公开可访问的IP地址或虚假的网站，吸引攻击者主 动尝试入侵、扫描或攻击蜜罐系统。</p>
+<p><strong>监测和记录：</strong>一旦攻击者进入蜜罐系统，蜜罐会记录攻击者的行为、攻击技术和使用的工具。  这些信息对于理解攻击者的策略和行为非常有价值。</p>
+<p> <strong>分析和响应：</strong>通过分析记录的数据，研究人员可以识别攻击者的行为模式、漏洞利用方法和漏洞 的目标。</p>
+<p>这些信息可以用于改进真实系统的安全性，及时发现和应对新的威胁。  蜜罐的优势在于能够提供高质量的<code>攻击数据和情报</code>，帮助安全团队更好地了解攻击者的<code>行为模式和目的</code>，加强防御措施并及时应对威胁。</p>
+<p>然而，蜜罐也需要专业人员来设计、部署和管理，以确保其安全性和有效性，并避免对真实系统 造成潜在的风险。</p>
+<h2 id="十九、内存马查杀-原理"><a href="#十九、内存马查杀-原理" class="headerlink" title="十九、内存马查杀&amp;原理"></a>十九、内存马查杀&amp;原理</h2><p><strong>java内存马原理</strong></p>
+<p>通过在Java虚拟机（JVM）中运行的恶意代码，实现对被攻击者系统的远程控制。其原理是通过在Java虚拟机中注入特定的Java类、变量或方法等Java对象，然后在Java虚拟机中运行这些代码，实现对受害者机器的远程控制</p>
+<p><strong>java内存马排查</strong></p>
+<p>利用Java Agent技术遍历所有已经加载到内存中的class。  先判断是否是内存马，是则进入内存查杀。</p>
+<p><strong>识别</strong></p>
+<p>1，filter名字很特别</p>
+<p>2，filter优先级是第一位</p>
+<p>3，对比web.xml中没有filter配置</p>
+<p>4，特殊classloader加载</p>
+<p>5，对应的classloader路径下没有class文件</p>
+<p>6，Filter的doFilter方法中 有恶意代码</p>
+<p><strong>清除</strong></p>
+<p>1、清除内存马中的Filter的恶意代码，2、 模拟中间件注销Filter</p>
+<h2 id="二十、常见的危险PHP函数总结"><a href="#二十、常见的危险PHP函数总结" class="headerlink" title="二十、常见的危险PHP函数总结"></a>二十、常见的危险PHP函数总结</h2><p><strong>eval() — 把字符串作为PHP代码执行</strong></p>
+<p>语法eval( string $code ) : mixed</p>
+<p>把字符串 code 作为PHP代码执行。</p>
+<p>这个函数一般都是攻击者用的，没什么人会拿这个放到自己的源码里面</p>
+<p>PHP官方也给出了警告</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111045791-270916336.png" alt="image-20240627111043558"></p>
+<p><strong>assert() — 检查一个断言是否为 false （把字符串作为PHP代码执行）</strong></p>
+<p>语法</p>
+<p>PHP 5</p>
+<p>assert( mixed $assertion , string $description &#x3D; ? ) : bool</p>
+<p>PHP 7</p>
+<p>assert( mixed $assertion , Throwable $exception &#x3D; ? ) : bool</p>
+<p>assert()会检查指定的 assertion 并在结果为 false 时采取适当的行动（把字符串  $assertion 作为PHP代码执行）</p>
+<p><strong>preg_replace — 执行一个正则表达式的搜索和替换</strong></p>
+<p>语法</p>
+<p>preg_replace( mixed $pattern , mixed $replacement , mixed $subject , int  $limit &#x3D; -1 , int &amp;$count &#x3D; ? ) : mixed</p>
+<p>搜索 subject 中匹配 pattern 的部分，以 replacement 进行替换。</p>
+<p>&#x2F;e 修正符使 preg_replace() 将 replacement 参数当作 PHP 代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">preg_replace(&quot;/test/e&quot;,$_GET[&quot;h&quot;],&quot;jutst test&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>如果我们提交 ?h&#x3D;phpinfo()，&#x2F;e就会将h参数当做PHP代码，phpinfo()将会被执行。</p>
+<h4 id="引发命令执行的危险函数"><a href="#引发命令执行的危险函数" class="headerlink" title="引发命令执行的危险函数"></a>引发命令执行的危险函数</h4><p> <strong>system — 执行外部程序，并且显示输出</strong></p>
+<p>说明</p>
+<p><code>system</code>( string <code>$command</code> , int <code>&amp;$return_var</code> &#x3D; ? ) : string</p>
+<p>同 C 版本的 <code>system()</code>函数一样， 本函数执行 <code>command</code> 参数所指定的命令， 并且输出执行结果。</p>
+<p>如果 PHP 运行在服务器模块中， system()函数还会尝试在每行输出完毕之后， 自动刷新 web服务器的输出缓存。</p>
+<p>如果要获取一个命令未经任何处理的 原始输出，请使用 passthru()函数。</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">system</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111508548-939463198.png" alt="image-20240627111507963"></p>
+<p> <strong>exec — 执行一个外部程序</strong></p>
+<p>exec()执行 command 参数所指定的命令</p>
+<p>举个例子</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240627111549318-1473617007.png" alt="image-20240627111548732"></p>
+<p><strong>shell_exec — 通过 shell 环境执行命令，并且将完整的输出以字 符串的方式返回。</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="keyword">echo</span> <span class="title function_ invoke__">shell_exec</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>passthru — 执行外部程序并且显示原始输出</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> <span class="title function_ invoke__">passthru</span>(<span class="string">&quot;whoami&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="引发文件包含的危险函数"><a href="#引发文件包含的危险函数" class="headerlink" title="引发文件包含的危险函数"></a>引发文件包含的危险函数</h4><p>主要作用为包含并运行指定文件。</p>
+<ol>
+<li>include()：代码执行到此函数时才将文件包含进来，发⽣错误时只警告并继续执行</li>
+<li>include_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
+<li>require()：立即调用此函数包含文件，发⽣错误时，会输出错误信息 并⽴即终⽌程序</li>
+<li>require_once()：功能和前者一样，区别在于调用同一文件时，程序只调用一次</li>
+</ol>
+<p>include $file;</p>
+<p>在变量 $file 可控的情况下，我们就可以包含任意文件，从而达到 getshell 的目的。</p>
+<p>另外，在不同的配置环境下，可以包含不同的文件。</p>
+<p>因此又分为远程文件包含和本地文件包含。</p>
+<p>包含函数也能够读取任意文件内容，这就需要用到【支持的协议和封装协议】和【过滤器】。</p>
+<p>例如，利用php流filter读取任意文件</p>
+<p>include($_GET[‘file’]); </p>
+<p>?file&#x3D;php:&#x2F;&#x2F;filter&#x2F;convert.base64-encode&#x2F;resource&#x3D;index.php</p>
+<p>解释：?file&#x3D;php:&#x2F;&#x2F; 协议 &#x2F; 过滤器 &#x2F; 文件</p>
+<h4 id="引发文件操作的危险函数"><a href="#引发文件操作的危险函数" class="headerlink" title="引发文件操作的危险函数"></a>引发文件操作的危险函数</h4><p>copy</p>
+<p>file_get_contents()</p>
+<p> highlight_file()</p>
+<p> fopen()</p>
+<p> read file()</p>
+<p> fread()</p>
+<p> fgetss()</p>
+<p> fgets()</p>
+<p> parse_ini_file()</p>
+<p> show_source()</p>
+<p> file()</p>
+<p>任意文件读取、写入、删除往往是上面几个函数受到了控制（当然还有其他的函数）。  不同的函数在不同的场景有不同的作用和不同的利用手法。  </p>
+<p>读取：可以读取配置等文件，拿到key  </p>
+<p>写入：可以写入shell代码相关的内容  </p>
+<p>删除：可以删除.lock文件而可以重新安装覆盖  </p>
+<p>更多思路请自行挖掘测试！！</p>
+<h4 id="引发信息泄露的危险函数"><a href="#引发信息泄露的危险函数" class="headerlink" title="引发信息泄露的危险函数"></a>引发信息泄露的危险函数</h4><p>phpinfo — 输出关于 PHP 配置的信息</p>
+<p>getenv — 获取一个环境变量的值</p>
+<p>get_current_user — 获取当前 PHP 脚本所有者名称</p>
+<p>getlastmod — 获取页面最后修改的时间</p>
+<p>ini_get — 获取一个配置选项的值</p>
+<p>glob — 寻找与模式匹配的文件路径</p>
+<h4 id="引发XEE的危险函数"><a href="#引发XEE的危险函数" class="headerlink" title="引发XEE的危险函数"></a>引发XEE的危险函数</h4><p>__construct()</p>
+<p>addAttribute()</p>
+<p>addChild()</p>
+<p>asXML()</p>
+<p>attributes()</p>
+<p>children()</p>
+<p>getDocNamespaces()</p>
+<p>getName()</p>
+<p>getNamespaces()</p>
+<p>registerXPathNamespace()</p>
+<p>simplexml_import_dom()</p>
+<p>simplexml_load_file()</p>
+<p>simplexml_load_string()</p>
+<p>xpath()</p>
+<h4 id="引发反序列化的危险函数"><a href="#引发反序列化的危险函数" class="headerlink" title="引发反序列化的危险函数"></a>引发反序列化的危险函数</h4><p>序列化函数：serialize()</p>
+<p>反序列化函数：unserialize()</p>
+<p>魔术函数：</p>
+<p>__construc()</p>
+<p>__destruct()</p>
+<p>__call()</p>
+<p>__callStatic()  </p>
+<p>__get()  </p>
+<p>__set() </p>
+<p>__isset()  </p>
+<p>__unset() </p>
+<p>__sleep() </p>
+<p>__wakeup()  </p>
+<p>__toString()  </p>
+<p>__invoke()  </p>
+<p>__set_state()  </p>
+<p>__clone()  </p>
+<p>__debuginfo()</p>
+<h2 id="二十一、Java危险函数"><a href="#二十一、Java危险函数" class="headerlink" title="二十一、Java危险函数"></a>二十一、Java危险函数</h2><h4 id="Java命令执行的函数"><a href="#Java命令执行的函数" class="headerlink" title="Java命令执行的函数"></a>Java命令执行的函数</h4><p><strong>Runtime类</strong></p>
+<p>Runtime类是私有的， 类的对象无法通过这种方式注册： Runtime r &#x3D; new Runtime() ; </p>
+<p>只能通过静态方法（getRuntime）获取： Runtime r &#x3D; Runtime.getRuntime()；</p>
+<p><strong>ProcessBuilder类</strong></p>
+<p>这种复现本质意义不大，重点是记一下敏感函数，</p>
+<p>rce2Servlet.java</p>
+<p><strong>ProcessImpl类ProcessImpl类通常是为ProcessBuilder.start()创建新进 程服务的，不能直接去调用。</strong></p>
+<p>看到ProcessImpl类构造器私有，所以不能直接对其进行实例化，为了演示可以用反射进行调 用。</p>
+<p>在获取到一个静态方法后，必须用setAccessible修改它的作用域，否则不能调用。</p>
+<h2 id="二十二、如何快速判定xss类型"><a href="#二十二、如何快速判定xss类型" class="headerlink" title="二十二、如何快速判定xss类型"></a>二十二、如何快速判定xss类型</h2><p><strong>存储型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，以后这个⻚⾯的返回包⾥都会有XSS代码</p>
+<p><strong>反射型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，只能在当前返回的数据包中发现XSS代码</p>
+<p><strong>dom型xss：</strong></p>
+<p>发送⼀次带XSS代码的请求，在返回包⾥压根⼉就找不到XSS代码的影⼦</p>
+<h2 id="二十三、csrf、ssrf和重放攻击有什么区别"><a href="#二十三、csrf、ssrf和重放攻击有什么区别" class="headerlink" title="二十三、csrf、ssrf和重放攻击有什么区别"></a>二十三、csrf、ssrf和重放攻击有什么区别</h2><p>CSRF是跨站请求伪造攻击，由客户端发起</p>
+<p>SSRF是服务器端请求伪造，由服务器发起</p>
+<p>重放攻击是将截获的数据包进⾏重放，达到身份认证等⽬的</p>
+<h2 id="常见对应端口及服务"><a href="#常见对应端口及服务" class="headerlink" title="常见对应端口及服务"></a>常见对应端口及服务</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610192113939-367834412.png" alt="image-20240610192109884"></p>
+<h2 id="设备"><a href="#设备" class="headerlink" title="设备"></a>设备</h2><p>安全设备<br>奇安信天眼<br>设备类型:全流量<br>大致使用方法<br>天眼首页截图:</p>
+<p>左边监测控制台,打开,有告警信息:</p>
+<p>分析时觉得IP有问题可以在攻击IP中搜索</p>
+<p>打开告警列表(奇安信网神?):</p>
+<p>点击详情,显示如下内容:</p>
+<p>微步tdp&#x2F;tip<br>TDP的<br>主页面:</p>
+<p>主要点击外部攻击的外部攻击项</p>
+<p>告警主机项，上面可以查询IP：</p>
+<p>内网渗透分析,被攻陷后可以看网络拓扑:</p>
+<p>优势项：自动识别一些恶意IP，即答：<u>tdp威胁情报发现有利于溯源分析</u><br><br><br></p>
+<p>青藤云HIDS<br>设备类型:全流量<br>大致使用方法<br>主页面，主机资产，安全台账功能，将可疑IP放到里面点击主机详情，看是不是内部IP：</p>
+<p>点击入侵事件,查看告警,点击告警的漏洞名称,可以跳到类似于天眼的详情信息页面</p>
+<p>可以查日志，筛选IP&#x2F;域名&#x2F;进程进行查询</p>
+<p>优势项:可以直接发现暴力破解,不需要人工添加规则</p>
+<p>明御安全网关<br>总结优势<br>HIDS：对全网信息捕捉</p>
+<p>微步:</p>
+<p>攻击发现，会显示攻击者画像 方便溯源分析<br>威胁情报发现，发现恶意IP<br>亚信：ei拦截的恶意文件会自动在an中运行检测生成报告</p>
+<p>ddei邮件网关，过滤垃圾邮件，对恶意文件隔离<br>ddan沙箱（&#x3D;微步云沙箱）：检测恶意文件，分析恶意样本，收集攻击信息，生成行为报告</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/e42dbe7e.html" rel="next" title="旅游vlog">
+                <i class="fa fa-chevron-left"></i> 旅游vlog
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/21993.html" rel="prev" title="数字取证">
+                数字取证 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lu-fe1" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:2186533588@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://blog.csdn.net/2301_82000839?spm=1000.2115.3001.5343" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81sql%E6%B3%A8%E5%85%A5%E5%88%86%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">一、sql注入分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%B8%B8%E8%A7%81%E6%BC%8F%E6%B4%9E"><span class="nav-number">1.1.</span> <span class="nav-text">其他常见漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#csrf"><span class="nav-number">1.1.1.</span> <span class="nav-text">csrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ssrf"><span class="nav-number">1.1.2.</span> <span class="nav-text">ssrf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB"><span class="nav-number">1.1.3.</span> <span class="nav-text">文件包含</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-number">1.1.4.</span> <span class="nav-text">文件上传</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xss"><span class="nav-number">1.1.5.</span> <span class="nav-text">xss</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#xxe"><span class="nav-number">1.1.6.</span> <span class="nav-text">xxe</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E5%88%A4%E6%96%AD%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%80%E6%AC%A1%E6%94%BB%E5%87%BB"><span class="nav-number">2.</span> <span class="nav-text">二、如何判断文件上传一次攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%92%8C%E4%BB%A3%E7%A0%81%E6%89%A7%E8%A1%8C"><span class="nav-number">3.</span> <span class="nav-text">三、命令执行和代码执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81CSRF-%E5%92%8C-XSS-%E5%92%8C-XXE-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">四、CSRF 和 XSS 和 XXE 有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%B8%80%E4%BA%9B%E6%BC%8F%E6%B4%9E"><span class="nav-number">5.</span> <span class="nav-text">五、一些漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shrio550%E5%92%8C721%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%BB%E8%A6%81%E5%8C%BA%E5%88%AB"><span class="nav-number">5.0.1.</span> <span class="nav-text">shrio550和721的区别主要区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fastjson%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.2.</span> <span class="nav-text">fastjson反序列化漏洞原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#log4j2%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.3.</span> <span class="nav-text">log4j2原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Struts2%E5%8E%9F%E7%90%86%EF%BC%9A"><span class="nav-number">5.0.4.</span> <span class="nav-text">Struts2原理：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Weblogic%EF%BC%9A"><span class="nav-number">5.0.5.</span> <span class="nav-text">Weblogic：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Jboss"><span class="nav-number">5.0.6.</span> <span class="nav-text">Jboss</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81webshell%E7%AE%A1%E7%90%86%E5%B7%A5%E5%85%B7"><span class="nav-number">6.</span> <span class="nav-text">六、webshell管理工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81windows-Linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%B5%81%E7%A8%8B"><span class="nav-number">7.</span> <span class="nav-text">七、windows+Linux应急响应流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">7.0.1.</span> <span class="nav-text">Windows入侵排查思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E5%85%A5%E4%BE%B5%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF"><span class="nav-number">7.0.2.</span> <span class="nav-text">Linux入侵排查思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94%E6%B5%81%E7%A8%8B"><span class="nav-number">7.0.3.</span> <span class="nav-text">应急响应流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#windows%E5%BA%94%E6%80%A5"><span class="nav-number">7.0.4.</span> <span class="nav-text">windows应急</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#linux%E5%BA%94%E6%80%A5"><span class="nav-number">7.0.5.</span> <span class="nav-text">linux应急</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81windows%E4%BA%8B%E4%BB%B6ID"><span class="nav-number">8.</span> <span class="nav-text">八、windows事件ID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81sql%E6%B3%A8%E5%85%A5"><span class="nav-number">9.</span> <span class="nav-text">九、sql注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81ssrf%E6%89%93redis"><span class="nav-number">10.</span> <span class="nav-text">十、ssrf打redis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81PHP%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%9C%A8%E9%A9%AC"><span class="nav-number">11.</span> <span class="nav-text">十一、PHP一句话木马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%8F%8A%E5%85%B6%E6%B5%81%E9%87%8F%E7%89%B9%E5%BE%81"><span class="nav-number">12.</span> <span class="nav-text">十二、序列化反序列化及其流量特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E8%AE%BE%E5%A4%87-%E5%87%BA%E7%8E%B0%E8%AF%AF%E6%8A%A5%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">13.</span> <span class="nav-text">十三、常见的设备,出现误报怎么办</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81wireshark%E6%8C%87%E4%BB%A4"><span class="nav-number">14.</span> <span class="nav-text">十四、wireshark指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%BA%94%E3%80%81%E4%B8%AD%E6%8C%96%E7%9F%BF%E7%97%85%E6%AF%92%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3"><span class="nav-number">15.</span> <span class="nav-text">十五、中挖矿病毒怎么解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E6%8B%BF%E5%88%B0webshell%E4%B8%8D%E5%87%BA%E7%BD%91%E6%83%85%E5%86%B5%E4%B8%8B%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">16.</span> <span class="nav-text">十六、拿到webshell不出网情况下怎么办</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B8%83%E3%80%81%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5java%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">17.</span> <span class="nav-text">十七、怎么排查java内存马</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E5%85%AB%E3%80%81%E8%9C%9C%E7%BD%90%E5%8E%9F%E7%90%86"><span class="nav-number">18.</span> <span class="nav-text">十八、蜜罐原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E4%B9%9D%E3%80%81%E5%86%85%E5%AD%98%E9%A9%AC%E6%9F%A5%E6%9D%80-%E5%8E%9F%E7%90%86"><span class="nav-number">19.</span> <span class="nav-text">十九、内存马查杀&amp;原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8D%B1%E9%99%A9PHP%E5%87%BD%E6%95%B0%E6%80%BB%E7%BB%93"><span class="nav-number">20.</span> <span class="nav-text">二十、常见的危险PHP函数总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.1.</span> <span class="nav-text">引发命令执行的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.2.</span> <span class="nav-text">引发文件包含的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.3.</span> <span class="nav-text">引发文件操作的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E4%BF%A1%E6%81%AF%E6%B3%84%E9%9C%B2%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.4.</span> <span class="nav-text">引发信息泄露的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91XEE%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.5.</span> <span class="nav-text">引发XEE的危险函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%8F%91%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">20.0.6.</span> <span class="nav-text">引发反序列化的危险函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%80%E3%80%81Java%E5%8D%B1%E9%99%A9%E5%87%BD%E6%95%B0"><span class="nav-number">21.</span> <span class="nav-text">二十一、Java危险函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%9A%84%E5%87%BD%E6%95%B0"><span class="nav-number">21.0.1.</span> <span class="nav-text">Java命令执行的函数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%BA%8C%E3%80%81%E5%A6%82%E4%BD%95%E5%BF%AB%E9%80%9F%E5%88%A4%E5%AE%9Axss%E7%B1%BB%E5%9E%8B"><span class="nav-number">22.</span> <span class="nav-text">二十二、如何快速判定xss类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E5%8D%81%E4%B8%89%E3%80%81csrf%E3%80%81ssrf%E5%92%8C%E9%87%8D%E6%94%BE%E6%94%BB%E5%87%BB%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">23.</span> <span class="nav-text">二十三、csrf、ssrf和重放攻击有什么区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%AF%B9%E5%BA%94%E7%AB%AF%E5%8F%A3%E5%8F%8A%E6%9C%8D%E5%8A%A1"><span class="nav-number">24.</span> <span class="nav-text">常见对应端口及服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E5%A4%87"><span class="nav-number">25.</span> <span class="nav-text">设备</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">关根</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>本站总访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

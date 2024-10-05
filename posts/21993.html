@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="任务三：数字文件取证   证据编号 在取证镜像中的文件名 镜像中原文件Hash码（MD5，不区分大小写）    evidence 1 eg2kx.jpg 85cdf73518b32a37f74c4bfa42d856a6   evidence 2 ZQOo2.zip 9e69763ec7dac69e2c5b07a5955a5868   evidence 3 p3qQ4.jpg a9a18aece">
+<meta property="og:type" content="article">
+<meta property="og:title" content="数字取证">
+<meta property="og:url" content="https://flowers-boy.top/posts/21993.html">
+<meta property="og:site_name" content="关根">
+<meta property="og:description" content="任务三：数字文件取证   证据编号 在取证镜像中的文件名 镜像中原文件Hash码（MD5，不区分大小写）    evidence 1 eg2kx.jpg 85cdf73518b32a37f74c4bfa42d856a6   evidence 2 ZQOo2.zip 9e69763ec7dac69e2c5b07a5955a5868   evidence 3 p3qQ4.jpg a9a18aece">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png">
+<meta property="og:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png">
+<meta property="article:published_time" content="2024-06-19T06:33:00.000Z">
+<meta property="article:modified_time" content="2024-06-19T06:58:59.261Z">
+<meta property="article:author" content="关根">
+<meta property="article:tag" content="关根">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://flowers-boy.top/posts/21993.html"/>
+
+
+
+
+
+  <title>数字取证 | 关根</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 7.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">关根</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">爱具体的人 做具体的事</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-首页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-分类">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://flowers-boy.top/posts/21993.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="关根">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">数字取证</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2024-06-19T14:33:00+08:00">
+                2024-06-19
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/writeup/" itemprop="url" rel="index">
+                    <span itemprop="name">writeup</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv">本文总阅读量
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>次
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <meta name="referrer" content="no-referrer">
+
+<h2 id="任务三：数字文件取证"><a href="#任务三：数字文件取证" class="headerlink" title="任务三：数字文件取证"></a>任务三：数字文件取证</h2><table>
+<thead>
+<tr>
+<th align="center">证据编号</th>
+<th align="center">在取证镜像中的文件名</th>
+<th align="center">镜像中原文件Hash码（MD5，不区分大小写）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">evidence 1</td>
+<td align="center">eg2kx.jpg</td>
+<td align="center">85cdf73518b32a37f74c4bfa42d856a6</td>
+</tr>
+<tr>
+<td align="center">evidence 2</td>
+<td align="center">ZQOo2.zip</td>
+<td align="center">9e69763ec7dac69e2c5b07a5955a5868</td>
+</tr>
+<tr>
+<td align="center">evidence 3</td>
+<td align="center">p3qQ4.jpg</td>
+<td align="center">a9a18aecec905a7742042461595b4b5c</td>
+</tr>
+<tr>
+<td align="center">evidence 4</td>
+<td align="center">nsOh2.png</td>
+<td align="center">f5b9ce3e485314c23c40a89d994b2dc8</td>
+</tr>
+<tr>
+<td align="center">evidence 5</td>
+<td align="center">RVlYt.zip</td>
+<td align="center">3f67593f11669c72a36bad4d41a83a78</td>
+</tr>
+<tr>
+<td align="center">evidence 6</td>
+<td align="center">mkjRv.7z</td>
+<td align="center">e610fcd2a0cd53d158e8ee4bb088100a</td>
+</tr>
+<tr>
+<td align="center">evidence 7</td>
+<td align="center">OR8iq.xml</td>
+<td align="center">28ba933c31fd60f8c4461aed14a8c447</td>
+</tr>
+<tr>
+<td align="center">evidence 8</td>
+<td align="center">8cFQj.py</td>
+<td align="center">7fccfb1778b15fbc09deb6690afc776a</td>
+</tr>
+<tr>
+<td align="center">evidence 9</td>
+<td align="center">jMH7w.xlsx</td>
+<td align="center">523c407180d54dde6eca700405599c8a</td>
+</tr>
+<tr>
+<td align="center">evidence 10</td>
+<td align="center">01d98.gif</td>
+<td align="center">d708444963b79da344fd71e5c72f7f02</td>
+</tr>
+</tbody></table>
+<h3 id="evidence-1"><a href="#evidence-1" class="headerlink" title="evidence 1"></a>evidence 1</h3><p>在auto中找到eg2kx.jpg，保存到本地</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144320915-1400398092.png" alt="image-20240619144319921"></p>
+<p>放到kali里查看下文件，发现里面有个压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144343298-1732351595.png" alt="image-20240619144344786"></p>
+<p>后缀修改.zip，打开压缩包</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144358900-1499432232.png" alt="image-20240619144400692"></p>
+<p>certutil -hashfile filename md5 使用cmd终端求出源文件hash码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144422045-534872133.png" alt="image-20240619144423655"></p>
+<h3 id="evidence-2"><a href="#evidence-2" class="headerlink" title="evidence 2"></a>evidence 2</h3><p>ZQOo2.jpg用kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144448282-781821382.png" alt="image-20240619144450039"></p>
+<p>修改成zip文件需要密码，拉到010修改参数</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144530235-441168608.png" alt="image-20240619144531862"></p>
+<h3 id="evidence-3"><a href="#evidence-3" class="headerlink" title="evidence 3"></a>evidence 3</h3><p>p3qQ4.jpg</p>
+<p>打开就是图片没显示完全 </p>
+<p>HEX 十六进制 </p>
+<p>DEC 十进制 </p>
+<p>OCT 八进制 </p>
+<p>BIN 二进制 </p>
+<p>00 00 02 80 代表宽度 </p>
+<p>00 00 01 92 代表高度</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144801830-207600106.png" alt="image-20240619144803532"></p>
+<p>将高度十进制修改成1000，十六进制就是03 E8</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144821301-1590599293.png" alt="image-20240619144822803"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144836124-1454248698.png" alt="image-20240619144837626"></p>
+<h3 id="evidence-4"><a href="#evidence-4" class="headerlink" title="evidence 4"></a>evidence 4</h3><p>nsOh2.png 直接显示了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619144902699-273714854.png" alt="image-20240619144904197"></p>
+<h3 id="evidence-5"><a href="#evidence-5" class="headerlink" title="evidence 5"></a>evidence 5</h3><p>RVlYt.zip</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145022732-277350086.png" alt="image-20240619145024416"></p>
+<p>另一张图片并没有什么 用010打开发现两张图片中间含有base64解码 搜索45 4E 44 是结尾16进制表示</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145038737-505191824.png" alt="image-20240619145040368"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145048790-1484432092.png" alt="image-20240619145050523"></p>
+<p>或者使用kali解码</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145103329-617948950.png" alt="image-20240619145105118"></p>
+<h3 id="evidence-6"><a href="#evidence-6" class="headerlink" title="evidence 6"></a>evidence 6</h3><p>mkjRv.7z</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145152522-1763155048.png" alt="image-20240619145154340"></p>
+<p> kali分析 修改成mpeg文件 使用audacity打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145207591-468728145.png" alt="image-20240619145209317"></p>
+<h3 id="evidence-7"><a href="#evidence-7" class="headerlink" title="evidence 7"></a>evidence 7</h3><p>OR8iq.xml</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145259439-134986905.png" alt="image-20240619145301158"></p>
+<p>stegsolve查看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145309375-539765797.png" alt="image-20240619145311255"></p>
+<h3 id="evidence-8"><a href="#evidence-8" class="headerlink" title="evidence 8"></a>evidence 8</h3><p>8cFQj.py</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145401004-1996773354.png" alt="image-20240619145402450"></p>
+<p>010 查看到末尾都是二进制，用python进行每8组为单位转换对应十进制 发现结尾都是base32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145425364-1203702419.png" alt="image-20240619145427107"></p>
+<p>进行在线转换，32-&gt;64-&gt;32-&gt;hex-&gt;32-&gt;64-&gt;32</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145443457-1463861147.png" alt="image-20240619145445087"></p>
+<h3 id="evidence-9"><a href="#evidence-9" class="headerlink" title="evidence 9"></a>evidence 9</h3><p> jMH7w.js</p>
+<p>kali分析</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145530875-351864068.png" alt="image-20240619145532632"></p>
+<p>改成压缩包后打开xlsx表格，拉住界面标红</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145537662-348434671.png" alt="image-20240619145539415"></p>
+<h3 id="evidence-10"><a href="#evidence-10" class="headerlink" title="evidence 10"></a>evidence 10</h3><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145600268-2100879050.png" alt="image-20240619145602089"></p>
+<p>Stegsolve.jar打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145612824-854213073.png" alt="image-20240619145614500"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619145622522-57668868.png" alt="image-20240619145624224"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/posts/4e75e90a.html" rel="next" title="护网蓝队面试">
+                <i class="fa fa-chevron-left"></i> 护网蓝队面试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/posts/14937.html" rel="prev" title="内存取证">
+                内存取证 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/lu-fe1" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:2186533588@qq.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://blog.csdn.net/2301_82000839?spm=1000.2115.3001.5343" target="_blank" title="CSDN">
+                      
+                        <i class="fa fa-fw fa-CSDN"></i>CSDN</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E4%B8%89%EF%BC%9A%E6%95%B0%E5%AD%97%E6%96%87%E4%BB%B6%E5%8F%96%E8%AF%81"><span class="nav-number">1.</span> <span class="nav-text">任务三：数字文件取证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-1"><span class="nav-number">1.1.</span> <span class="nav-text">evidence 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-2"><span class="nav-number">1.2.</span> <span class="nav-text">evidence 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-3"><span class="nav-number">1.3.</span> <span class="nav-text">evidence 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-4"><span class="nav-number">1.4.</span> <span class="nav-text">evidence 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-5"><span class="nav-number">1.5.</span> <span class="nav-text">evidence 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-6"><span class="nav-number">1.6.</span> <span class="nav-text">evidence 6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-7"><span class="nav-number">1.7.</span> <span class="nav-text">evidence 7</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-8"><span class="nav-number">1.8.</span> <span class="nav-text">evidence 8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-9"><span class="nav-number">1.9.</span> <span class="nav-text">evidence 9</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evidence-10"><span class="nav-number">1.10.</span> <span class="nav-text">evidence 10</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">关根</span>
+
+  
+</div>
+<!--
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv">
+      <i class="fa fa-user"></i>本站总访客数
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+      人次
+    </span>
+  
+
+  
+    <span class="site-pv">
+      <i class="fa fa-eye"></i>本站总访问量
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+      次
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
