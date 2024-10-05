@@ -116,6 +116,115 @@
       </categories>
   </entry>
   <entry>
+    <title>信安管评一阶段</title>
+    <url>/posts/2590.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="赛前准备"><a href="#赛前准备" class="headerlink" title="赛前准备"></a>赛前准备</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 梳理网线</span><br><span class="line">2. 配置BC、WFA、FW设备IP地址</span><br><span class="line">3. 连接设备检查是否能正常登录</span><br><span class="line">4. 查看拓扑图，子网划分表，vlan划分进行连线思路整理，细心耐心整理连接</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">型号</th>
+<th align="center">端口</th>
+<th align="center">登录</th>
+<th align="center">用户名</th>
+<th align="center">密码</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">DCFW-1800E-N3002</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.1.1/">https://192.168.1.1</a></td>
+<td align="center">admin</td>
+<td align="center">admin</td>
+</tr>
+<tr>
+<td align="center">DCFW-1800E-WAF-P</td>
+<td align="center">G0-G5</td>
+<td align="center"><a href="https://192.168.254.1/">https://192.168.254.1</a></td>
+<td align="center">admin</td>
+<td align="center">yunke1234!</td>
+</tr>
+<tr>
+<td align="center">DCBC-NetLog</td>
+<td align="center">eth0</td>
+<td align="center"><a href="https://192.168.0.1:9090/">https://192.168.0.1:9090</a></td>
+<td align="center">admin</td>
+<td align="center">admin*PWD</td>
+</tr>
+<tr>
+<td align="center">DCWS-6028P</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">CS6200-28X-Pro</td>
+<td align="center"></td>
+<td align="center">console</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<p>必须熟记三个web网站及对应型号，节省一阶段时间</p>
+<h2 id="任务一"><a href="#任务一" class="headerlink" title="任务一"></a>任务一</h2><p>使用笔记本模板配置最快速 </p>
+<p>连接AP，FW都为trunk  </p>
+<p>连接AP时设置native vlan</p>
+<h3 id="FW"><a href="#FW" class="headerlink" title="FW"></a>FW</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.1.1</span><br><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
+
+<p><strong>策略放行</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rule id 1</span><br><span class="line">   action permit</span><br><span class="line">   src-addr any</span><br><span class="line">   dst-addr any</span><br><span class="line">   service any</span><br><span class="line">zone trust1</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enabel</span><br><span class="line">interface e0/1</span><br><span class="line">manage ping </span><br><span class="line">zone trust</span><br><span class="line">ip ad 192.168.0.1/24</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">interface aggregate1</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">lacp enable</span><br><span class="line">exit</span><br><span class="line">interface aggregate1.113</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.1/24</span><br><span class="line">interface aggregate1.114</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.2/24</span><br><span class="line">exit</span><br><span class="line">interface e0/1</span><br><span class="line">aggregate aggregate1</span><br><span class="line">interface e0/2</span><br><span class="line">aggregate aggregate1</span><br><span class="line">show configuration  interface  aggregate1</span><br></pre></td></tr></table></figure>
+
+<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enable</span><br><span class="line">config</span><br><span class="line">hostname CS</span><br><span class="line">vlan xx;xx;xx</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置IP</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enable</span><br><span class="line">interface vlan xx</span><br><span class="line">ipv6 enable </span><br><span class="line">ip ad 192.168.0.1/24</span><br><span class="line">ipv6 ....</span><br></pre></td></tr></table></figure>
+
+<p><strong>捆绑vlan</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int e1/0/1</span><br><span class="line">sw ac vlan  xx</span><br><span class="line">int e1/0/2</span><br><span class="line">sw mode trunk</span><br><span class="line">sw trunk all vlan 140;150 </span><br><span class="line">sw trunk native vlan 11 此时管理vlan就是11 140;150是通过此端口的vlan就比如vlan140;150是APvlan</span><br></pre></td></tr></table></figure>
+
+<p><strong>链路聚合配置</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">port-group  1 </span><br><span class="line">interface ethernet  1/0/1-2</span><br><span class="line">port-group 1 mode active 主动模式</span><br><span class="line">interface  port-channel 1 </span><br><span class="line">switchport mode trunk 设置为trunk端口，看题目而定，access可不设置</span><br><span class="line">switchport trunk allowed vlan 100</span><br></pre></td></tr></table></figure>
+
+<h3 id="WS"><a href="#WS" class="headerlink" title="WS"></a>WS</h3><p>同CS配置一样</p>
+<h3 id="BC"><a href="#BC" class="headerlink" title="BC"></a>BC</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.0.1:9090 </span><br><span class="line">admin</span><br><span class="line">admin*PWD</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 增加安全策略</span><br><span class="line">3. 配置端口、IP</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184833754-1912863813.png" alt="image-20240619184834859"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184849177-962736332.png" alt="image-20240619184850332"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184905358-1318996520.png" alt="image-20240619184906940"></p>
+<h3 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.254.1</span><br><span class="line">admin</span><br><span class="line">yunke1234!</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 配置端口、IP、默认路由</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184952246-32313762.png" alt="image-20240619184953903"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185000429-1283664333.png" alt="image-20240619185002200"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185009251-1309281478.png" alt="image-20240619185010997"></p>
+<h2 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h2><p>首先要明白主机IP32位由 网络位+主机位构成<br>二进制计算：<br>0  |0 |0 |0 |0|0|0|0<br>128|64|32|16|8|4|2|1 相加就是255</p>
+<p>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24<br>网络地址是主机号全为0<br>广播地址是主机号全为1<br>比如192.168.0.1&#x2F;24二进制表达就是<br>主机： 11000000 10101000 00000000 00000001<br>掩码： 11111111 11111111 11111111 00000000<br>子网： 11000000 10101000 00000000 00000000<br>主机掩码变化到子网就是同1化1，异化0<br>根据子网算出网络地址和广播地址<br>子网： 11000000 10101000 00000000 | 00000000 #因为掩码是24所以前24位是固定的，变化的都是<br>主机号<br>      —-     网络位          —| –主机位–<br>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24</p>
+<h3 id="解决思路："><a href="#解决思路：" class="headerlink" title="解决思路："></a>解决思路：</h3><p><strong>第一步：</strong>找出题目中给出的网络号<br><strong>第二部：</strong>计算出网络地址和广播地址 #目的就是划分网络不超出这个范围<br><strong>第三步：</strong>进行子网划分，遵循从大到小原则，先算大，再算小<br><strong>第四步：</strong>通过子网掩码计算可用主机数量<br><strong>第五步：</strong>从大到小计算网络地址和广播地址</p>
+<h3 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h3><p>某公司获得了一个 IP 地址段为172.16.24.0&#x2F;23 的网络。该公司需要将这个网络划分为多个子网以满足不<br>同部门的需求。根据给定的要求，请回答以下问题：<br>公司有三个部门，各部门所需最少子网地址数量，销售（60）、技术（10）、营销（129）<br>基于上述划分，确定每个子网的子网掩码、网络地址范围和广播地址</p>
+<p><strong>第一步：</strong>172.16.24.0&#x2F;23<br><strong>第二部：</strong>自己按照上面提示求出子网<br>子网：10101100 00010000 00011000 00000000<br>这次掩码变为23了，所以主机位就是9，前23位不动，后9位变化<br>子网：10101100 00010000 0001100|0 00000000—<br>            —              网络位                   —|—    主机位  —<br>网络地址：172.16.24.0&#x2F;23<br>广播地址：172.16.25.255&#x2F;23<br><strong>第三步：</strong>先算营销、再销售、再技术<br><strong>第四步：</strong>营销所需129个 销售所需60 技术所需10个 +2是因为.0和.255不可用就是网络地址和广播地址不<br>可用</p>
+<p>2的x的平方&gt;&#x3D;129+2 x&gt;&#x3D;8 32-8&#x3D;24 所以营销部门子网掩码就是24</p>
+<p>2的x的平方&gt;&#x3D;60+2 x&gt;&#x3D;6 32-6&#x3D;26 所以销售部门子网掩码就是26 </p>
+<p>2的x的平方&gt;&#x3D;10+2 x&gt;&#x3D;4 32-4&#x3D;28 所以技术部门子网掩码就是28</p>
+<p><strong>第五步：</strong><br><strong>1.营销：</strong>172.16.24.0&#x2F;24<br> 172.16.24.00000000<br>网络-广播：172.16.24.0-172.16.24.255&#x2F;24<br>可用主机：172.16.24.1-172.16.24.254<br>因为172.16.24.0&#x2F;24的地址均用完，接下来就要使用172.16.25.0网段</p>
+<p><strong>2.销售：</strong>172.16.25.0&#x2F;26<br> 172.16.24.00|000000<br>网络-广播：172.16.25.0-172.16.25.63&#x2F;26<br>可用主机：172.16.25.1-172.16.25.62&#x2F;26<br> <strong>3.技术：</strong>172.16.25.64&#x2F;28<br> 172.16.24.0100|0000<br>网路-广播：172.16.25.64-172.16.25.79&#x2F;28<br>可用主机：172.16.25.65-172.16.25.78&#x2F;28</p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
     <title>内存取证</title>
     <url>/posts/14937.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -238,6 +347,38 @@
       </categories>
   </entry>
   <entry>
+    <title>图床搭建(零成本)</title>
+    <url>/posts/afaa72b6.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
+<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
+<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
+<p>阿里和腾讯都需要收费</p>
+<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
+<p>管理-设置-其他设置</p>
+<p>需要设置令牌</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
+<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
+<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
+<p>进行配置</p>
+<p>id是作者名称</p>
+<p>账号就是登录名</p>
+<p>密码就是令牌</p>
+<p>地址是metaweblog地址</p>
+<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
+<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
+<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
+<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
+<p>点击验证测试</p>
+<p>到此，免费图床就配置好了，祝各位前途无忧</p>
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
     <title>国护Vlog</title>
     <url>/posts/28501.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -273,204 +414,6 @@
 ]]></content>
       <categories>
         <category>生活</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>信安管评一阶段</title>
-    <url>/posts/2590.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="赛前准备"><a href="#赛前准备" class="headerlink" title="赛前准备"></a>赛前准备</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 梳理网线</span><br><span class="line">2. 配置BC、WFA、FW设备IP地址</span><br><span class="line">3. 连接设备检查是否能正常登录</span><br><span class="line">4. 查看拓扑图，子网划分表，vlan划分进行连线思路整理，细心耐心整理连接</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th align="center">型号</th>
-<th align="center">端口</th>
-<th align="center">登录</th>
-<th align="center">用户名</th>
-<th align="center">密码</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">DCFW-1800E-N3002</td>
-<td align="center">eth0</td>
-<td align="center"><a href="https://192.168.1.1/">https://192.168.1.1</a></td>
-<td align="center">admin</td>
-<td align="center">admin</td>
-</tr>
-<tr>
-<td align="center">DCFW-1800E-WAF-P</td>
-<td align="center">G0-G5</td>
-<td align="center"><a href="https://192.168.254.1/">https://192.168.254.1</a></td>
-<td align="center">admin</td>
-<td align="center">yunke1234!</td>
-</tr>
-<tr>
-<td align="center">DCBC-NetLog</td>
-<td align="center">eth0</td>
-<td align="center"><a href="https://192.168.0.1:9090/">https://192.168.0.1:9090</a></td>
-<td align="center">admin</td>
-<td align="center">admin*PWD</td>
-</tr>
-<tr>
-<td align="center">DCWS-6028P</td>
-<td align="center"></td>
-<td align="center">console</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr>
-<td align="center">CS6200-28X-Pro</td>
-<td align="center"></td>
-<td align="center">console</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-</tbody></table>
-<p>必须熟记三个web网站及对应型号，节省一阶段时间</p>
-<h2 id="任务一"><a href="#任务一" class="headerlink" title="任务一"></a>任务一</h2><p>使用笔记本模板配置最快速 </p>
-<p>连接AP，FW都为trunk  </p>
-<p>连接AP时设置native vlan</p>
-<h3 id="FW"><a href="#FW" class="headerlink" title="FW"></a>FW</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.1.1</span><br><span class="line">admin</span><br><span class="line">admin</span><br></pre></td></tr></table></figure>
-
-<p><strong>策略放行</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">rule id 1</span><br><span class="line">   action permit</span><br><span class="line">   src-addr any</span><br><span class="line">   dst-addr any</span><br><span class="line">   service any</span><br><span class="line">zone trust1</span><br></pre></td></tr></table></figure>
-
-<p><strong>配置IP</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enabel</span><br><span class="line">interface e0/1</span><br><span class="line">manage ping </span><br><span class="line">zone trust</span><br><span class="line">ip ad 192.168.0.1/24</span><br></pre></td></tr></table></figure>
-
-<p><strong>链路聚合配置</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">interface aggregate1</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">lacp enable</span><br><span class="line">exit</span><br><span class="line">interface aggregate1.113</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.1/24</span><br><span class="line">interface aggregate1.114</span><br><span class="line">zone trust</span><br><span class="line">manage ping</span><br><span class="line">ip address 192.168.0.2/24</span><br><span class="line">exit</span><br><span class="line">interface e0/1</span><br><span class="line">aggregate aggregate1</span><br><span class="line">interface e0/2</span><br><span class="line">aggregate aggregate1</span><br><span class="line">show configuration  interface  aggregate1</span><br></pre></td></tr></table></figure>
-
-<h3 id="CS"><a href="#CS" class="headerlink" title="CS"></a>CS</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">enable</span><br><span class="line">config</span><br><span class="line">hostname CS</span><br><span class="line">vlan xx;xx;xx</span><br></pre></td></tr></table></figure>
-
-<p><strong>配置IP</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ipv6 enable</span><br><span class="line">interface vlan xx</span><br><span class="line">ipv6 enable </span><br><span class="line">ip ad 192.168.0.1/24</span><br><span class="line">ipv6 ....</span><br></pre></td></tr></table></figure>
-
-<p><strong>捆绑vlan</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">int e1/0/1</span><br><span class="line">sw ac vlan  xx</span><br><span class="line">int e1/0/2</span><br><span class="line">sw mode trunk</span><br><span class="line">sw trunk all vlan 140;150 </span><br><span class="line">sw trunk native vlan 11 此时管理vlan就是11 140;150是通过此端口的vlan就比如vlan140;150是APvlan</span><br></pre></td></tr></table></figure>
-
-<p><strong>链路聚合配置</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">port-group  1 </span><br><span class="line">interface ethernet  1/0/1-2</span><br><span class="line">port-group 1 mode active 主动模式</span><br><span class="line">interface  port-channel 1 </span><br><span class="line">switchport mode trunk 设置为trunk端口，看题目而定，access可不设置</span><br><span class="line">switchport trunk allowed vlan 100</span><br></pre></td></tr></table></figure>
-
-<h3 id="WS"><a href="#WS" class="headerlink" title="WS"></a>WS</h3><p>同CS配置一样</p>
-<h3 id="BC"><a href="#BC" class="headerlink" title="BC"></a>BC</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.0.1:9090 </span><br><span class="line">admin</span><br><span class="line">admin*PWD</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 增加安全策略</span><br><span class="line">3. 配置端口、IP</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184833754-1912863813.png" alt="image-20240619184834859"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184849177-962736332.png" alt="image-20240619184850332"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184905358-1318996520.png" alt="image-20240619184906940"></p>
-<h3 id="WAF"><a href="#WAF" class="headerlink" title="WAF"></a>WAF</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">https://192.168.254.1</span><br><span class="line">admin</span><br><span class="line">yunke1234!</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1. 改名</span><br><span class="line">2. 配置端口、IP、默认路由</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619184952246-32313762.png" alt="image-20240619184953903"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185000429-1283664333.png" alt="image-20240619185002200"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619185009251-1309281478.png" alt="image-20240619185010997"></p>
-<h2 id="子网划分"><a href="#子网划分" class="headerlink" title="子网划分"></a>子网划分</h2><p>首先要明白主机IP32位由 网络位+主机位构成<br>二进制计算：<br>0  |0 |0 |0 |0|0|0|0<br>128|64|32|16|8|4|2|1 相加就是255</p>
-<p>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24<br>网络地址是主机号全为0<br>广播地址是主机号全为1<br>比如192.168.0.1&#x2F;24二进制表达就是<br>主机： 11000000 10101000 00000000 00000001<br>掩码： 11111111 11111111 11111111 00000000<br>子网： 11000000 10101000 00000000 00000000<br>主机掩码变化到子网就是同1化1，异化0<br>根据子网算出网络地址和广播地址<br>子网： 11000000 10101000 00000000 | 00000000 #因为掩码是24所以前24位是固定的，变化的都是<br>主机号<br>      —-     网络位          —| –主机位–<br>网络地址：192.168.0.0&#x2F;24<br>广播地址：192.168.0.255&#x2F;24</p>
-<h3 id="解决思路："><a href="#解决思路：" class="headerlink" title="解决思路："></a>解决思路：</h3><p><strong>第一步：</strong>找出题目中给出的网络号<br><strong>第二部：</strong>计算出网络地址和广播地址 #目的就是划分网络不超出这个范围<br><strong>第三步：</strong>进行子网划分，遵循从大到小原则，先算大，再算小<br><strong>第四步：</strong>通过子网掩码计算可用主机数量<br><strong>第五步：</strong>从大到小计算网络地址和广播地址</p>
-<h3 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h3><p>某公司获得了一个 IP 地址段为172.16.24.0&#x2F;23 的网络。该公司需要将这个网络划分为多个子网以满足不<br>同部门的需求。根据给定的要求，请回答以下问题：<br>公司有三个部门，各部门所需最少子网地址数量，销售（60）、技术（10）、营销（129）<br>基于上述划分，确定每个子网的子网掩码、网络地址范围和广播地址</p>
-<p><strong>第一步：</strong>172.16.24.0&#x2F;23<br><strong>第二部：</strong>自己按照上面提示求出子网<br>子网：10101100 00010000 00011000 00000000<br>这次掩码变为23了，所以主机位就是9，前23位不动，后9位变化<br>子网：10101100 00010000 0001100|0 00000000—<br>            —              网络位                   —|—    主机位  —<br>网络地址：172.16.24.0&#x2F;23<br>广播地址：172.16.25.255&#x2F;23<br><strong>第三步：</strong>先算营销、再销售、再技术<br><strong>第四步：</strong>营销所需129个 销售所需60 技术所需10个 +2是因为.0和.255不可用就是网络地址和广播地址不<br>可用</p>
-<p>2的x的平方&gt;&#x3D;129+2 x&gt;&#x3D;8 32-8&#x3D;24 所以营销部门子网掩码就是24</p>
-<p>2的x的平方&gt;&#x3D;60+2 x&gt;&#x3D;6 32-6&#x3D;26 所以销售部门子网掩码就是26 </p>
-<p>2的x的平方&gt;&#x3D;10+2 x&gt;&#x3D;4 32-4&#x3D;28 所以技术部门子网掩码就是28</p>
-<p><strong>第五步：</strong><br><strong>1.营销：</strong>172.16.24.0&#x2F;24<br> 172.16.24.00000000<br>网络-广播：172.16.24.0-172.16.24.255&#x2F;24<br>可用主机：172.16.24.1-172.16.24.254<br>因为172.16.24.0&#x2F;24的地址均用完，接下来就要使用172.16.25.0网段</p>
-<p><strong>2.销售：</strong>172.16.25.0&#x2F;26<br> 172.16.24.00|000000<br>网络-广播：172.16.25.0-172.16.25.63&#x2F;26<br>可用主机：172.16.25.1-172.16.25.62&#x2F;26<br> <strong>3.技术：</strong>172.16.25.64&#x2F;28<br> 172.16.24.0100|0000<br>网路-广播：172.16.25.64-172.16.25.79&#x2F;28<br>可用主机：172.16.25.65-172.16.25.78&#x2F;28</p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>博客配置</title>
-    <url>/posts/459ba203.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
-
-<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
-<p>可选择是否自动播放</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
-<p>音乐代码</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
-<meta name="referrer" content="no-referrer">
-
-<p>例子：</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
-<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
-<ul>
-<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
-<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
-</ul>
-<p>在博客根目录文件夹下打开</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
-
-<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
-<p><strong>启用主题：</strong></p>
-<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
-<p><strong>验证：</strong></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
-
-<p>清空缓存，生成，上传</p>
-<p><strong>分类：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
-
-<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
-<p>以此类推</p>
-<p><strong>标签：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
-
-<p><strong>关于：</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>博客配置</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>图床搭建(零成本)</title>
-    <url>/posts/afaa72b6.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h2><p>使用typora发布博客以及发送给朋友md文档需要打包成压缩包，csdn还无法解码url，</p>
-<p>于是搭建免费版github+pic图床，但github图床限制1G，超过就会有人工审核，并且传输不稳定，时好时坏</p>
-<p>七牛虽然高速，但免费时长只有一月，超过需要绑定域名，（域名便宜的大概12一年）</p>
-<p>阿里和腾讯都需要收费</p>
-<h3 id="1-创建博客园账号"><a href="#1-创建博客园账号" class="headerlink" title="1.创建博客园账号"></a>1.创建博客园账号</h3><p>软件exe基于博客园使用</p>
-<p>管理-设置-其他设置</p>
-<p>需要设置令牌</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233056234-253989091.png" alt="image-20240609233055768"></p>
-<h3 id="2-下载exe"><a href="#2-下载exe" class="headerlink" title="2.下载exe"></a>2.下载exe</h3><p>注意：！！！安装路径不要带有中文路径</p>
-<p><a href="https://www.123pan.com/s/YiNWjv-b5fa3.html%E6%8F%90%E5%8F%96%E7%A0%81:48Oh">https://www.123pan.com/s/YiNWjv-b5fa3.html提取码:48Oh</a></p>
-<p>进行配置</p>
-<p>id是作者名称</p>
-<p>账号就是登录名</p>
-<p>密码就是令牌</p>
-<p>地址是metaweblog地址</p>
-<p>设置错误也没关系，按1重置，慢慢来就会成功</p>
-<h3 id="3-配置typora"><a href="#3-配置typora" class="headerlink" title="3.配置typora"></a>3.配置typora</h3><p>文件-偏好设置-图像</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609233259076-2096031584.png" alt="image-20240609233258532"></p>
-<p>命令为.exe软件位置（再次提醒不要安装在中文路径）</p>
-<p>比如我的位置是D:\Tool\EasyBlogImageForTypora\EasyBlogImageForTypora.exe</p>
-<p>点击验证测试</p>
-<p>到此，免费图床就配置好了，祝各位前途无忧</p>
-]]></content>
-      <categories>
-        <category>博客配置</category>
       </categories>
   </entry>
   <entry>
@@ -943,6 +886,188 @@
       </categories>
   </entry>
   <entry>
+    <title>博客配置</title>
+    <url>/posts/459ba203.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="插入音乐"><a href="#插入音乐" class="headerlink" title="插入音乐"></a>插入音乐</h2><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=416892296&auto=0&height=66"></iframe>
+
+<p>网易云找到需要插入的音乐，进入图片界面，点击生成外链播放器</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220349515-1715996838.png" alt="image-20240609220348450"></p>
+<p>可选择是否自动播放</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220433508-344574955.png" alt="image-20240609220433503"></p>
+<p>音乐代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">frameborder</span>=<span class="string">&quot;no&quot;</span> <span class="attr">border</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginwidth</span>=<span class="string">&quot;0&quot;</span> <span class="attr">marginheight</span>=<span class="string">&quot;0&quot;</span> <span class="attr">width</span>=<span class="string">330</span> <span class="attr">height</span>=<span class="string">86</span> <span class="attr">src</span>=<span class="string">&quot;//music.163.com/outchain/player?type=2&amp;id=416892296&amp;auto=0&amp;height=66&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="关于图床不能正常显示"><a href="#关于图床不能正常显示" class="headerlink" title="关于图床不能正常显示"></a>关于图床不能正常显示</h2><p>在md文章顶部输入</p>
+<meta name="referrer" content="no-referrer">
+
+<p>例子：</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609220736493-1958683140.png" alt="image-20240609220735192"></p>
+<h2 id="主题安装"><a href="#主题安装" class="headerlink" title="主题安装"></a>主题安装</h2><p><strong>正式开始部署之前我们需要明白：</strong></p>
+<ul>
+<li>站点配置文件：位于站点根目录下，基于网站的配置</li>
+<li>主题配置文件：位于<code>themes</code>目录下，基于主题相关配置</li>
+</ul>
+<p>在博客根目录文件夹下打开</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609222908550-1908865020.png" alt="image-20240609222908329"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/theme-next/hexo-theme-next themes/next</span><br></pre></td></tr></table></figure>
+
+<p>注意：git方式下载为最新版本（下载报错一般是github连接不到，网上教程配置下加速解决），需要其他版本可去<a href="https://github.com/theme-next/hexo-theme-next/releases">next官网</a>下载压缩包解压到themes下即可</p>
+<p><strong>启用主题：</strong></p>
+<p>与其他主题启用模式相同，打开站点配置文件，找到<code>themes</code>，修改成自己的主题文件夹命名</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609224045428-1170978313.png" alt="image-20240609224045350"></p>
+<p><strong>验证：</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo clean <span class="comment">#生成缓存</span></span><br><span class="line">hexo g <span class="comment">#生成文件</span></span><br><span class="line">hexo s<span class="comment">#本地服务进行测试</span></span><br><span class="line">hexo d <span class="comment">#上传到github</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基础配置"><a href="#基础配置" class="headerlink" title="基础配置"></a>基础配置</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">title:</span> <span class="comment">#网站的标题</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站副标题</span></span><br><span class="line"><span class="attr">description:</span> <span class="string">&#x27;&#x27;</span> <span class="comment">#网站描述</span></span><br><span class="line"><span class="attr">keywords:</span> <span class="comment">#网站关键字</span></span><br><span class="line"><span class="attr">author:</span> <span class="comment">#网站作者</span></span><br><span class="line"><span class="attr">language:</span> <span class="string">zh-CN</span> <span class="comment">#语言 zh-CN简体中文</span></span><br><span class="line"><span class="attr">timezone:</span> <span class="string">&#x27;Asia/Shanghai&#x27;</span> <span class="comment">#时区</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="发布文章"><a href="#发布文章" class="headerlink" title="发布文章"></a>发布文章</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo new 文章</span><br><span class="line">hexo new <span class="string">&quot;hello jack&quot;</span><span class="comment">#文章标题有空格的条件下</span></span><br></pre></td></tr></table></figure>
+
+<p>清空缓存，生成，上传</p>
+<p><strong>分类：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;categories&quot;</span><br></pre></td></tr></table></figure>
+
+<p><code>source</code>内会出现categories文件夹，配置文件index.md</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609225036377-1664229931.png" alt="image-20240609225036464"></p>
+<p>以此类推</p>
+<p><strong>标签：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;tags&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>关于：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new page &quot;about&quot;</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>博客配置</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>数据流量分析</title>
+    <url>/posts/51705.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<h2 id="数据分析01"><a href="#数据分析01" class="headerlink" title="数据分析01"></a>数据分析01</h2><p>http.request.method &#x3D;&#x3D;POST<br>筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18<br>黑客IP是172.16.1.110<br>或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110<br>的易受攻击端⼝短时间内发送了⼤量的建⽴连接请求，因此判定 172.16.1.110 为攻击机 172.16.1.18为<br>服务器<br>FLAG: 172.16.1.110</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png" alt="image-20240619153436773"></p>
+<p>ip.src &#x3D;&#x3D; 172.16.1.110 and ip.dst &#x3D;&#x3D; 172.16.1.18 and tcp.connection.syn<br> TCP连接的SYN标志被设置。SYN标志表示一个TCP连接请求，用于建立一个新的连接<br>FLAG: 21&#x2F;22&#x2F;23&#x2F;80&#x2F;3306</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153457056-1932560292.png" alt="image-20240619153458454"></p>
+<p>统计-&gt;协议分级 发现数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、igmp、arp<br>其中telnet和ssh都是远程终端协议，telnet是明⽂传输⽽ssh是加密传输，ftp是命令控制协议，ftp<br>data是真正文件传输走的协议，因此只要看到存在ftp-data协议，就证明从ftp服务器传输了数据<br>vnc协议是磐云平台上连接虚拟机⾛的协议，这个可以忽略</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153517745-455823692.png" alt="image-20240619153519164"></p>
+<p>综上所述，能查看服务器主机名的协议有：<br>telnet<br> ssh (加密的，可以适当性忽略)<br> http(如果存在命令执⾏漏洞，就有可能查看主机名)<br>其实telnet协议在不登录服务器的情况下，就会显示其主机名。主机名 login 主机名可能会变，但是<br>login始终固定，因此我们可以构造如下过滤规则，筛选出所有内容包含login的telnet数据包<br>telnet contains “login”</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153536364-602711919.png" alt="image-20240619153538045"></p>
+<p>或点击筛选出来的telnet数据包右键追踪流 -&gt; TCP流<br>FLAG: SecTestLabs</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153552223-862063718.png" alt="image-20240619153554014"></p>
+<p>数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、IGMP、arp<br>设计密码认证有telnet、mysql、ftp、ssh (加密的，可以适当性忽略)<br>如上图查看telnet登录都是显示登录错误<br>mysql.command<br>使用过滤规则过滤出mysql执行命令<br>可以看出mysql是登录成功了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153614598-407397050.png" alt="image-20240619153616271"></p>
+<p>追踪流-&gt;tcp流<br>FLAG: 5.7.26</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153629369-2074965379.png" alt="image-20240619153631079"></p>
+<p>顺便看下是不是暴力破解，数据库登录错误会显示：ERROR 1045 (28000): Access denied for user<br>‘用户名‘@’主机名’ (using password: YES)<br>使用mysql.error_code&#x3D;&#x3D;1045 过滤规则查看到就是暴力破解</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153642021-889017229.png" alt="image-20240619153643725"></p>
+<p>查看最后几个数据直接看到一句话木马<br>FLAG: horse<br>FLAG：lqsym</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153720217-2116545314.png" alt="image-20240619153721896"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">知道木马名称horse.php，利用木马肯定会进行post请求，一种方法是过滤http包含horse.php数据包，另</span><br><span class="line">一种是查看所有post请求数据，前者方便些</span><br><span class="line">http contains &quot;horse.php&quot;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153736181-1390259469.png" alt="image-20240619153737828"></p>
+<p>查看tcp流，需要解码，显示查看etc目录，再看下一个数据流 FLAG: passwd</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153858445-328000929.png" alt="image-20240619153900215"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153910382-1025583693.png" alt="image-20240619153912146"></p>
+<p>找到了异常⽤户并且使⽤该⽤户名对某个服务进⾏密码爆破枚举，那么该异常⽤户肯定是 通过读<br>取&#x2F;etc&#x2F;passwd⽂件所看到的，通过查看该⽂件我们发现，只有⽤户suictsr247可以登录到系统，并且是⾮<br>系统⽤户，其还在root组 ⾥⾯</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153957174-1098027555.png" alt="image-20240619153958861"></p>
+<p>由于诸多协议都是基于tcp的，因此我们使⽤ tcp contains “suictsr247”<br>我们看到大部分都是FTP服务，剩下俩是http，</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154019106-813217475.png" alt="image-20240619154020568"></p>
+<p>FTP登录成功显示的状态码是230，使用过滤规则<br>ftp.response.code&#x3D;&#x3D;230</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154035722-792054202.png" alt="image-20240619154037492"></p>
+<p>看到第一个数据流没有做任何操作，RETR是FTP中的命令RETR flag.jpg 意思是下载名为flag.jpg文件，<br>接下我们要做的事情就是，将该⽂件导出，前⾯说过，ftp在进⾏⽂件传输的时候，⾛的是ftp-data协议，因<br>此我们直接过滤该协议即可，由于⽂件传输⾛的是切⽚传输，会将⼀个⽂件分为多次发送，最终进⾏合并，意<br>思有很多flag.jpg，只需要选择任意⼀个追踪流即可<br>FLAG: harmony</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154140357-490746339.png" alt="image-20240619154141810"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154147095-2085816783.png" alt="image-20240619154148808"></p>
+<h2 id="数据分析02"><a href="#数据分析02" class="headerlink" title="数据分析02"></a>数据分析02</h2><p>通过直接分析端口得出<br>黑客ip：192.168.1.25<br>服务器ip：192.168.1.5</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154234908-1254783750.png" alt="image-20240619154236618"></p>
+<p>做个过滤，查看一下<br>ip.src&#x3D;&#x3D;192.168.1.25<br> flag：1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154253099-1154840722.png" alt="image-20240619154254788"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用过滤ip.src==192.168.1.25 and tcp.connection.syn没查看的</span><br><span class="line">修改下参数ip.src==192.168.1.25 and tcp.connection.rst</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154312607-953563727.png" alt="image-20240619154314250"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154334154-145866405.png" alt="image-20240619154335799"></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flag：21,23,80,445,3306,3389</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154356475-927600043.png" alt="image-20240619154358175"></p>
+<p>筛选http，字符串筛选login寻找，应该是post请求，点开就找到了 flag：’or’1’&#x3D;’1</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154408997-1749416248.png" alt="image-20240619154410672"></p>
+<p>登录成功后发现上传了一张图片，而 content-type 值为 image&#x2F;jpeg，那么很明显这里就是文件上传 MIME 绕过</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154457719-25275776.png" alt="image-20240619154459430"></p>
+<p>使用过滤出post请求，找到一句话木马密码<br>http.request.method &#x3D;&#x3D;POST<br> flag：Q</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154525742-70105635.png" alt="image-20240619154527456"></p>
+<p>继续往下查看，显示出变化 flag：c:&#x2F;phpstudy&#x2F;www&#x2F;shell2.php</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154540454-1625652965.png" alt="image-20240619154542154"></p>
+<p>下载文件应该还是post请求，使用过滤http.request.method &#x3D;&#x3D;POST</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154554493-1232244455.png" alt="image-20240619154556238"></p>
+<p>将内容查看tcp流保存原始数据为zip格式打开<br>flag：DPS</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154610429-1615102666.png" alt="image-20240619154612186"></p>
+]]></content>
+      <categories>
+        <category>学习笔记</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>旅游vlog</title>
+    <url>/posts/e42dbe7e.html</url>
+    <content><![CDATA[<meta name="referrer" content="no-referrer">
+
+<p>爱民谣</p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=31445772&auto=0&height=66"></iframe>
+
+<p>铁路会员积分到9400了</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807194241534-149490777.png" alt="image-20240807194232418"></p>
+<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
+<p>赛车</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
+<p>看古城</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
+<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>开封鼓楼</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
+<p>期待已久的打铁花，现场很美，画质可能被图床压缩了，没有现场好看</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
+<p>(｡･∀･)ﾉﾞ嗨</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
+<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>千窟为佑 太平无忧</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
+<p>无忧无虑</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
+<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>青春没有售价，嵩山就在脚下</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
+<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>古人西辞黄鹤楼，烟花十二月去武汉</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
+<p>步行街江汉关</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
+<p>长江大桥，很清爽</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
+<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
+<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>拿自由敬青春</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
+<p>一叶扁舟</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
+<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
+<h2 id="24年7月-北京"><a href="#24年7月-北京" class="headerlink" title="24年7月 北京"></a>24年7月 北京</h2><p>HVV经历</p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105653115-857898814.png" alt="image-20240831105619740"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105911882-154478791.png" alt="image-20240831105828978"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111433655-649346347.png" alt="image-20240831111349412"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111517591-1875079912.png" alt="image-20240831111452432"></p>
+<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111608864-1942078496.png" alt="image-20240831111527493"></p>
+]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+  </entry>
+  <entry>
     <title>数字取证</title>
     <url>/posts/21993.html</url>
     <content><![CDATA[<meta name="referrer" content="no-referrer">
@@ -1255,131 +1380,6 @@
 ]]></content>
       <categories>
         <category>writeup</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>旅游vlog</title>
-    <url>/posts/e42dbe7e.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<p>爱民谣</p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="330" height="86" src="//music.163.com/outchain/player?type=2&id=31445772&auto=0&height=66"></iframe>
-
-<p>铁路会员积分到9400了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240807194241534-149490777.png" alt="image-20240807194232418"></p>
-<h2 id="23年二月-商丘"><a href="#23年二月-商丘" class="headerlink" title="23年二月 商丘"></a>23年二月 商丘</h2><p>骑马</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235855070-349630753.png" alt="image-20240609235854475"></p>
-<p>赛车</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240609235922572-1439168124.png" alt="image-20240609235916947"></p>
-<p>看古城</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000033705-1839786062.png" alt="image-20240610000031135"></p>
-<h2 id="23年四月-开封"><a href="#23年四月-开封" class="headerlink" title="23年四月 开封"></a>23年四月 开封</h2><p>开封鼓楼</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000259773-1915523068.png" alt="image-20240610000258835"></p>
-<p>期待已久的打铁花，现场很美，画质可能被图床压缩了，没有现场好看</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000625079-1301771947.png" alt="image-20240610000624124"></p>
-<p>(｡･∀･)ﾉﾞ嗨</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610000959834-909010269.png" alt="image-20240610000958816"></p>
-<h2 id="23年四月-洛阳"><a href="#23年四月-洛阳" class="headerlink" title="23年四月 洛阳"></a>23年四月 洛阳</h2><p>千窟为佑 太平无忧</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001415503-106223712.png" alt="image-20240610001414507"></p>
-<p>无忧无虑</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610001628619-1480015057.png" alt="image-20240610001625964"></p>
-<h2 id="23年五月-郑州登封"><a href="#23年五月-郑州登封" class="headerlink" title="23年五月 郑州登封"></a>23年五月 郑州登封</h2><p>青春没有售价，嵩山就在脚下</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002528685-142711459.png" alt="image-20240610002527596"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002556216-262726712.png" alt="image-20240610002555576"></p>
-<h2 id="23年十二月-武汉"><a href="#23年十二月-武汉" class="headerlink" title="23年十二月 武汉"></a>23年十二月 武汉</h2><p>古人西辞黄鹤楼，烟花十二月去武汉</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610002924613-1983262460.png" alt="image-20240610002923127"></p>
-<p>步行街江汉关</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003027894-1658771681.png" alt="image-20240610003027550"></p>
-<p>长江大桥，很清爽</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003052750-631552577.png" alt="image-20240610003051755"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003517855-927015852.png" alt="image-20240610003513205"></p>
-<h2 id="24年二月-徐州"><a href="#24年二月-徐州" class="headerlink" title="24年二月 徐州"></a>24年二月 徐州</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003809562-1194830605.png" alt="image-20240610003803536"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610003909673-548240670.png" alt="image-20240610003904633"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004010708-1279197733.png" alt="image-20240610004010404"></p>
-<h2 id="24年四月-焦作"><a href="#24年四月-焦作" class="headerlink" title="24年四月 焦作"></a>24年四月 焦作</h2><p>拿自由敬青春</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004439818-1718239269.png" alt="image-20240610004430581"></p>
-<p>一叶扁舟</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004511751-1526690432.png" alt="image-20240610004505454"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004543291-1559204537.png" alt="image-20240610004530177"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610004643011-2061532258.png" alt="image-20240610004637830"></p>
-<h2 id="24年四月-西安"><a href="#24年四月-西安" class="headerlink" title="24年四月 西安"></a>24年四月 西安</h2><p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005004439-1352672664.png" alt="image-20240610004959118"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005030831-1684737016.png" alt="image-20240610005016115"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240610005120749-766008487.png" alt="image-20240610005115208"></p>
-<h2 id="24年7月-北京"><a href="#24年7月-北京" class="headerlink" title="24年7月 北京"></a>24年7月 北京</h2><p>HVV经历</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105653115-857898814.png" alt="image-20240831105619740"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831105911882-154478791.png" alt="image-20240831105828978"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111433655-649346347.png" alt="image-20240831111349412"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111517591-1875079912.png" alt="image-20240831111452432"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202408/3373819-20240831111608864-1942078496.png" alt="image-20240831111527493"></p>
-]]></content>
-      <categories>
-        <category>生活</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>数据流量分析</title>
-    <url>/posts/51705.html</url>
-    <content><![CDATA[<meta name="referrer" content="no-referrer">
-
-<h2 id="数据分析01"><a href="#数据分析01" class="headerlink" title="数据分析01"></a>数据分析01</h2><p>http.request.method &#x3D;&#x3D;POST<br>筛选出采用http协议的post方式的数据包，发现请求都是172.16.1.110，发送到172.16.1.18<br>黑客IP是172.16.1.110<br>或者使⽤过滤规则 tcp.connection.syn 过滤出所有带有SYN标志位的数据包，发现IP为172.16.1.110<br>的易受攻击端⼝短时间内发送了⼤量的建⽴连接请求，因此判定 172.16.1.110 为攻击机 172.16.1.18为<br>服务器<br>FLAG: 172.16.1.110</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153434973-1680874269.png" alt="image-20240619153436773"></p>
-<p>ip.src &#x3D;&#x3D; 172.16.1.110 and ip.dst &#x3D;&#x3D; 172.16.1.18 and tcp.connection.syn<br> TCP连接的SYN标志被设置。SYN标志表示一个TCP连接请求，用于建立一个新的连接<br>FLAG: 21&#x2F;22&#x2F;23&#x2F;80&#x2F;3306</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153457056-1932560292.png" alt="image-20240619153458454"></p>
-<p>统计-&gt;协议分级 发现数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、igmp、arp<br>其中telnet和ssh都是远程终端协议，telnet是明⽂传输⽽ssh是加密传输，ftp是命令控制协议，ftp<br>data是真正文件传输走的协议，因此只要看到存在ftp-data协议，就证明从ftp服务器传输了数据<br>vnc协议是磐云平台上连接虚拟机⾛的协议，这个可以忽略</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153517745-455823692.png" alt="image-20240619153519164"></p>
-<p>综上所述，能查看服务器主机名的协议有：<br>telnet<br> ssh (加密的，可以适当性忽略)<br> http(如果存在命令执⾏漏洞，就有可能查看主机名)<br>其实telnet协议在不登录服务器的情况下，就会显示其主机名。主机名 login 主机名可能会变，但是<br>login始终固定，因此我们可以构造如下过滤规则，筛选出所有内容包含login的telnet数据包<br>telnet contains “login”</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153536364-602711919.png" alt="image-20240619153538045"></p>
-<p>或点击筛选出来的telnet数据包右键追踪流 -&gt; TCP流<br>FLAG: SecTestLabs</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153552223-862063718.png" alt="image-20240619153554014"></p>
-<p>数据包中有vnc、telnet、ssh、mysql、http、ftp-data、ftp、IGMP、arp<br>设计密码认证有telnet、mysql、ftp、ssh (加密的，可以适当性忽略)<br>如上图查看telnet登录都是显示登录错误<br>mysql.command<br>使用过滤规则过滤出mysql执行命令<br>可以看出mysql是登录成功了</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153614598-407397050.png" alt="image-20240619153616271"></p>
-<p>追踪流-&gt;tcp流<br>FLAG: 5.7.26</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153629369-2074965379.png" alt="image-20240619153631079"></p>
-<p>顺便看下是不是暴力破解，数据库登录错误会显示：ERROR 1045 (28000): Access denied for user<br>‘用户名‘@’主机名’ (using password: YES)<br>使用mysql.error_code&#x3D;&#x3D;1045 过滤规则查看到就是暴力破解</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153642021-889017229.png" alt="image-20240619153643725"></p>
-<p>查看最后几个数据直接看到一句话木马<br>FLAG: horse<br>FLAG：lqsym</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153720217-2116545314.png" alt="image-20240619153721896"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">知道木马名称horse.php，利用木马肯定会进行post请求，一种方法是过滤http包含horse.php数据包，另</span><br><span class="line">一种是查看所有post请求数据，前者方便些</span><br><span class="line">http contains &quot;horse.php&quot;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153736181-1390259469.png" alt="image-20240619153737828"></p>
-<p>查看tcp流，需要解码，显示查看etc目录，再看下一个数据流 FLAG: passwd</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153858445-328000929.png" alt="image-20240619153900215"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153910382-1025583693.png" alt="image-20240619153912146"></p>
-<p>找到了异常⽤户并且使⽤该⽤户名对某个服务进⾏密码爆破枚举，那么该异常⽤户肯定是 通过读<br>取&#x2F;etc&#x2F;passwd⽂件所看到的，通过查看该⽂件我们发现，只有⽤户suictsr247可以登录到系统，并且是⾮<br>系统⽤户，其还在root组 ⾥⾯</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619153957174-1098027555.png" alt="image-20240619153958861"></p>
-<p>由于诸多协议都是基于tcp的，因此我们使⽤ tcp contains “suictsr247”<br>我们看到大部分都是FTP服务，剩下俩是http，</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154019106-813217475.png" alt="image-20240619154020568"></p>
-<p>FTP登录成功显示的状态码是230，使用过滤规则<br>ftp.response.code&#x3D;&#x3D;230</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154035722-792054202.png" alt="image-20240619154037492"></p>
-<p>看到第一个数据流没有做任何操作，RETR是FTP中的命令RETR flag.jpg 意思是下载名为flag.jpg文件，<br>接下我们要做的事情就是，将该⽂件导出，前⾯说过，ftp在进⾏⽂件传输的时候，⾛的是ftp-data协议，因<br>此我们直接过滤该协议即可，由于⽂件传输⾛的是切⽚传输，会将⼀个⽂件分为多次发送，最终进⾏合并，意<br>思有很多flag.jpg，只需要选择任意⼀个追踪流即可<br>FLAG: harmony</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154140357-490746339.png" alt="image-20240619154141810"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154147095-2085816783.png" alt="image-20240619154148808"></p>
-<h2 id="数据分析02"><a href="#数据分析02" class="headerlink" title="数据分析02"></a>数据分析02</h2><p>通过直接分析端口得出<br>黑客ip：192.168.1.25<br>服务器ip：192.168.1.5</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154234908-1254783750.png" alt="image-20240619154236618"></p>
-<p>做个过滤，查看一下<br>ip.src&#x3D;&#x3D;192.168.1.25<br> flag：1</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154253099-1154840722.png" alt="image-20240619154254788"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">使用过滤ip.src==192.168.1.25 and tcp.connection.syn没查看的</span><br><span class="line">修改下参数ip.src==192.168.1.25 and tcp.connection.rst</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154312607-953563727.png" alt="image-20240619154314250"></p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154334154-145866405.png" alt="image-20240619154335799"></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">flag：21,23,80,445,3306,3389</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154356475-927600043.png" alt="image-20240619154358175"></p>
-<p>筛选http，字符串筛选login寻找，应该是post请求，点开就找到了 flag：’or’1’&#x3D;’1</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154408997-1749416248.png" alt="image-20240619154410672"></p>
-<p>登录成功后发现上传了一张图片，而 content-type 值为 image&#x2F;jpeg，那么很明显这里就是文件上传 MIME 绕过</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154457719-25275776.png" alt="image-20240619154459430"></p>
-<p>使用过滤出post请求，找到一句话木马密码<br>http.request.method &#x3D;&#x3D;POST<br> flag：Q</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154525742-70105635.png" alt="image-20240619154527456"></p>
-<p>继续往下查看，显示出变化 flag：c:&#x2F;phpstudy&#x2F;www&#x2F;shell2.php</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154540454-1625652965.png" alt="image-20240619154542154"></p>
-<p>下载文件应该还是post请求，使用过滤http.request.method &#x3D;&#x3D;POST</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154554493-1232244455.png" alt="image-20240619154556238"></p>
-<p>将内容查看tcp流保存原始数据为zip格式打开<br>flag：DPS</p>
-<p><img src="https://img2023.cnblogs.com/blog/3373819/202406/3373819-20240619154610429-1615102666.png" alt="image-20240619154612186"></p>
-]]></content>
-      <categories>
-        <category>学习笔记</category>
       </categories>
   </entry>
 </search>
